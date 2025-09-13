@@ -1,0 +1,32 @@
+/* Simple Icon Component Styles */
+.simple-icon {
+  display: inline-block;
+  text-align: center;
+  line-height: 1;
+  vertical-align: middle;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.simple-icon-add::before { content: "➕"; }
+.simple-icon-close::before { content: "✖️"; }
+.simple-icon-edit::before { content: "✏️"; }
+.simple-icon-check-circle::before { content: "✅"; }
+.simple-icon-check-circle-filled::before { content: "✅"; }
+.simple-icon-search::before { content: "🔍"; }
+.simple-icon-filter::before { content: "🔽"; }
+.simple-icon-sort::before { content: "⇕️"; }
+.simple-icon-view-module::before { content: "⊞"; }
+.simple-icon-format-list-bulleted::before { content: "☰"; }
+.simple-icon-star-filled::before { content: "⭐"; }
+.simple-icon-layers::before { content: "📚"; }
+.simple-icon-thumb-up::before { content: "👍"; }
+.simple-icon-palette::before { content: "🎨"; }
+.simple-icon-time::before { content: "⏰"; }
+.simple-icon-user::before { content: "👤"; }
+.simple-icon-chevron-right::before { content: "▷"; }
+.simple-icon-chevron-right-double::before { content: "⏭️"; }
+
+/* Generic fallback */
+.simple-icon:not([class*="::before"]) {
+  font-size: 0.8em;
+}

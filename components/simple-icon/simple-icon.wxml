@@ -1,0 +1,2 @@
+<!-- Simple Icon Component - Text-based fallback for TDesign icons -->
+<text class="simple-icon simple-icon-{{name}}" style="font-size: {{size}}; color: {{color}};">{{iconText}}</text>

@@ -1,0 +1,1888 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>字帖生成小程序 - 纯净移动端展示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        
+        /* iOS官方设计系统色彩规范 */
+        :root {
+            /* iOS系统色彩 - 完整规范 */
+            --ios-blue: #007AFF;
+            --ios-blue-light: #5AC8FA;
+            --ios-blue-dark: #0051D5;
+            --ios-green: #34C759;
+            --ios-green-light: #30D158;
+            --ios-green-dark: #248A3D;
+            --ios-indigo: #5856D6;
+            --ios-indigo-light: #5E5CE6;
+            --ios-indigo-dark: #3634A3;
+            --ios-orange: #FF9500;
+            --ios-orange-light: #FF9F0A;
+            --ios-orange-dark: #C77700;
+            --ios-pink: #FF2D92;
+            --ios-pink-light: #FF2D92;
+            --ios-pink-dark: #D70015;
+            --ios-purple: #AF52DE;
+            --ios-purple-light: #BF5AF2;
+            --ios-purple-dark: #8E44AD;
+            --ios-red: #FF3B30;
+            --ios-red-light: #FF453A;
+            --ios-red-dark: #D70015;
+            --ios-teal: #5AC8FA;
+            --ios-teal-light: #64D2FF;
+            --ios-teal-dark: #0071A4;
+            --ios-yellow: #FFCC00;
+            --ios-yellow-light: #FFD60A;
+            --ios-yellow-dark: #C7A500;
+            
+            /* iOS语义色彩系统 */
+            --ios-label: #000000;
+            --ios-label-secondary: rgba(60, 60, 67, 0.6);
+            --ios-label-tertiary: rgba(60, 60, 67, 0.3);
+            --ios-label-quaternary: rgba(60, 60, 67, 0.18);
+            
+            --ios-fill: rgba(120, 120, 128, 0.2);
+            --ios-fill-secondary: rgba(120, 120, 128, 0.16);
+            --ios-fill-tertiary: rgba(120, 120, 128, 0.12);
+            --ios-fill-quaternary: rgba(120, 120, 128, 0.08);
+            
+            --ios-background: #FFFFFF;
+            --ios-background-secondary: #F2F2F7;
+            --ios-background-tertiary: #FFFFFF;
+            
+            --ios-grouped-background: #F2F2F7;
+            --ios-grouped-background-secondary: #FFFFFF;
+            --ios-grouped-background-tertiary: #F2F2F7;
+            
+            --ios-separator: rgba(60, 60, 67, 0.29);
+            --ios-separator-opaque: #C6C6C8;
+            
+            /* 高级渐变系统 */
+            --gradient-hero: linear-gradient(135deg, #007AFF 0%, #5AC8FA 50%, #34C759 100%);
+            --gradient-card: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.8) 100%);
+            --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.1) 100%);
+            --gradient-background: linear-gradient(135deg, #F2F2F7 0%, #E5E5EA 25%, #D1D1D6 50%, #E5E5EA 75%, #F2F2F7 100%);
+            
+            /* 多层毛玻璃效果 */
+            --glass-ultra-thin: backdrop-filter: blur(10px) saturate(180%) contrast(120%) brightness(110%);
+            --glass-thin: backdrop-filter: blur(20px) saturate(180%) contrast(120%) brightness(110%);
+            --glass-regular: backdrop-filter: blur(30px) saturate(180%) contrast(120%) brightness(110%);
+            --glass-thick: backdrop-filter: blur(40px) saturate(200%) contrast(130%) brightness(120%);
+            --glass-ultra-thick: backdrop-filter: blur(60px) saturate(220%) contrast(140%) brightness(130%);
+            
+            /* 优雅阴影系统 - 6个层级 */
+            --shadow-level-1: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06);
+            --shadow-level-2: 0 2px 4px rgba(0, 0, 0, 0.06), 0 1px 6px rgba(0, 0, 0, 0.08);
+            --shadow-level-3: 0 4px 8px rgba(0, 0, 0, 0.08), 0 2px 12px rgba(0, 0, 0, 0.12);
+            --shadow-level-4: 0 8px 16px rgba(0, 0, 0, 0.10), 0 4px 20px rgba(0, 0, 0, 0.16);
+            --shadow-level-5: 0 16px 24px rgba(0, 0, 0, 0.12), 0 8px 32px rgba(0, 0, 0, 0.20);
+            --shadow-level-6: 0 24px 40px rgba(0, 0, 0, 0.16), 0 12px 60px rgba(0, 0, 0, 0.28);
+            
+            /* 彩色阴影系统 */
+            --shadow-blue: 0 8px 16px rgba(0, 122, 255, 0.15), 0 4px 20px rgba(0, 122, 255, 0.08);
+            --shadow-green: 0 8px 16px rgba(52, 199, 89, 0.15), 0 4px 20px rgba(52, 199, 89, 0.08);
+            --shadow-orange: 0 8px 16px rgba(255, 149, 0, 0.15), 0 4px 20px rgba(255, 149, 0, 0.08);
+            --shadow-red: 0 8px 16px rgba(255, 59, 48, 0.15), 0 4px 20px rgba(255, 59, 48, 0.08);
+            --shadow-purple: 0 8px 16px rgba(175, 82, 222, 0.15), 0 4px 20px rgba(175, 82, 222, 0.08);
+            
+            /* iPhone 12 精确尺寸 */
+            --iphone-width: 390px;
+            --status-bar-height: 47px;
+            --home-indicator-height: 34px;
+            --safe-area-top: 47px;
+            --safe-area-bottom: 34px;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+            background: var(--gradient-background);
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* 多层毛玻璃纹理背景系统 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                /* 第一层：主要色彩渐变 */
+                radial-gradient(circle at 20% 20%, rgba(0, 122, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(52, 199, 89, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 60% 40%, rgba(255, 149, 0, 0.12) 0%, transparent 50%),
+                /* 第二层：纹理细节 */
+                radial-gradient(circle at 40% 70%, rgba(175, 82, 222, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 30%, rgba(255, 45, 146, 0.08) 0%, transparent 40%),
+                /* 第三层：微纹理 */
+                radial-gradient(circle at 15% 85%, rgba(90, 200, 250, 0.06) 0%, transparent 30%),
+                radial-gradient(circle at 75% 15%, rgba(255, 204, 0, 0.06) 0%, transparent 30%);
+            opacity: 0.8;
+            pointer-events: none;
+            z-index: -2;
+            animation: backgroundFloat 20s ease-in-out infinite alternate;
+        }
+        
+        @keyframes backgroundFloat {
+            0% { transform: translateX(-2px) translateY(-2px) scale(1); }
+            50% { transform: translateX(4px) translateY(-4px) scale(1.01); }
+            100% { transform: translateX(-2px) translateY(2px) scale(1); }
+        }
+        
+        /* 页面展示容器 */
+        .pages-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(390px, 1fr));
+            gap: 40px;
+            padding: 40px 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+            justify-items: center;
+            align-items: start;
+        }
+        
+        /* 纯净的页面容器 */
+        .page-container {
+            width: 390px;
+            height: auto;
+            background: var(--ios-background);
+            border-radius: 20px;
+            overflow: visible;
+            position: relative;
+            box-shadow: var(--shadow-level-4);
+            border: 0.5px solid rgba(0,0,0,0.06);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .page-container:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: var(--shadow-level-6);
+        }
+        
+        /* 页面标题浮动标签 */
+        .page-title {
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px) saturate(180%);
+            color: var(--ios-label);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: var(--shadow-level-3);
+            border: 1px solid rgba(255,255,255,0.2);
+            z-index: 20;
+            animation: titleFloat 3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes titleFloat {
+            0% { transform: translateX(-50%) translateY(0px); opacity: 0.8; }
+            100% { transform: translateX(-50%) translateY(-4px); opacity: 1; }
+        }
+        
+        /* 状态栏 */
+        .status-bar {
+            height: var(--status-bar-height);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px) saturate(180%) contrast(120%);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px 0 36px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--ios-label);
+            position: relative;
+            z-index: 100;
+            border-bottom: 0.5px solid var(--ios-separator);
+        }
+        
+        .time {
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -0.3px;
+        }
+        
+        .battery-status {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 14px;
+        }
+        
+        /* 内容区域 - 无滚动，自适应高度 */
+        .content {
+            width: 100%;
+            background: var(--ios-grouped-background);
+            position: relative;
+            flex: 1;
+        }
+        
+        /* 导航栏 */
+        .nav-bar {
+            height: 64px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 0.5px solid var(--ios-separator);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+        
+        .nav-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--ios-label);
+            text-align: center;
+            flex: 1;
+            letter-spacing: -0.4px;
+        }
+        
+        .nav-back, .nav-action {
+            color: var(--ios-blue);
+            font-size: 17px;
+            font-weight: 400;
+            min-width: 44px;
+            text-align: center;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.15s ease;
+        }
+        
+        .nav-back:active, .nav-action:active {
+            background: rgba(0, 122, 255, 0.1);
+            transform: scale(0.95);
+        }
+        
+        /* iOS卡片组件系统 */
+        .ios-card {
+            background: var(--ios-grouped-background-secondary);
+            border-radius: 16px;
+            margin: 20px 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-level-2);
+            border: 0.5px solid rgba(0,0,0,0.04);
+        }
+        
+        .ios-card.elevated {
+            box-shadow: var(--shadow-level-4);
+            transform: translateY(-2px);
+        }
+        
+        .ios-card-header {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--ios-label-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin: 24px 20px 8px;
+            line-height: 18px;
+        }
+        
+        .ios-card-section {
+            padding: 16px 20px;
+            border-bottom: 0.5px solid var(--ios-separator);
+            background: var(--ios-grouped-background-secondary);
+        }
+        
+        .ios-card-section:last-child {
+            border-bottom: none;
+        }
+        
+        /* 列表项组件 */
+        .ios-list-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            background: var(--ios-grouped-background-secondary);
+            border-bottom: 0.5px solid var(--ios-separator);
+            transition: all 0.15s ease;
+            position: relative;
+        }
+        
+        .ios-list-item:last-child {
+            border-bottom: none;
+        }
+        
+        .ios-list-item:active {
+            background: var(--ios-fill-quaternary);
+            transform: scale(0.99);
+        }
+        
+        .ios-list-item-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            font-size: 18px;
+            box-shadow: var(--shadow-level-1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ios-list-item-icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.1) 100%);
+            z-index: 1;
+        }
+        
+        .ios-list-item-content {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .ios-list-item-title {
+            font-size: 17px;
+            color: var(--ios-label);
+            margin-bottom: 2px;
+            font-weight: 400;
+            line-height: 22px;
+            letter-spacing: -0.4px;
+        }
+        
+        .ios-list-item-subtitle {
+            font-size: 15px;
+            color: var(--ios-label-secondary);
+            line-height: 20px;
+            letter-spacing: -0.2px;
+        }
+        
+        .ios-list-item-arrow {
+            color: var(--ios-label-tertiary);
+            font-size: 14px;
+            margin-left: 8px;
+            opacity: 0.6;
+        }
+        
+        /* 按钮组件系统 */
+        .ios-button {
+            background: var(--ios-blue);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 16px 24px;
+            font-size: 17px;
+            font-weight: 600;
+            letter-spacing: -0.4px;
+            transition: all 0.15s ease;
+            min-height: 50px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ios-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .ios-button:hover::before {
+            left: 100%;
+        }
+        
+        .ios-button:active {
+            transform: scale(0.98);
+            opacity: 0.8;
+        }
+        
+        .ios-button.secondary {
+            background: var(--ios-fill);
+            color: var(--ios-blue);
+        }
+        
+        .ios-button.destructive {
+            background: var(--ios-red);
+        }
+        
+        .ios-button.success {
+            background: var(--ios-green);
+            box-shadow: var(--shadow-green);
+        }
+        
+        /* 输入框组件 */
+        .ios-input {
+            width: 100%;
+            padding: 16px;
+            border: 1px solid var(--ios-separator);
+            border-radius: 12px;
+            font-size: 17px;
+            background: var(--ios-background);
+            color: var(--ios-label);
+            transition: all 0.15s ease;
+            letter-spacing: -0.4px;
+        }
+        
+        .ios-input:focus {
+            outline: none;
+            border-color: var(--ios-blue);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+        
+        .ios-input::placeholder {
+            color: var(--ios-label-tertiary);
+        }
+        
+        /* Tab Bar组件 */
+        .tab-bar {
+            height: calc(83px + var(--home-indicator-height));
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px) saturate(180%);
+            border-top: 0.5px solid var(--ios-separator);
+            padding: 8px 8px var(--home-indicator-height) 8px;
+            display: flex;
+            justify-content: space-around;
+            position: relative;
+            margin-top: auto;
+            border-radius: 0 0 20px 20px;
+        }
+        
+        .tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+            border-radius: 8px;
+            transition: all 0.15s ease;
+            max-width: 75px;
+        }
+        
+        .tab-item:active {
+            transform: scale(0.95);
+            background: var(--ios-fill-quaternary);
+        }
+        
+        .tab-item.active .tab-icon {
+            color: var(--ios-blue);
+            transform: scale(1.1);
+        }
+        
+        .tab-item.active .tab-label {
+            color: var(--ios-blue);
+        }
+        
+        .tab-icon {
+            font-size: 26px;
+            margin-bottom: 4px;
+            color: var(--ios-label-secondary);
+            transition: all 0.2s ease;
+        }
+        
+        .tab-label {
+            font-size: 10px;
+            color: var(--ios-label-secondary);
+            font-weight: 500;
+            letter-spacing: 0.1px;
+            transition: all 0.2s ease;
+        }
+        
+        /* 页面内容区域 - 自适应高度 */
+        .page-content {
+            flex: 1;
+            padding-bottom: 20px;
+        }
+        
+        /* 首页英雄区域 */
+        .home-hero {
+            background: var(--gradient-hero);
+            color: white;
+            padding: 40px 20px 32px;
+            text-align: center;
+            margin-bottom: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .home-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            right: -50%;
+            bottom: -50%;
+            background: 
+                radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.5;
+            animation: heroPattern 20s linear infinite;
+        }
+        
+        @keyframes heroPattern {
+            0% { transform: rotate(0deg) translateX(0px); }
+            100% { transform: rotate(360deg) translateX(20px); }
+        }
+        
+        .home-hero h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.8px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .home-hero p {
+            font-size: 17px;
+            opacity: 0.9;
+            letter-spacing: -0.2px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* 预览容器 */
+        .preview-container {
+            background: var(--ios-grouped-background-secondary);
+            border-radius: 16px;
+            margin: 20px 16px;
+            padding: 24px;
+            box-shadow: var(--shadow-level-3);
+            text-align: center;
+            border: 0.5px solid rgba(0,0,0,0.04);
+        }
+        
+        .preview-paper {
+            background: linear-gradient(145deg, #fefefe 0%, #f8f8f8 100%);
+            border: 1px solid #e8e8ed;
+            border-radius: 12px;
+            padding: 24px 20px;
+            margin: 20px auto;
+            max-width: 300px;
+            box-shadow: 
+                var(--shadow-level-2),
+                inset 0 1px 0 rgba(255,255,255,0.8);
+            position: relative;
+        }
+        
+        .preview-paper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(0,0,0,0.02) 1px, transparent 1px),
+                radial-gradient(circle at 75% 75%, rgba(0,0,0,0.015) 1px, transparent 1px);
+            background-size: 30px 30px, 45px 45px;
+            opacity: 0.6;
+            border-radius: 12px;
+        }
+        
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3px;
+            margin: 12px 0;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .grid-cell {
+            aspect-ratio: 1;
+            border: 1.5px solid #d1d1d6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: var(--ios-label);
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 4px;
+            font-weight: 500;
+            position: relative;
+        }
+        
+        /* 田字格样式 */
+        .grid-cell.tian {
+            background-image: 
+                linear-gradient(to right, #d1d1d6 50%, transparent 50%),
+                linear-gradient(to bottom, #d1d1d6 50%, transparent 50%);
+            background-size: 100% 1px, 1px 100%;
+            background-position: center, center;
+            background-repeat: no-repeat;
+        }
+        
+        /* 设置行组件 */
+        .setting-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: var(--ios-grouped-background-secondary);
+            border-bottom: 0.5px solid var(--ios-separator);
+            min-height: 56px;
+        }
+        
+        .setting-row:last-child {
+            border-bottom: none;
+        }
+        
+        .setting-label {
+            font-size: 17px;
+            color: var(--ios-label);
+            letter-spacing: -0.4px;
+        }
+        
+        .setting-value {
+            color: var(--ios-label-secondary);
+            font-size: 17px;
+            letter-spacing: -0.2px;
+        }
+        
+        /* iOS开关组件 */
+        .ios-switch {
+            position: relative;
+            display: inline-block;
+            width: 51px;
+            height: 31px;
+        }
+        
+        .switch-slider {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--ios-green);
+            border-radius: 31px;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-level-1);
+        }
+        
+        .switch-slider:before {
+            position: absolute;
+            content: "";
+            height: 27px;
+            width: 27px;
+            right: 2px;
+            bottom: 2px;
+            background-color: white;
+            border-radius: 50%;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .switch-slider.off {
+            background-color: #e9e9ea;
+        }
+        
+        .switch-slider.off:before {
+            transform: translateX(-20px);
+        }
+        
+        /* 响应式适配 */
+        @media (max-width: 430px) {
+            .pages-showcase {
+                grid-template-columns: 1fr;
+                padding: 20px 10px;
+                gap: 30px;
+            }
+            
+            .page-container {
+                width: min(390px, calc(100vw - 20px));
+            }
+        }
+        
+        @media (min-width: 900px) {
+            .pages-showcase {
+                grid-template-columns: repeat(2, 390px);
+                gap: 60px;
+            }
+        }
+        
+        @media (min-width: 1300px) {
+            .pages-showcase {
+                grid-template-columns: repeat(3, 390px);
+                gap: 60px;
+            }
+        }
+        
+        @media (min-width: 1700px) {
+            .pages-showcase {
+                grid-template-columns: repeat(4, 390px);
+                gap: 80px;
+            }
+        }
+        
+        /* 高性能动画 */
+        .ios-card,
+        .ios-list-item,
+        .ios-button,
+        .tab-item {
+            will-change: transform;
+        }
+        
+        /* 无障碍支持 */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        
+        /* 深色模式支持 */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --ios-label: #FFFFFF;
+                --ios-label-secondary: rgba(235, 235, 245, 0.6);
+                --ios-label-tertiary: rgba(235, 235, 245, 0.3);
+                --ios-label-quaternary: rgba(235, 235, 245, 0.18);
+                
+                --ios-background: #1C1C1E;
+                --ios-background-secondary: #2C2C2E;
+                --ios-background-tertiary: #3A3A3C;
+                
+                --ios-grouped-background: #1C1C1E;
+                --ios-grouped-background-secondary: #2C2C2E;
+                --ios-grouped-background-tertiary: #3A3A3C;
+                
+                --ios-separator: rgba(84, 84, 88, 0.65);
+                --ios-separator-opaque: #38383A;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="pages-showcase">
+        <!-- 首页 -->
+        <div class="page-container">
+            <div class="page-title">🏠 首页导航</div>
+            
+            <div class="status-bar">
+                <span class="time">9:41</span>
+                <span class="battery-status">
+                    <span>📶</span>
+                    <span>📶</span>
+                    <span>🔋</span>
+                </span>
+            </div>
+            
+            <div class="content">
+                <div class="home-hero">
+                    <h1>✍️ 字帖生成</h1>
+                    <p>个性化练字字帖制作工具</p>
+                </div>
+                
+                <div class="ios-card elevated">
+                    <div class="ios-card-header">核心功能</div>
+                    <div class="ios-list-item">
+                        <div class="ios-list-item-icon" style="background: var(--gradient-hero); color: white;">✍️</div>
+                        <div class="ios-list-item-content">
+                            <div class="ios-list-item-title">字帖制作</div>
+                            <div class="ios-list-item-subtitle">选择类型、输入内容、实时预览</div>
+                        </div>
+                        <div class="ios-list-item-arrow">›</div>
+                    </div>
+                    <div class="ios-list-item">
+                        <div class="ios-list-item-icon" style="background: linear-gradient(135deg, var(--ios-green), var(--ios-teal)); color: white;">📚</div>
+                        <div class="ios-list-item-content">
+                            <div class="ios-list-item-title">字帖模板</div>
+                            <div class="ios-list-item-subtitle">精选模板库，快速选择内容</div>
+                        </div>
+                        <div class="ios-list-item-arrow">›</div>
+                    </div>
+                    <div class="ios-list-item">
+                        <div class="ios-list-item-icon" style="background: linear-gradient(135deg, var(--ios-orange), var(--ios-pink)); color: white;">📋</div>
+                        <div class="ios-list-item-content">
+                            <div class="ios-list-item-title">我的作品</div>
+                            <div class="ios-list-item-subtitle">管理和查看创建的字帖</div>
+                        </div>
+                        <div class="ios-list-item-arrow">›</div>
+                    </div>
+                </div>
+                
+                <div class="ios-card">
+                    <div class="ios-card-header">工具设置</div>
+                    <div class="ios-list-item">
+                        <div class="ios-list-item-icon" style="background: linear-gradient(135deg, var(--ios-fill), #8E8E93); color: white;">⚙️</div>
+                        <div class="ios-list-item-content">
+                            <div class="ios-list-item-title">高级设置</div>
+                            <div class="ios-list-item-subtitle">专业参数和格式配置</div>
+                        </div>
+                        <div class="ios-list-item-arrow">›</div>
+                    </div>
+                    <div class="ios-list-item">
+                        <div class="ios-list-item-icon" style="background: linear-gradient(135deg, var(--ios-purple), var(--ios-pink)); color: white;">👤</div>
+                        <div class="ios-list-item-content">
+                            <div class="ios-list-item-title">个人中心</div>
+                            <div class="ios-list-item-subtitle">账户信息和应用偏好</div>
+                        </div>
+                        <div class="ios-list-item-arrow">›</div>
+                    </div>
+                </div>
+                
+                <div class="tab-bar">
+                    <div class="tab-item active">
+                        <div class="tab-icon">🏠</div>
+                        <div class="tab-label">首页</div>
+                    </div>
+                    <div class="tab-item">
+                        <div class="tab-icon">✍️</div>
+                        <div class="tab-label">制作</div>
+                    </div>
+                    <div class="tab-item">
+                        <div class="tab-icon">📚</div>
+                        <div class="tab-label">模板</div>
+                    </div>
+                    <div class="tab-item">
+                        <div class="tab-icon">📋</div>
+                        <div class="tab-label">作品</div>
+                    </div>
+                    <div class="tab-item">
+                        <div class="tab-icon">👤</div>
+                        <div class="tab-label">我的</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 字帖制作页面 -->
+        <div class="page-container">
+            <div class="page-title">✍️ 字帖制作</div>
+            
+            <div class="status-bar">
+                <span class="time">9:41</span>
+                <span class="battery-status">
+                    <span>📶</span>
+                    <span>📶</span>
+                    <span>🔋</span>
+                </span>
+            </div>
+            
+            <div class="content">
+                <div class="nav-bar">
+                    <div class="nav-back">‹ 返回</div>
+                    <div class="nav-title">字帖制作</div>
+                    <div class="nav-action">预览</div>
+                </div>
+                
+                <div class="page-content">
+                    <div class="ios-card">
+                        <div class="ios-card-header">字帖类型选择</div>
+                        <div class="setting-row">
+                            <span class="setting-label">格子类型</span>
+                            <span class="setting-value">田字格 ›</span>
+                        </div>
+                        <div class="setting-row">
+                            <span class="setting-label">纸张尺寸</span>
+                            <span class="setting-value">A4 ›</span>
+                        </div>
+                    </div>
+                    
+                    <div class="ios-card">
+                        <div class="ios-card-header">练习内容</div>
+                        <div class="ios-card-section">
+                            <textarea class="ios-input" rows="4" placeholder="请输入要练习的文字内容..." style="resize: none;">人生如梦，岁月如歌，书法如诗。
+练字如修心，一笔一画皆是人生感悟。
+静心凝神，感受汉字之美。</textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="preview-container">
+                        <h3 style="margin-bottom: 16px; color: var(--ios-label); font-size: 18px; font-weight: 600;">实时预览</h3>
+                        <div class="preview-paper">
+                            <div class="grid-container">
+                                <div class="grid-cell tian">人</div>
+                                <div class="grid-cell tian">生</div>
+                                <div class="grid-cell tian">如</div>
+                                <div class="grid-cell tian">梦</div>
+                                <div class="grid-cell tian">岁</div>
+                                <div class="grid-cell tian">月</div>
+                                <div class="grid-cell tian">如</div>
+                                <div class="grid-cell tian">歌</div>
+                                <div class="grid-cell tian">书</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="ios-card">
+                        <div class="ios-card-section">
+                            <button class="ios-button success">
+                                生成完整字帖
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-bar">
+                    <div class="tab-item">
+                        <div class="tab-icon">🏠</div>
+                        <div class="tab-label">首页</div>
+                    </div>
+                    <div class="tab-item active">
+                        <div class="tab-icon">✍️</div>
+                        <div class="tab-label">制作</div>
+                    </div>
+                    <div class="tab-item">
+                        <div class="tab-icon">📚</div>
+                        <div class="tab-label">模板</div>
+                    </div>
+                    <div class="tab-item">
+                        <div class="tab-icon">📋</div>
+                        <div class="tab-label">作品</div>
+                    </div>
+                    <div class="tab-item">
+                        <div class="tab-icon">👤</div>
+                        <div class="tab-label">我的</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 字帖模板页面 -->
+        <div class="page-container">
+            <div class="page-title">📚 字帖模板</div>
+            
+            <div class="status-bar">
+                <span class="time">9:41</span>
+                <span class="battery-status">
+                    <span>📶</span>
+                    <span>📶</span>
+                    <span>🔋</span>
+                </span>
+            </div>
+            
+            <div class="content">
+                <div class="nav-bar">
+                    <div class="nav-back">‹ 返回</div>
+                    <div class="nav-title">字帖模板</div>
+                    <div class="nav-action">搜索</div>
+                </div>
+                
+                <div class="page-content">
+                    <div class="ios-card elevated">
+                        <div class="ios-card-header">热门推荐</div>
+                        <div class="ios-list-item">
+                            <div class="ios-list-item-icon" style="background: linear-gradient(135deg, var(--ios-orange), var(--ios-pink)); color: white;">🌸</div>
+                            <div class="ios-list-item-content">
+                                <div class="ios-list-item-title">古诗词精选</div>
+                                <div class="ios-list-item-subtitle">经典古诗词，传承文化之美</div>
+                            </div>
+                            <div class="ios-list-item-arrow">›</div>
+                        </div>
+                        <div class="ios-list-item">
+                            <div class="ios-list-item-icon" style="background: linear-gradient(135deg, var(--ios-green), var(--ios-teal)); color: white;">💫</div>
+                            <div class="ios-list-item-content">
+                                <div class="ios-list-item-title">励志名言</div>
+                                <div class="ios-list-item-subtitle">激励人心的经典语录</div>
+                            </div>
+                            <div class="ios-list-item-arrow">›</div>
+                        </div>
+                        <div class="ios-list-item">
+                            <div class="ios-list-item-icon" style="background: var(--gradient-hero); color: white;">✨</div>
+                            <div class="ios-list-item-content">
+                                <div class="ios-list-item-title">常用汉字</div>
+                                <div class="ios-list-item-subtitle">3500个高频汉字练习</div>
+                            </div>
+                            <div class="ios-list-item-arrow">›</div>
+                        </div>
+                    </div>
+                    
+                    <div class="ios-card">
+                        <div class="ios-card-header">学习专区</div>
+                        <div class="ios-list-item">
+                            <div class="ios-list-item-icon" style="background: linear-gradient(135deg, var(--ios-purple), var(--ios-pink)); color: white;">🎓</div>
+                            <div class="ios-list-item-content">
+                                <div class="ios-list-item-title">小学生练字</div>
+                                <div class="ios-list-item-subtitle">适合小学1-6年级</div>
+                            </div>
+                            <div class="ios-list-item-arrow">›</div>
+                        </div>
+                        <div class="ios-list-item">
+                            <div class="ios-list-item-icon" style="background: linear-gradient(135deg, var(--ios-red), var(--ios-orange)); color: white;">📖</div>
+                            <div class="ios-list-item-content">
+                                <div class="ios-list-item-title">中学生练字</div>
+                                <div class="ios-list-item-subtitle">中高考常用字词</div>
+                            </div>
+                            <div class="ios-list-item-arrow">›</div>
+                        </div>
+                        <div class="ios-list-item">
+                            <div class="ios-list-item-icon" style="background: linear-gradient(135deg, var(--ios-indigo), var(--ios-purple)); color: white;">🎨</div>
+                            <div class="ios-list-item-content">
+                                <div class="ios-list-item-title">成人练字</div>
+                                <div class="ios-list-item-subtitle">职场常用字及美文</div>
+                            </div>
+                            <div class="ios-list-item-arrow">›</div>
+                        </div>
+                    </div>
+                    
+                    <div class="ios-card">
+                        <div class="ios-card-header">特色内容</div>
+                        <div class="ios-list-item">
+                            <div class="ios-list-item-icon" style="background: linear-gradient(135deg, var(--ios-yellow), var(--ios-orange)); color: white;">🏛️</div>
+                            <div class="ios-list-item-content">
+                                <div class="ios-list-item-title">书法经典</div>
+                                <div class="ios-list-item-subtitle">历代名家作品临摹</div>
+                            </div>
+                            <div class="ios-list-item-arrow">›</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-bar">
+                    <div class="tab-item">
+                        <div class="tab-icon">🏠</div>
+                        <div class="tab-label">首页</div>
+                    </div>
+                    <div class="tab-item">
+                        <div class="tab-icon">✍️</div>
+                        <div class="tab-label">制作</div>
+                    </div>
+                    <div class="tab-item active">
+                        <div class="tab-icon">📚</div>
+                        <div class="tab-label">模板</div>
+                    </div>
+                    <div class="tab-item">
+                        <div class="tab-icon">📋</div>
+                        <div class="tab-label">作品</div>
+                    </div>
+                    <div class="tab-item">
+                        <div class="tab-icon">👤</div>
+                        <div class="tab-label">我的</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 我的作品页面 -->
+        <div class="page-container">
+            <div class="page-title">📋 我的作品</div>
+            
+            <div class="status-bar">
+                <span class="time">9:41</span>
+                <span class="battery-status">
+                    <span>📶</span>
+                    <span>📶</span>
+                    <span>🔋</span>
+                </span>
+            </div>
+            
+            <div class="content">
+                <div class="nav-bar">
+                    <div class="nav-back">‹ 返回</div>
+                    <div class="nav-title">我的作品</div>
+                    <div class="nav-action">编辑</div>
+                </div>
+                
+                <div class="page-content">
+                    <div class="ios-card elevated">
+                        <div class="ios-card-header">最近创建</div>
+                        <div class="ios-list-item">
+                            <div class="ios-list-item-icon" style="background: var(--gradient-hero); color: white;">📄</div>
+                            <div class="ios-list-item-content">
+                                <div class="ios-list-item-title">古诗词练习册</div>
+                                <div class="ios-list-item-subtitle">今天 14:30 • 田字格 • 24页</div>
+                            </div>
+                            <div class="ios-list-item-arrow">›</div>
+                        </div>
+                        <div class="ios-list-item">
+                            <div class="ios-list-item-icon" style="background: linear-gradient(135deg, var(--ios-green), var(--ios-teal)); color: white;">📄</div>
+                            <div class="ios-list-item-content">
+                                <div class="ios-list-item-title">励志名言集</div>
+                                <div class="ios-list-item-subtitle">昨天 16:45 • 米字格 • 18页</div>
+                            </div>
+                            <div class="ios-list-item-arrow">›</div>
+                        </div>
+                        <div class="ios-list-item">
+                            <div class="ios-list-item-icon" style="background: linear-gradient(135deg, var(--ios-orange), var(--ios-pink)); color: white;">📄</div>
+                            <div class="ios-list-item-content">
+                                <div class="ios-list-item-title">常用汉字训练</div>
+                                <div class="ios-list-item-subtitle">3天前 • 田字格 • 32页</div>
+                            </div>
+                            <div class="ios-list-item-arrow">›</div>
+                        </div>
+                    </div>
+                    
+                    <div class="ios-card">
+                        <div class="ios-card-header">统计数据</div>
+                        <div class="setting-row">
+                            <span class="setting-label">总计作品</span>
+                            <span class="setting-value">28</span>
+                        </div>
+                        <div class="setting-row">
+                            <span class="setting-label">本月创建</span>
+                            <span class="setting-value">12</span>
+                        </div>
+                        <div class="setting-row">
+                            <span class="setting-label">总练习页数</span>
+                            <span class="setting-value">486页</span>
+                        </div>
+                        <div class="setting-row">
+                            <span class="setting-label">常用格子类型</span>
+                            <span class="setting-value">田字格</span>
+                        </div>
+                    </div>
+                    
+                    <div class="ios-card">
+                        <div class="ios-card-header">快捷操作</div>
+                        <div class="ios-list-item">
+                            <div class="ios-list-item-icon" style="background: linear-gradient(135deg, var(--ios-blue), var(--ios-teal)); color: white;">📤</div>
+                            <div class="ios-list-item-content">
+                                <div class="ios-list-item-title">批量导出</div>
+                                <div class="ios-list-item-subtitle">导出多个作品为PDF</div>
+                            </div>
+                            <div class="ios-list-item-arrow">›</div>
+                        </div>
+                        <div class="ios-list-item">
+                            <div class="ios-list-item-icon" style="background: linear-gradient(135deg, var(--ios-red), var(--ios-orange)); color: white;">🗑️</div>
+                            <div class="ios-list-item-content">
+                                <div class="ios-list-item-title">清理作品</div>
+                                <div class="ios-list-item-subtitle">删除不需要的练习册</div>
+                            </div>
+                            <div class="ios-list-item-arrow">›</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-bar">
+                    <div class="tab-item">
+                        <div class="tab-icon">🏠</div>
+                        <div class="tab-label">首页</div>
+                    </div>
+                    <div class="tab-item">
+                        <div class="tab-icon">✍️</div>
+                        <div class="tab-label">制作</div>
+                    </div>
+                    <div class="tab-item">
+                        <div class="tab-icon">📚</div>
+                        <div class="tab-label">模板</div>
+                    </div>
+                    <div class="tab-item active">
+                        <div class="tab-icon">📋</div>
+                        <div class="tab-label">作品</div>
+                    </div>
+                    <div class="tab-item">
+                        <div class="tab-icon">👤</div>
+                        <div class="tab-label">我的</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 高级设置页面 -->
+        <div class="page-container">
+            <div class="page-title">⚙️ 高级设置</div>
+            
+            <div class="status-bar">
+                <span class="time">9:41</span>
+                <span class="battery-status">
+                    <span>📶</span>
+                    <span>📶</span>
+                    <span>🔋</span>
+                </span>
+            </div>
+            
+            <div class="content">
+                <div class="nav-bar">
+                    <div class="nav-back">‹ 返回</div>
+                    <div class="nav-title">高级设置</div>
+                    <div class="nav-action">重置</div>
+                </div>
+                
+                <div class="page-content">
+                    <div class="ios-card">
+                        <div class="ios-card-header">方格设置</div>
+                        <div class="setting-row">
+                            <span class="setting-label">格子大小</span>
+                            <span class="setting-value">40px</span>
+                        </div>
+                        <div class="setting-row">
+                            <span class="setting-label">线条粗细</span>
+                            <span class="setting-value">2px</span>
+                        </div>
+                        <div class="setting-row">
+                            <span class="setting-label">显示辅助线</span>
+                            <div class="ios-switch">
+                                <div class="switch-slider"></div>
+                            </div>
+                        </div>
+                        <div class="setting-row">
+                            <span class="setting-label">方格颜色</span>
+                            <div style="width: 32px; height: 32px; background: #d1d1d6; border-radius: 8px; border: 2px solid var(--ios-separator);"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="ios-card">
+                        <div class="ios-card-header">字体设置</div>
+                        <div class="setting-row">
+                            <span class="setting-label">字体样式</span>
+                            <span class="setting-value">楷体 ›</span>
+                        </div>
+                        <div class="setting-row">
+                            <span class="setting-label">字体大小</span>
+                            <span class="setting-value">24px</span>
+                        </div>
+                        <div class="setting-row">
+                            <span class="setting-label">字体颜色</span>
+                            <div style="width: 32px; height: 32px; background: var(--ios-label); border-radius: 8px; border: 2px solid var(--ios-separator);"></div>
+                        </div>
+                        <div class="setting-row">
+                            <span class="setting-label">字体粗细</span>
+                            <span class="setting-value">标准 ›</span>
+                        </div>
+                    </div>
+                    
+                    <div class="ios-card">
+                        <div class="ios-card-header">描红设置</div>
+                        <div class="setting-row">
+                            <span class="setting-label">启用描红</span>
+                            <div class="ios-switch">
+                                <div class="switch-slider"></div>
+                            </div>
+                        </div>
+                        <div class="setting-row">
+                            <span class="setting-label">描红透明度</span>
+                            <span class="setting-value">30%</span>
+                        </div>
+                        <div class="setting-row">
+                            <span class="setting-label">描红颜色</span>
+                            <div style="width: 32px; height: 32px; background: rgba(0, 122, 255, 0.3); border-radius: 8px; border: 2px solid var(--ios-separator);"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="ios-card">
+                        <div class="ios-card-header">页面布局</div>
+                        <div class="setting-row">
+                            <span class="setting-label">纸张大小</span>
+                            <span class="setting-value">A4 ›</span>
+                        </div>
+                        <div class="setting-row">
+                            <span class="setting-label">页边距</span>
+                            <span class="setting-value">2.0cm</span>
+                        </div>
+                        <div class="setting-row">
+                            <span class="setting-label">页面方向</span>
+                            <span class="setting-value">纵向 ›</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-bar">
+                    <div class="tab-item">
+                        <div class="tab-icon">🏠</div>
+                        <div class="tab-label">首页</div>
+                    </div>
+                    <div class="tab-item">
+                        <div class="tab-icon">✍️</div>
+                        <div class="tab-label">制作</div>
+                    </div>
+                    <div class="tab-item">
+                        <div class="tab-icon">📚</div>
+                        <div class="tab-label">模板</div>
+                    </div>
+                    <div class="tab-item">
+                        <div class="tab-icon">📋</div>
+                        <div class="tab-label">作品</div>
+                    </div>
+                    <div class="tab-item">
+                        <div class="tab-icon">👤</div>
+                        <div class="tab-label">我的</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 个人中心页面 -->
+        <div class="page-container">
+            <div class="page-title">👤 个人中心</div>
+            
+            <div class="status-bar">
+                <span class="time">9:41</span>
+                <span class="battery-status">
+                    <span>📶</span>
+                    <span>📶</span>
+                    <span>🔋</span>
+                </span>
+            </div>
+            
+            <div class="content">
+                <div class="nav-bar">
+                    <div class="nav-back">‹ 返回</div>
+                    <div class="nav-title">个人中心</div>
+                    <div class="nav-action">编辑</div>
+                </div>
+                
+                <div class="page-content">
+                    <div class="ios-card elevated">
+                        <div class="ios-list-item">
+                            <div class="ios-list-item-icon" style="background: var(--gradient-hero); color: white;">👤</div>
+                            <div class="ios-list-item-content">
+                                <div class="ios-list-item-title">练字达人</div>
+                                <div class="ios-list-item-subtitle">点击登录微信账号</div>
+                            </div>
+                            <div class="ios-list-item-arrow">›</div>
+                        </div>
+                    </div>
+                    
+                    <div class="ios-card">
+                        <div class="ios-card-header">应用偏好</div>
+                        <div class="ios-list-item">
+                            <div class="ios-list-item-icon" style="background: linear-gradient(135deg, var(--ios-green), var(--ios-teal)); color: white;">🔔</div>
+                            <div class="ios-list-item-content">
+                                <div class="ios-list-item-title">推送通知</div>
+                                <div class="ios-list-item-subtitle">新功能和练字提醒</div>
+                            </div>
+                            <div class="ios-switch">
+                                <div class="switch-slider"></div>
+                            </div>
+                        </div>
+                        <div class="ios-list-item">
+                            <div class="ios-list-item-icon" style="background: linear-gradient(135deg, var(--ios-orange), var(--ios-pink)); color: white;">🌙</div>
+                            <div class="ios-list-item-content">
+                                <div class="ios-list-item-title">深色模式</div>
+                                <div class="ios-list-item-subtitle">跟随系统设置</div>
+                            </div>
+                            <div class="ios-switch">
+                                <div class="switch-slider off"></div>
+                            </div>
+                        </div>
+                        <div class="ios-list-item">
+                            <div class="ios-list-item-icon" style="background: linear-gradient(135deg, var(--ios-purple), var(--ios-pink)); color: white;">💾</div>
+                            <div class="ios-list-item-content">
+                                <div class="ios-list-item-title">自动保存</div>
+                                <div class="ios-list-item-subtitle">创建时自动保存草稿</div>
+                            </div>
+                            <div class="ios-switch">
+                                <div class="switch-slider"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="ios-card">
+                        <div class="ios-card-header">高级功能</div>
+                        <div class="ios-list-item">
+                            <div class="ios-list-item-icon" style="background: linear-gradient(135deg, #FFD700, var(--ios-orange)); color: white;">👑</div>
+                            <div class="ios-list-item-content">
+                                <div class="ios-list-item-title">升级专业版</div>
+                                <div class="ios-list-item-subtitle">解锁更多字体和模板</div>
+                            </div>
+                            <div class="ios-list-item-arrow">›</div>
+                        </div>
+                        <div class="ios-list-item">
+                            <div class="ios-list-item-icon" style="background: linear-gradient(135deg, var(--ios-teal), var(--ios-blue)); color: white;">☁️</div>
+                            <div class="ios-list-item-content">
+                                <div class="ios-list-item-title">云端同步</div>
+                                <div class="ios-list-item-subtitle">多设备作品同步</div>
+                            </div>
+                            <div class="ios-list-item-arrow">›</div>
+                        </div>
+                    </div>
+                    
+                    <div class="ios-card">
+                        <div class="ios-card-header">帮助与支持</div>
+                        <div class="ios-list-item">
+                            <div class="ios-list-item-icon" style="background: linear-gradient(135deg, #8E8E93, #C7C7CC); color: white;">❓</div>
+                            <div class="ios-list-item-content">
+                                <div class="ios-list-item-title">使用教程</div>
+                                <div class="ios-list-item-subtitle">快速上手指南</div>
+                            </div>
+                            <div class="ios-list-item-arrow">›</div>
+                        </div>
+                        <div class="ios-list-item">
+                            <div class="ios-list-item-icon" style="background: linear-gradient(135deg, var(--ios-red), var(--ios-orange)); color: white;">🐛</div>
+                            <div class="ios-list-item-content">
+                                <div class="ios-list-item-title">问题反馈</div>
+                                <div class="ios-list-item-subtitle">报告BUG或建议</div>
+                            </div>
+                            <div class="ios-list-item-arrow">›</div>
+                        </div>
+                        <div class="ios-list-item">
+                            <div class="ios-list-item-icon" style="background: linear-gradient(135deg, var(--ios-blue), var(--ios-purple)); color: white;">⭐</div>
+                            <div class="ios-list-item-content">
+                                <div class="ios-list-item-title">给我们评分</div>
+                                <div class="ios-list-item-subtitle">在App Store评价</div>
+                            </div>
+                            <div class="ios-list-item-arrow">›</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-bar">
+                    <div class="tab-item">
+                        <div class="tab-icon">🏠</div>
+                        <div class="tab-label">首页</div>
+                    </div>
+                    <div class="tab-item">
+                        <div class="tab-icon">✍️</div>
+                        <div class="tab-label">制作</div>
+                    </div>
+                    <div class="tab-item">
+                        <div class="tab-icon">📚</div>
+                        <div class="tab-label">模板</div>
+                    </div>
+                    <div class="tab-item">
+                        <div class="tab-icon">📋</div>
+                        <div class="tab-label">作品</div>
+                    </div>
+                    <div class="tab-item active">
+                        <div class="tab-icon">👤</div>
+                        <div class="tab-label">我的</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 预览导出页面 -->
+        <div class="page-container">
+            <div class="page-title">👀 预览导出</div>
+            
+            <div class="status-bar">
+                <span class="time">9:41</span>
+                <span class="battery-status">
+                    <span>📶</span>
+                    <span>📶</span>
+                    <span>🔋</span>
+                </span>
+            </div>
+            
+            <div class="content">
+                <div class="nav-bar">
+                    <div class="nav-back">‹ 返回</div>
+                    <div class="nav-title">预览导出</div>
+                    <div class="nav-action">分享</div>
+                </div>
+                
+                <div class="page-content">
+                    <div class="preview-container">
+                        <h3 style="margin-bottom: 20px; color: var(--ios-label); font-size: 20px; font-weight: 600;">字帖预览</h3>
+                        <div class="preview-paper" style="max-width: 320px;">
+                            <div class="grid-container" style="grid-template-columns: repeat(4, 1fr); gap: 2px;">
+                                <div class="grid-cell tian">人</div>
+                                <div class="grid-cell tian">生</div>
+                                <div class="grid-cell tian">如</div>
+                                <div class="grid-cell tian">梦</div>
+                                <div class="grid-cell tian">岁</div>
+                                <div class="grid-cell tian">月</div>
+                                <div class="grid-cell tian">如</div>
+                                <div class="grid-cell tian">歌</div>
+                                <div class="grid-cell tian">书</div>
+                                <div class="grid-cell tian">法</div>
+                                <div class="grid-cell tian">如</div>
+                                <div class="grid-cell tian">诗</div>
+                            </div>
+                        </div>
+                        <p style="color: var(--ios-label-secondary); font-size: 14px; margin-top: 12px;">
+                            共生成24页 • 田字格 • A4纸张
+                        </p>
+                    </div>
+                    
+                    <div class="ios-card elevated">
+                        <div class="ios-card-header">导出选项</div>
+                        <div class="ios-list-item">
+                            <div class="ios-list-item-icon" style="background: linear-gradient(135deg, var(--ios-red), var(--ios-orange)); color: white;">📄</div>
+                            <div class="ios-list-item-content">
+                                <div class="ios-list-item-title">PDF文档</div>
+                                <div class="ios-list-item-subtitle">高质量打印，完整保留格式</div>
+                            </div>
+                            <div class="ios-list-item-arrow">›</div>
+                        </div>
+                        <div class="ios-list-item">
+                            <div class="ios-list-item-icon" style="background: linear-gradient(135deg, var(--ios-green), var(--ios-teal)); color: white;">📱</div>
+                            <div class="ios-list-item-content">
+                                <div class="ios-list-item-title">图片格式</div>
+                                <div class="ios-list-item-subtitle">PNG/JPG，方便分享保存</div>
+                            </div>
+                            <div class="ios-list-item-arrow">›</div>
+                        </div>
+                        <div class="ios-list-item">
+                            <div class="ios-list-item-icon" style="background: var(--gradient-hero); color: white;">☁️</div>
+                            <div class="ios-list-item-content">
+                                <div class="ios-list-item-title">云端打印</div>
+                                <div class="ios-list-item-subtitle">直接发送到打印机</div>
+                            </div>
+                            <div class="ios-list-item-arrow">›</div>
+                        </div>
+                    </div>
+                    
+                    <div class="ios-card">
+                        <div class="ios-card-section">
+                            <button class="ios-button" style="background: var(--gradient-hero); border: none;">
+                                <span style="display: flex; align-items: center; justify-content: center; gap: 12px;">
+                                    <span style="font-size: 20px;">📤</span>
+                                    <span>立即分享字帖</span>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="ios-card">
+                        <div class="ios-card-header">快速操作</div>
+                        <div class="ios-list-item">
+                            <div class="ios-list-item-icon" style="background: linear-gradient(135deg, var(--ios-blue), var(--ios-teal)); color: white;">💾</div>
+                            <div class="ios-list-item-content">
+                                <div class="ios-list-item-title">保存到相册</div>
+                            </div>
+                            <div class="ios-list-item-arrow">›</div>
+                        </div>
+                        <div class="ios-list-item">
+                            <div class="ios-list-item-icon" style="background: linear-gradient(135deg, var(--ios-orange), var(--ios-pink)); color: white;">✉️</div>
+                            <div class="ios-list-item-content">
+                                <div class="ios-list-item-title">发送邮件</div>
+                            </div>
+                            <div class="ios-list-item-arrow">›</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-bar">
+                    <div class="tab-item">
+                        <div class="tab-icon">🏠</div>
+                        <div class="tab-label">首页</div>
+                    </div>
+                    <div class="tab-item">
+                        <div class="tab-icon">✍️</div>
+                        <div class="tab-label">制作</div>
+                    </div>
+                    <div class="tab-item">
+                        <div class="tab-icon">📚</div>
+                        <div class="tab-label">模板</div>
+                    </div>
+                    <div class="tab-item">
+                        <div class="tab-icon">📋</div>
+                        <div class="tab-label">作品</div>
+                    </div>
+                    <div class="tab-item">
+                        <div class="tab-icon">👤</div>
+                        <div class="tab-label">我的</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- html2canvas库用于页面截图 -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    
+    <script>
+        // 移动端优化脚本和右键保存图片功能
+        document.addEventListener('DOMContentLoaded', function() {
+            // 禁用双击缩放
+            document.addEventListener('dblclick', function(e) {
+                e.preventDefault();
+            }, { passive: false });
+            
+            // 为每个页面容器添加右键菜单功能
+            const pageContainers = document.querySelectorAll('.page-container');
+            
+            pageContainers.forEach((container, index) => {
+                // 阻止默认右键菜单，添加自定义右键功能
+                container.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    
+                    // 获取页面标题
+                    const pageTitle = container.querySelector('.page-title');
+                    const titleText = pageTitle ? pageTitle.textContent.trim() : `页面${index + 1}`;
+                    
+                    // 显示保存确认
+                    if (confirm(`是否保存"${titleText}"为图片？`)) {
+                        savePageAsImage(container, titleText);
+                    }
+                });
+                
+                // 添加视觉反馈 - 鼠标悬停时显示可保存提示
+                let hoverTimeout;
+                container.addEventListener('mouseenter', function() {
+                    hoverTimeout = setTimeout(() => {
+                        showSaveHint(container);
+                    }, 1000); // 1秒后显示提示
+                });
+                
+                container.addEventListener('mouseleave', function() {
+                    clearTimeout(hoverTimeout);
+                    hideSaveHint(container);
+                });
+            });
+            
+            // 防止页面滚动弹性（除了内容区域）
+            document.body.addEventListener('touchmove', function(e) {
+                // 只阻止body级别的滚动，允许内容区域自由滚动
+                if (e.target === document.body) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+            
+            console.log('字帖生成小程序纯净移动端展示版本已加载 - 支持右键保存图片');
+        });
+        
+        // 保存页面为图片的函数
+        function savePageAsImage(container, title) {
+            // 显示加载提示
+            showLoadingIndicator(container);
+            
+            // 配置html2canvas选项
+            const options = {
+                backgroundColor: null, // 透明背景
+                scale: 2, // 高分辨率
+                useCORS: true, // 支持跨域图片
+                allowTaint: false,
+                width: 390,
+                height: container.offsetHeight,
+                scrollX: 0,
+                scrollY: 0,
+                windowWidth: 390,
+                windowHeight: container.offsetHeight,
+                ignoreElements: function(element) {
+                    // 忽略保存提示元素
+                    return element.classList.contains('save-hint') || 
+                           element.classList.contains('loading-indicator');
+                }
+            };
+            
+            // 使用html2canvas生成图片
+            html2canvas(container, options)
+                .then(function(canvas) {
+                    // 创建下载链接
+                    const link = document.createElement('a');
+                    link.download = `${title.replace(/[^\w\s]/gi, '')}_${new Date().getTime()}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    
+                    // 触发下载
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    // 隐藏加载提示
+                    hideLoadingIndicator(container);
+                    
+                    // 显示成功提示
+                    showSuccessMessage(container, title);
+                })
+                .catch(function(error) {
+                    console.error('保存图片失败:', error);
+                    hideLoadingIndicator(container);
+                    alert('保存图片失败，请重试！');
+                });
+        }
+        
+        // 显示保存提示
+        function showSaveHint(container) {
+            // 检查是否已存在提示
+            if (container.querySelector('.save-hint')) return;
+            
+            const hint = document.createElement('div');
+            hint.className = 'save-hint';
+            hint.innerHTML = '💾 右键保存为图片';
+            hint.style.cssText = `
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                background: rgba(0, 122, 255, 0.9);
+                color: white;
+                padding: 8px 12px;
+                border-radius: 16px;
+                font-size: 12px;
+                font-weight: 500;
+                z-index: 1000;
+                backdrop-filter: blur(10px);
+                box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+                animation: fadeInHint 0.3s ease;
+                pointer-events: none;
+            `;
+            
+            container.appendChild(hint);
+        }
+        
+        // 隐藏保存提示
+        function hideSaveHint(container) {
+            const hint = container.querySelector('.save-hint');
+            if (hint) {
+                hint.style.animation = 'fadeOutHint 0.3s ease forwards';
+                setTimeout(() => {
+                    if (hint.parentNode) {
+                        hint.parentNode.removeChild(hint);
+                    }
+                }, 300);
+            }
+        }
+        
+        // 显示加载指示器
+        function showLoadingIndicator(container) {
+            const indicator = document.createElement('div');
+            indicator.className = 'loading-indicator';
+            indicator.innerHTML = `
+                <div class="loading-spinner"></div>
+                <span>正在生成图片...</span>
+            `;
+            indicator.style.cssText = `
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0, 0, 0, 0.8);
+                color: white;
+                padding: 20px;
+                border-radius: 12px;
+                text-align: center;
+                z-index: 2000;
+                backdrop-filter: blur(10px);
+                font-size: 14px;
+                font-weight: 500;
+            `;
+            
+            container.appendChild(indicator);
+        }
+        
+        // 隐藏加载指示器
+        function hideLoadingIndicator(container) {
+            const indicator = container.querySelector('.loading-indicator');
+            if (indicator) {
+                indicator.parentNode.removeChild(indicator);
+            }
+        }
+        
+        // 显示成功消息
+        function showSuccessMessage(container, title) {
+            const message = document.createElement('div');
+            message.className = 'success-message';
+            message.innerHTML = `✅ "${title}"已保存到下载文件夹`;
+            message.style.cssText = `
+                position: absolute;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(52, 199, 89, 0.9);
+                color: white;
+                padding: 12px 20px;
+                border-radius: 20px;
+                font-size: 13px;
+                font-weight: 500;
+                z-index: 1000;
+                backdrop-filter: blur(10px);
+                box-shadow: 0 4px 12px rgba(52, 199, 89, 0.3);
+                animation: successSlideIn 0.5s ease;
+                pointer-events: none;
+            `;
+            
+            container.appendChild(message);
+            
+            // 3秒后自动移除
+            setTimeout(() => {
+                if (message.parentNode) {
+                    message.style.animation = 'successSlideOut 0.3s ease forwards';
+                    setTimeout(() => {
+                        if (message.parentNode) {
+                            message.parentNode.removeChild(message);
+                        }
+                    }, 300);
+                }
+            }, 3000);
+        }
+    </script>
+    
+    <style>
+        /* 提示动画 */
+        @keyframes fadeInHint {
+            from {
+                opacity: 0;
+                transform: translateY(-10px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        @keyframes fadeOutHint {
+            from {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-10px) scale(0.9);
+            }
+        }
+        
+        @keyframes successSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0) scale(1);
+            }
+        }
+        
+        @keyframes successSlideOut {
+            from {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0) scale(1);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px) scale(0.9);
+            }
+        }
+        
+        /* 加载旋转动画 */
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* 页面容器悬停效果增强 */
+        .page-container {
+            cursor: default;
+        }
+        
+        .page-container:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: var(--shadow-level-6);
+            border-color: rgba(0, 122, 255, 0.2);
+        }
+    </style>
+</body>
+</html>

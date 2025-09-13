@@ -1,0 +1,31 @@
+{
+  "allowedTools": [
+    "Read",
+    "Write", 
+    "Edit",
+    "MultiEdit",
+    "Grep",
+    "Glob",
+    "Bash(git *)",
+    "Bash(gh *)",
+    "Bash(npm *)",
+    "Bash(yarn *)",
+    "Bash(python *)",
+    "Bash(pip *)",
+    "Bash(go *)",
+    "Bash(cargo *)",
+    "mcp__*",
+    "Task",
+    "TodoWrite"
+  ],
+  "autoApprove": [
+    "Read",
+    "Grep", 
+    "Glob"
+  ],
+  "requireConfirmation": [
+    "Bash(rm *)",
+    "Bash(sudo *)",
+    "Bash(docker *)"
+  ]
+}

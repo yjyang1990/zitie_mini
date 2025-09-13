@@ -1,0 +1,264 @@
+{
+  "version": "2.0",
+  "description": "CCPM Command Index - Centralized command registry and categories",
+  "categories": {
+    "core": {
+      "name": "Core Commands",
+      "description": "Essential framework functionality",
+      "color": "blue",
+      "commands": [
+        {
+          "name": "init",
+          "file": "core/init.md",
+          "description": "Initialize CCPM project structure",
+          "usage": "/init",
+          "priority": 1
+        },
+        {
+          "name": "validate", 
+          "file": "core/validate.md",
+          "description": "Validate configuration and environment",
+          "usage": "/validate [--quick|--config|--full]",
+          "priority": 1
+        },
+        {
+          "name": "context",
+          "file": "core/context.md", 
+          "description": "Generate and manage project context",
+          "usage": "/context [create|update|show]",
+          "priority": 1
+        }
+      ]
+    },
+    "pm": {
+      "name": "Project Management",
+      "description": "Project management and workflow commands", 
+      "color": "green",
+      "commands": [
+        {
+          "name": "pm:init",
+          "file": "pm/init.md",
+          "description": "Initialize project management system",
+          "usage": "/pm:init",
+          "priority": 1
+        },
+        {
+          "name": "pm:prd-new",
+          "file": "pm/prd-new.md", 
+          "description": "Create new Product Requirements Document",
+          "usage": "/pm:prd-new <name>",
+          "priority": 2
+        },
+        {
+          "name": "pm:prd-parse", 
+          "file": "pm/prd-parse.md",
+          "description": "Transform PRD into actionable epic",
+          "usage": "/pm:prd-parse <prd-name>",
+          "priority": 2
+        },
+        {
+          "name": "pm:epic-show",
+          "file": "pm/epic-show.md",
+          "description": "Display epic details and progress",
+          "usage": "/pm:epic-show <epic-name>",
+          "priority": 2
+        },
+        {
+          "name": "pm:epic-sync",
+          "file": "pm/epic-sync.md",
+          "description": "Sync epic tasks to GitHub Issues", 
+          "usage": "/pm:epic-sync <epic-name>",
+          "priority": 2
+        },
+        {
+          "name": "pm:issue-start",
+          "file": "pm/issue-start.md",
+          "description": "Start working on specific GitHub issue",
+          "usage": "/pm:issue-start <issue-number>",
+          "priority": 2
+        },
+        {
+          "name": "pm:status",
+          "file": "pm/status.md",
+          "description": "Show project status and progress",
+          "usage": "/pm:status",
+          "priority": 1
+        },
+        {
+          "name": "pm:next",
+          "file": "pm/next.md", 
+          "description": "Show next priority task",
+          "usage": "/pm:next",
+          "priority": 1
+        },
+        {
+          "name": "pm:complete",
+          "file": "pm/complete.md",
+          "description": "Mark task or epic as complete",
+          "usage": "/pm:complete <task-name>",
+          "priority": 2
+        },
+        {
+          "name": "pm:search",
+          "file": "pm/search.md",
+          "description": "Search across epics and tasks", 
+          "usage": "/pm:search <query>",
+          "priority": 3
+        },
+        {
+          "name": "pm:sync",
+          "file": "pm/sync.md",
+          "description": "Sync project with GitHub",
+          "usage": "/pm:sync",
+          "priority": 2
+        },
+        {
+          "name": "pm:help",
+          "file": "pm/help.md",
+          "description": "Show PM system help",
+          "usage": "/pm:help",
+          "priority": 3
+        }
+      ]
+    },
+    "testing": {
+      "name": "Testing System",
+      "description": "Testing environment and execution", 
+      "color": "yellow",
+      "commands": [
+        {
+          "name": "testing:prime",
+          "file": "testing/prime.md",
+          "description": "Setup and configure testing environment", 
+          "usage": "/testing:prime [framework] [--auto-detect|--configure]",
+          "priority": 1
+        },
+        {
+          "name": "testing:run",
+          "file": "testing/run.md",
+          "description": "Execute tests with comprehensive analysis",
+          "usage": "/testing:run [test_target] [--pattern|--verbose]", 
+          "priority": 1
+        }
+      ]
+    },
+    "workflow": {
+      "name": "Development Workflows",
+      "description": "Specialized development workflow commands",
+      "color": "purple", 
+      "commands": [
+        {
+          "name": "epic-status",
+          "file": "workflow/epic-status.md",
+          "description": "Show epic status and progress overview",
+          "usage": "/epic-status <epic-name>",
+          "priority": 2
+        },
+        {
+          "name": "fix-github-issue", 
+          "file": "workflow/fix-github-issue.md",
+          "description": "Automated GitHub issue resolution workflow",
+          "usage": "/fix-github-issue <issue-number>",
+          "priority": 2
+        },
+        {
+          "name": "deep-architectural-think",
+          "file": "workflow/deep-architectural-think.md", 
+          "description": "Deep architectural analysis and design thinking",
+          "usage": "/deep-architectural-think <topic>",
+          "priority": 3
+        }
+      ]
+    },
+    "dev-tools": {
+      "name": "Development Tools",
+      "description": "Development utilities and tools",
+      "color": "cyan",
+      "commands": [
+        {
+          "name": "code-rabbit",
+          "file": "dev-tools/code-rabbit.md",
+          "description": "CodeRabbit AI code review integration", 
+          "usage": "/code-rabbit [action] [--review|--integrate]",
+          "priority": 2
+        },
+        {
+          "name": "prompt",
+          "file": "dev-tools/prompt.md",
+          "description": "Complex prompt management and execution",
+          "usage": "/prompt \"text\" [--template|--save|--validate]",
+          "priority": 2
+        },
+        {
+          "name": "re-init",
+          "file": "dev-tools/re-init.md",
+          "description": "CLAUDE.md management and synchronization",
+          "usage": "/re-init [action] [--force|--backup]",
+          "priority": 2
+        },
+        {
+          "name": "test-all",
+          "file": "dev-tools/test-all.md", 
+          "description": "Run complete test suite with reporting",
+          "usage": "/test-all [--verbose|--coverage]",
+          "priority": 2
+        },
+        {
+          "name": "claude-md:generate",
+          "file": "claude-md-generate.sh",
+          "description": "Generate intelligent project-specific CLAUDE.md",
+          "usage": "/claude-md:generate [project_type] [output_file]",
+          "priority": 2
+        }
+      ]
+    }
+  },
+  "aliases": {
+    "init": "core/init",
+    "status": "pm:status", 
+    "test": "testing:run",
+    "check": "validate --quick",
+    "help": "pm:help"
+  },
+  "quick_access": [
+    "init", 
+    "pm:status",
+    "validate --quick",
+    "testing:prime",
+    "testing:run",
+    "pm:next"
+  ],
+  "execution_tracking": {
+    "enabled": true,
+    "metrics": {
+      "usage_count": "number",
+      "success_rate": "percentage",
+      "average_duration": "seconds"
+    },
+    "retention_days": 90
+  },
+  "dependency_management": {
+    "check_dependencies": true,
+    "dependency_map": {
+      "pm:epic-sync": ["pm:prd-parse"],
+      "pm:issue-start": ["pm:epic-sync"],
+      "testing:run": ["testing:prime"],
+      "pm:complete": ["pm:issue-start"]
+    },
+    "auto_resolve": false
+  },
+  "custom_commands": {
+    "directory": ".claude/commands/custom",
+    "auto_detect": true,
+    "naming_convention": "^[a-z][a-z0-9-]*$",
+    "validation": {
+      "required_fields": ["description", "usage"],
+      "max_file_size": "50KB"
+    }
+  },
+  "command_suggestions": {
+    "enabled": true,
+    "based_on": ["project_type", "usage_patterns", "workflow_state"],
+    "show_in_help": true
+  }
+}

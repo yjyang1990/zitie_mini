@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的作品 - 字帖生成器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .phone-container {
+            background: #000;
+            border-radius: 25px;
+            padding: 8px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
+        
+        .screen {
+            width: 375px;
+            height: 812px;
+            background: #fff;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* 微信小程序状态栏 */
+        .mp-status-bar {
+            background: #fff;
+            height: 44px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        /* 微信小程序导航栏 */
+        .mp-nav-bar {
+            background: #576b95;
+            color: white;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            position: relative;
+        }
+        
+        .mp-nav-title {
+            flex: 1;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .mp-nav-back {
+            position: absolute;
+            left: 16px;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .mp-nav-action {
+            position: absolute;
+            right: 16px;
+            font-size: 14px;
+            background: rgba(255,255,255,0.1);
+            padding: 6px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+        
+        /* 主要内容区域 */
+        .mp-main-content {
+            height: calc(100% - 171px);
+            overflow-y: auto;
+            background: #f7f7f7;
+        }
+        
+        .mp-main-content::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* 统计卡片 */
+        .mp-stats-card {
+            background: linear-gradient(135deg, #576b95, #4a5d8a);
+            color: white;
+            margin: 12px;
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .mp-stats-bg {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            font-size: 100px;
+            opacity: 0.1;
+            transform: rotate(15deg);
+        }
+        
+        .mp-stats-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        
+        .mp-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .mp-stat-item {
+            text-align: center;
+        }
+        
+        .mp-stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .mp-stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        /* 筛选栏 */
+        .mp-filter-bar {
+            background: white;
+            margin: 12px;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .mp-filter-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .mp-filter-tab {
+            background: #f5f5f5;
+            color: #666;
+            padding: 8px 16px;
+            border-radius: 16px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .mp-filter-tab.active {
+            background: #576b95;
+            color: white;
+            border-color: #576b95;
+        }
+        
+        .mp-filter-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .mp-sort-select {
+            background: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .mp-action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .mp-action-btn {
+            background: #f0f0f0;
+            border: none;
+            color: #666;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .mp-action-btn:active {
+            background: #e0e0e0;
+        }
+        
+        /* 小程序卡片样式 */
+        .mp-card {
+            background: white;
+            margin: 12px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .mp-card-header {
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .mp-card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .mp-card-action {
+            color: #576b95;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        
+        .mp-card-content {
+            padding: 0;
+        }
+        
+        /* 作品列表项 */
+        .mp-work-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        
+        .mp-work-item:last-child {
+            border-bottom: none;
+        }
+        
+        .mp-work-item:active {
+            background: #f8f9fa;
+        }
+        
+        .mp-work-preview {
+            width: 60px;
+            height: 60px;
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-family: '楷体', 'KaiTi', serif;
+            font-size: 14px;
+            color: #666;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .mp-work-preview-bg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 1px;
+            height: 80%;
+            background: #e0e0e0;
+        }
+        
+        .mp-work-preview-bg::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 1px;
+            background: #e0e0e0;
+        }
+        
+        .mp-work-info {
+            flex: 1;
+        }
+        
+        .mp-work-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        
+        .mp-work-desc {
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 6px;
+        }
+        
+        .mp-work-meta {
+            display: flex;
+            align-items: center;
+            font-size: 11px;
+            color: #999;
+            gap: 12px;
+        }
+        
+        .mp-work-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-end;
+        }
+        
+        .mp-work-status {
+            background: #e7f3ff;
+            color: #576b95;
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 500;
+        }
+        
+        .mp-work-status.success {
+            background: #f0f9ff;
+            color: #07c160;
+        }
+        
+        .mp-work-status.failed {
+            background: #fff0f0;
+            color: #ff4757;
+        }
+        
+        .mp-work-menu {
+            color: #999;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 4px;
+        }
+        
+        /* 空状态 */
+        .mp-empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: #999;
+        }
+        
+        .mp-empty-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        
+        .mp-empty-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #666;
+        }
+        
+        .mp-empty-desc {
+            font-size: 14px;
+            margin-bottom: 24px;
+            line-height: 1.4;
+        }
+        
+        .mp-empty-action {
+            background: #576b95;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .mp-empty-action:active {
+            background: #4a5d8a;
+            transform: scale(0.95);
+        }
+        
+        /* 底部导航 */
+        .mp-tabbar {
+            background: white;
+            height: 83px;
+            display: flex;
+            border-top: 1px solid #e5e5e5;
+            padding-bottom: 34px;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+        
+        .mp-tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding-top: 8px;
+            cursor: pointer;
+        }
+        
+        .mp-tab-icon {
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #999;
+        }
+        
+        .mp-tab-item.active .mp-tab-icon {
+            color: #07c160;
+        }
+        
+        .mp-tab-text {
+            font-size: 10px;
+            color: #999;
+        }
+        
+        .mp-tab-item.active .mp-tab-text {
+            color: #07c160;
+        }
+        
+        /* 批量操作栏 */
+        .mp-batch-bar {
+            position: fixed;
+            bottom: 83px;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            padding: 12px 16px;
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .mp-batch-bar.show {
+            display: flex;
+        }
+        
+        .mp-batch-info {
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .mp-batch-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .mp-batch-btn {
+            background: #f0f0f0;
+            border: none;
+            color: #333;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        
+        .mp-batch-btn.danger {
+            background: #ff4757;
+            color: white;
+        }
+        
+        .mp-batch-btn.primary {
+            background: #576b95;
+            color: white;
+        }
+        
+        /* 社区动态样式 */
+        .mp-community-feed {
+            padding: 0;
+        }
+        
+        .mp-feed-item {
+            padding: 16px 0;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        
+        .mp-feed-item:last-child {
+            border-bottom: none;
+        }
+        
+        .mp-feed-item:active {
+            background: #f8f9fa;
+        }
+        
+        .mp-feed-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .mp-feed-avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #576b95, #4a5d8a);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: white;
+        }
+        
+        .mp-feed-info {
+            flex: 1;
+        }
+        
+        .mp-feed-username {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 2px;
+        }
+        
+        .mp-feed-time {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .mp-feed-content {
+            margin-bottom: 12px;
+        }
+        
+        .mp-feed-text {
+            font-size: 14px;
+            color: #333;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+        
+        .mp-feed-preview {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 12px;
+            position: relative;
+        }
+        
+        .mp-feed-work {
+            font-family: '楷体', 'KaiTi', serif;
+            font-size: 16px;
+            color: #333;
+            text-align: center;
+            position: relative;
+        }
+        
+        .mp-feed-work::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 1px;
+            height: 80%;
+            background: #e0e0e0;
+        }
+        
+        .mp-feed-work::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 1px;
+            background: #e0e0e0;
+        }
+        
+        .mp-feed-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .mp-feed-action {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            transition: background 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .mp-feed-action:active {
+            background: #f0f0f0;
+        }
+        
+        .mp-action-icon {
+            font-size: 14px;
+        }
+        
+        .mp-action-count,
+        .mp-action-text {
+            font-size: 12px;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .mp-feed-action.liked .mp-action-icon {
+            color: #ff4757;
+        }
+        
+        .mp-feed-action.liked .mp-action-count {
+            color: #ff4757;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <div class="screen">
+            <!-- 微信小程序状态栏 -->
+            <div class="mp-status-bar">
+                <div>9:41</div>
+                <div>📶 📶 🔋</div>
+            </div>
+            
+            <!-- 微信小程序导航栏 -->
+            <div class="mp-nav-bar">
+                <div class="mp-nav-back" onclick="goBack()">‹</div>
+                <div class="mp-nav-title">我的作品</div>
+                <div class="mp-nav-action" onclick="toggleBatchMode()">管理</div>
+            </div>
+            
+            <div class="mp-main-content">
+                <!-- 统计概览 -->
+                <div class="mp-stats-card">
+                    <div class="mp-stats-bg">🏆</div>
+                    <div class="mp-stats-title">🎯 我的练字成就</div>
+                    <div class="mp-stats-grid">
+                        <div class="mp-stat-item">
+                            <div class="mp-stat-number">28</div>
+                            <div class="mp-stat-label">总作品</div>
+                        </div>
+                        <div class="mp-stat-item">
+                            <div class="mp-stat-number">7</div>
+                            <div class="mp-stat-label">本周新增</div>
+                        </div>
+                        <div class="mp-stat-item">
+                            <div class="mp-stat-number">156</div>
+                            <div class="mp-stat-label">练习字数</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 社区动态 -->
+                <div class="mp-card">
+                    <div class="mp-card-header">
+                        <div class="mp-card-title">
+                            👥 社区动态
+                        </div>
+                        <div class="mp-card-action" onclick="viewMoreCommunity()">更多</div>
+                    </div>
+                    <div class="mp-card-content">
+                        <div class="mp-community-feed">
+                            <div class="mp-feed-item" onclick="viewCommunityWork('静夜思作品')">
+                                <div class="mp-feed-header">
+                                    <div class="mp-feed-avatar">🎨</div>
+                                    <div class="mp-feed-info">
+                                        <div class="mp-feed-username">书法达人</div>
+                                        <div class="mp-feed-time">2小时前</div>
+                                    </div>
+                                </div>
+                                <div class="mp-feed-content">
+                                    <div class="mp-feed-text">"静夜思"临摹练习，求指正 ✨</div>
+                                    <div class="mp-feed-preview">
+                                        <div class="mp-feed-work">床前明月光</div>
+                                    </div>
+                                </div>
+                                <div class="mp-feed-actions">
+                                    <div class="mp-feed-action" onclick="likeCommunityWork(event)">
+                                        <span class="mp-action-icon">❤️</span>
+                                        <span class="mp-action-count">23</span>
+                                    </div>
+                                    <div class="mp-feed-action" onclick="commentCommunityWork(event)">
+                                        <span class="mp-action-icon">💬</span>
+                                        <span class="mp-action-count">5</span>
+                                    </div>
+                                    <div class="mp-feed-action" onclick="shareCommunityWork(event)">
+                                        <span class="mp-action-icon">📤</span>
+                                        <span class="mp-action-text">分享</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mp-feed-item" onclick="viewCommunityWork('春夏秋冬作品')">
+                                <div class="mp-feed-header">
+                                    <div class="mp-feed-avatar">✏️</div>
+                                    <div class="mp-feed-info">
+                                        <div class="mp-feed-username">练字小白</div>
+                                        <div class="mp-feed-time">4小时前</div>
+                                    </div>
+                                </div>
+                                <div class="mp-feed-content">
+                                    <div class="mp-feed-text">练字第30天打卡！进步了很多 💪</div>
+                                    <div class="mp-feed-preview">
+                                        <div class="mp-feed-work">春夏秋冬</div>
+                                    </div>
+                                </div>
+                                <div class="mp-feed-actions">
+                                    <div class="mp-feed-action" onclick="likeCommunityWork(event)">
+                                        <span class="mp-action-icon">❤️</span>
+                                        <span class="mp-action-count">18</span>
+                                    </div>
+                                    <div class="mp-feed-action" onclick="commentCommunityWork(event)">
+                                        <span class="mp-action-icon">💬</span>
+                                        <span class="mp-action-count">3</span>
+                                    </div>
+                                    <div class="mp-feed-action" onclick="shareCommunityWork(event)">
+                                        <span class="mp-action-icon">📤</span>
+                                        <span class="mp-action-text">分享</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 筛选栏 -->
+                <div class="mp-filter-bar">
+                    <div class="mp-filter-tabs">
+                        <div class="mp-filter-tab active" onclick="filterWorks('all', this)">全部</div>
+                        <div class="mp-filter-tab" onclick="filterWorks('recent', this)">最近</div>
+                        <div class="mp-filter-tab" onclick="filterWorks('hanzi', this)">汉字</div>
+                        <div class="mp-filter-tab" onclick="filterWorks('english', this)">英文</div>
+                        <div class="mp-filter-tab" onclick="filterWorks('favorite', this)">收藏</div>
+                    </div>
+                    <div class="mp-filter-actions">
+                        <select class="mp-sort-select" onchange="sortWorks(this.value)">
+                            <option value="time">按时间排序</option>
+                            <option value="name">按名称排序</option>
+                            <option value="size">按大小排序</option>
+                        </select>
+                        <div class="mp-action-buttons">
+                            <button class="mp-action-btn" onclick="exportAll()">📤 导出</button>
+                            <button class="mp-action-btn" onclick="clearAll()">🗑️ 清理</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 作品列表 -->
+                <div class="mp-card">
+                    <div class="mp-card-header">
+                        <div class="mp-card-title">
+                            📄 作品管理
+                        </div>
+                        <div class="mp-card-action" onclick="refreshList()">刷新</div>
+                    </div>
+                    <div class="mp-card-content">
+                        <div class="mp-work-item" onclick="openWork('你好世界字帖')">
+                            <div class="mp-work-preview">
+                                <div class="mp-work-preview-bg"></div>
+                                你好
+                            </div>
+                            <div class="mp-work-info">
+                                <div class="mp-work-title">你好世界字帖</div>
+                                <div class="mp-work-desc">汉字练习 · 4字符 · 楷体</div>
+                                <div class="mp-work-meta">
+                                    <span>📅 今天 15:30</span>
+                                    <span>📄 2页</span>
+                                    <span>💾 1.2MB</span>
+                                </div>
+                            </div>
+                            <div class="mp-work-actions">
+                                <div class="mp-work-status success">已完成</div>
+                                <div class="mp-work-menu" onclick="showWorkMenu(event, '你好世界字帖')">⋯</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mp-work-item" onclick="openWork('春夏秋冬字帖')">
+                            <div class="mp-work-preview">
+                                <div class="mp-work-preview-bg"></div>
+                                春夏
+                            </div>
+                            <div class="mp-work-info">
+                                <div class="mp-work-title">春夏秋冬字帖</div>
+                                <div class="mp-work-desc">四季词汇 · 4字符 · 楷体</div>
+                                <div class="mp-work-meta">
+                                    <span>📅 今天 14:20</span>
+                                    <span>📄 2页</span>
+                                    <span>💾 1.1MB</span>
+                                </div>
+                            </div>
+                            <div class="mp-work-actions">
+                                <div class="mp-work-status success">已完成</div>
+                                <div class="mp-work-menu" onclick="showWorkMenu(event, '春夏秋冬字帖')">⋯</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mp-work-item" onclick="openWork('一二三四字帖')">
+                            <div class="mp-work-preview">
+                                <div class="mp-work-preview-bg"></div>
+                                一二
+                            </div>
+                            <div class="mp-work-info">
+                                <div class="mp-work-title">一二三四字帖</div>
+                                <div class="mp-work-desc">数字练习 · 4字符 · 楷体</div>
+                                <div class="mp-work-meta">
+                                    <span>📅 昨天 16:45</span>
+                                    <span>📄 2页</span>
+                                    <span>💾 1.0MB</span>
+                                </div>
+                            </div>
+                            <div class="mp-work-actions">
+                                <div class="mp-work-status">生成中</div>
+                                <div class="mp-work-menu" onclick="showWorkMenu(event, '一二三四字帖')">⋯</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mp-work-item" onclick="openWork('ABCD字帖')">
+                            <div class="mp-work-preview">
+                                <div class="mp-work-preview-bg"></div>
+                                AB
+                            </div>
+                            <div class="mp-work-info">
+                                <div class="mp-work-title">ABCD字帖</div>
+                                <div class="mp-work-desc">英文字母 · 26字符 · Arial</div>
+                                <div class="mp-work-meta">
+                                    <span>📅 昨天 10:30</span>
+                                    <span>📄 3页</span>
+                                    <span>💾 1.5MB</span>
+                                </div>
+                            </div>
+                            <div class="mp-work-actions">
+                                <div class="mp-work-status success">已完成</div>
+                                <div class="mp-work-menu" onclick="showWorkMenu(event, 'ABCD字帖')">⋯</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mp-work-item" onclick="openWork('上下左右字帖')">
+                            <div class="mp-work-preview">
+                                <div class="mp-work-preview-bg"></div>
+                                上下
+                            </div>
+                            <div class="mp-work-info">
+                                <div class="mp-work-title">上下左右字帖</div>
+                                <div class="mp-work-desc">方位词汇 · 4字符 · 楷体</div>
+                                <div class="mp-work-meta">
+                                    <span>📅 前天 20:15</span>
+                                    <span>📄 2页</span>
+                                    <span>💾 1.1MB</span>
+                                </div>
+                            </div>
+                            <div class="mp-work-actions">
+                                <div class="mp-work-status failed">生成失败</div>
+                                <div class="mp-work-menu" onclick="showWorkMenu(event, '上下左右字帖')">⋯</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mp-work-item" onclick="openWork('红黄蓝绿字帖')">
+                            <div class="mp-work-preview">
+                                <div class="mp-work-preview-bg"></div>
+                                红黄
+                            </div>
+                            <div class="mp-work-info">
+                                <div class="mp-work-title">红黄蓝绿字帖</div>
+                                <div class="mp-work-desc">颜色词汇 · 4字符 · 楷体</div>
+                                <div class="mp-work-meta">
+                                    <span>📅 3天前 19:40</span>
+                                    <span>📄 2页</span>
+                                    <span>💾 1.0MB</span>
+                                </div>
+                            </div>
+                            <div class="mp-work-actions">
+                                <div class="mp-work-status success">已完成</div>
+                                <div class="mp-work-menu" onclick="showWorkMenu(event, '红黄蓝绿字帖')">⋯</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 底部安全区域 -->
+                <div style="height: 20px;"></div>
+            </div>
+            
+            <!-- 批量操作栏 -->
+            <div class="mp-batch-bar" id="batchBar">
+                <div class="mp-batch-info">
+                    已选择 <span id="selectedCount">0</span> 个作品
+                </div>
+                <div class="mp-batch-actions">
+                    <button class="mp-batch-btn" onclick="batchExport()">导出</button>
+                    <button class="mp-batch-btn" onclick="batchShare()">分享</button>
+                    <button class="mp-batch-btn danger" onclick="batchDelete()">删除</button>
+                </div>
+            </div>
+            
+            <!-- 微信小程序底部导航 -->
+            <div class="mp-tabbar">
+                <div class="mp-tab-item">
+                    <div class="mp-tab-icon">📝</div>
+                    <div class="mp-tab-text">制作</div>
+                </div>
+                <div class="mp-tab-item">
+                    <div class="mp-tab-icon">📚</div>
+                    <div class="mp-tab-text">模板</div>
+                </div>
+                <div class="mp-tab-item active">
+                    <div class="mp-tab-icon">📋</div>
+                    <div class="mp-tab-text">我的作品</div>
+                </div>
+                <div class="mp-tab-item">
+                    <div class="mp-tab-icon">👤</div>
+                    <div class="mp-tab-text">设置</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 作品数据
+        const works = [
+            {
+                id: 1,
+                title: '你好世界字帖',
+                content: '你好世界',
+                type: 'hanzi',
+                font: '楷体',
+                pages: 2,
+                size: '1.2MB',
+                status: 'completed',
+                createTime: '今天 15:30',
+                favorite: false
+            },
+            {
+                id: 2,
+                title: '春夏秋冬字帖',
+                content: '春夏秋冬',
+                type: 'hanzi',
+                font: '楷体',
+                pages: 2,
+                size: '1.1MB',
+                status: 'completed',
+                createTime: '今天 14:20',
+                favorite: true
+            },
+            {
+                id: 3,
+                title: '一二三四字帖',
+                content: '一二三四',
+                type: 'number',
+                font: '楷体',
+                pages: 2,
+                size: '1.0MB',
+                status: 'generating',
+                createTime: '昨天 16:45',
+                favorite: false
+            },
+            {
+                id: 4,
+                title: 'ABCD字帖',
+                content: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+                type: 'english',
+                font: 'Arial',
+                pages: 3,
+                size: '1.5MB',
+                status: 'completed',
+                createTime: '昨天 10:30',
+                favorite: false
+            },
+            {
+                id: 5,
+                title: '上下左右字帖',
+                content: '上下左右',
+                type: 'hanzi',
+                font: '楷体',
+                pages: 2,
+                size: '1.1MB',
+                status: 'failed',
+                createTime: '前天 20:15',
+                favorite: false
+            },
+            {
+                id: 6,
+                title: '红黄蓝绿字帖',
+                content: '红黄蓝绿',
+                type: 'hanzi',
+                font: '楷体',
+                pages: 2,
+                size: '1.0MB',
+                status: 'completed',
+                createTime: '3天前 19:40',
+                favorite: false
+            }
+        ];
+        
+        // 当前筛选条件
+        let currentFilter = 'all';
+        let currentSort = 'time';
+        let batchMode = false;
+        let selectedWorks = new Set();
+        
+        // 筛选作品
+        function filterWorks(filter, element) {
+            // 更新活跃标签
+            document.querySelectorAll('.mp-filter-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            element.classList.add('active');
+            
+            currentFilter = filter;
+            console.log('筛选作品:', filter);
+            
+            // 这里可以根据筛选条件更新显示
+            updateWorksList();
+            
+            if (typeof wx !== 'undefined') {
+                wx.vibrateShort();
+            }
+        }
+        
+        // 排序作品
+        function sortWorks(sortBy) {
+            currentSort = sortBy;
+            console.log('排序方式:', sortBy);
+            updateWorksList();
+        }
+        
+        // 更新作品列表
+        function updateWorksList() {
+            console.log('更新作品列表, 筛选:', currentFilter, '排序:', currentSort);
+            // 这里可以实现实际的筛选和排序逻辑
+        }
+        
+        // 打开作品
+        function openWork(workTitle) {
+            if (batchMode) {
+                toggleWorkSelection(workTitle);
+                return;
+            }
+            
+            if (typeof wx !== 'undefined') {
+                wx.vibrateShort();
+                wx.navigateTo({
+                    url: `/pages/preview/preview?work=${encodeURIComponent(workTitle)}`
+                });
+            } else {
+                alert(`打开作品: ${workTitle}`);
+            }
+        }
+        
+        // 显示作品菜单
+        function showWorkMenu(event, workTitle) {
+            event.stopPropagation();
+            
+            if (typeof wx !== 'undefined') {
+                wx.showActionSheet({
+                    itemList: ['预览', '重新生成', '分享', '重命名', '收藏', '删除'],
+                    success: function(res) {
+                        const actions = ['预览', '重新生成', '分享', '重命名', '收藏', '删除'];
+                        const action = actions[res.tapIndex];
+                        handleWorkAction(workTitle, action);
+                    }
+                });
+            } else {
+                const action = prompt(`选择操作 (${workTitle}):\n1. 预览\n2. 重新生成\n3. 分享\n4. 重命名\n5. 收藏\n6. 删除\n请输入数字:`);
+                const actions = ['', '预览', '重新生成', '分享', '重命名', '收藏', '删除'];
+                if (action && actions[action]) {
+                    handleWorkAction(workTitle, actions[action]);
+                }
+            }
+        }
+        
+        // 处理作品操作
+        function handleWorkAction(workTitle, action) {
+            console.log(`对作品 "${workTitle}" 执行操作: ${action}`);
+            
+            switch(action) {
+                case '预览':
+                    openWork(workTitle);
+                    break;
+                case '重新生成':
+                    regenerateWork(workTitle);
+                    break;
+                case '分享':
+                    shareWork(workTitle);
+                    break;
+                case '重命名':
+                    renameWork(workTitle);
+                    break;
+                case '收藏':
+                    toggleFavorite(workTitle);
+                    break;
+                case '删除':
+                    deleteWork(workTitle);
+                    break;
+            }
+        }
+        
+        // 重新生成作品
+        function regenerateWork(workTitle) {
+            if (typeof wx !== 'undefined') {
+                wx.showLoading({
+                    title: '重新生成中...'
+                });
+                
+                setTimeout(() => {
+                    wx.hideLoading();
+                    wx.showToast({
+                        title: '生成成功',
+                        icon: 'success'
+                    });
+                }, 2000);
+            } else {
+                alert(`重新生成作品: ${workTitle}`);
+            }
+        }
+        
+        // 分享作品
+        function shareWork(workTitle) {
+            if (typeof wx !== 'undefined') {
+                wx.showShareMenu({
+                    withShareTicket: true
+                });
+            } else {
+                alert(`分享作品: ${workTitle}`);
+            }
+        }
+        
+        // 重命名作品
+        function renameWork(workTitle) {
+            if (typeof wx !== 'undefined') {
+                wx.showModal({
+                    title: '重命名',
+                    content: '请输入新的作品名称',
+                    editable: true,
+                    placeholderText: workTitle,
+                    success: function(res) {
+                        if (res.confirm && res.content) {
+                            console.log('重命名为:', res.content);
+                        }
+                    }
+                });
+            } else {
+                const newName = prompt('请输入新的作品名称:', workTitle);
+                if (newName && newName !== workTitle) {
+                    console.log('重命名为:', newName);
+                }
+            }
+        }
+        
+        // 切换收藏状态
+        function toggleFavorite(workTitle) {
+            console.log('切换收藏状态:', workTitle);
+            
+            if (typeof wx !== 'undefined') {
+                wx.showToast({
+                    title: '已收藏',
+                    icon: 'success'
+                });
+            }
+        }
+        
+        // 删除作品
+        function deleteWork(workTitle) {
+            if (typeof wx !== 'undefined') {
+                wx.showModal({
+                    title: '删除作品',
+                    content: `确定要删除 "${workTitle}" 吗？`,
+                    success: function(res) {
+                        if (res.confirm) {
+                            console.log('删除作品:', workTitle);
+                            wx.showToast({
+                                title: '删除成功',
+                                icon: 'success'
+                            });
+                        }
+                    }
+                });
+            } else {
+                if (confirm(`确定要删除 "${workTitle}" 吗？`)) {
+                    console.log('删除作品:', workTitle);
+                }
+            }
+        }
+        
+        // 切换批量模式
+        function toggleBatchMode() {
+            batchMode = !batchMode;
+            selectedWorks.clear();
+            
+            const batchBar = document.getElementById('batchBar');
+            const navAction = document.querySelector('.mp-nav-action');
+            
+            if (batchMode) {
+                batchBar.classList.add('show');
+                navAction.textContent = '取消';
+            } else {
+                batchBar.classList.remove('show');
+                navAction.textContent = '管理';
+            }
+            
+            updateSelectedCount();
+            
+            if (typeof wx !== 'undefined') {
+                wx.vibrateShort();
+            }
+        }
+        
+        // 切换作品选择状态
+        function toggleWorkSelection(workTitle) {
+            if (selectedWorks.has(workTitle)) {
+                selectedWorks.delete(workTitle);
+            } else {
+                selectedWorks.add(workTitle);
+            }
+            
+            updateSelectedCount();
+            
+            if (typeof wx !== 'undefined') {
+                wx.vibrateShort();
+            }
+        }
+        
+        // 更新选中数量显示
+        function updateSelectedCount() {
+            const countElement = document.getElementById('selectedCount');
+            if (countElement) {
+                countElement.textContent = selectedWorks.size;
+            }
+        }
+        
+        // 批量导出
+        function batchExport() {
+            if (selectedWorks.size === 0) {
+                if (typeof wx !== 'undefined') {
+                    wx.showToast({
+                        title: '请选择作品',
+                        icon: 'none'
+                    });
+                } else {
+                    alert('请先选择要导出的作品');
+                }
+                return;
+            }
+            
+            console.log('批量导出:', Array.from(selectedWorks));
+            
+            if (typeof wx !== 'undefined') {
+                wx.showLoading({
+                    title: '导出中...'
+                });
+                
+                setTimeout(() => {
+                    wx.hideLoading();
+                    wx.showToast({
+                        title: '导出成功',
+                        icon: 'success'
+                    });
+                }, 2000);
+            }
+        }
+        
+        // 批量分享
+        function batchShare() {
+            if (selectedWorks.size === 0) {
+                if (typeof wx !== 'undefined') {
+                    wx.showToast({
+                        title: '请选择作品',
+                        icon: 'none'
+                    });
+                } else {
+                    alert('请先选择要分享的作品');
+                }
+                return;
+            }
+            
+            console.log('批量分享:', Array.from(selectedWorks));
+        }
+        
+        // 批量删除
+        function batchDelete() {
+            if (selectedWorks.size === 0) {
+                if (typeof wx !== 'undefined') {
+                    wx.showToast({
+                        title: '请选择作品',
+                        icon: 'none'
+                    });
+                } else {
+                    alert('请先选择要删除的作品');
+                }
+                return;
+            }
+            
+            if (typeof wx !== 'undefined') {
+                wx.showModal({
+                    title: '批量删除',
+                    content: `确定要删除选中的 ${selectedWorks.size} 个作品吗？`,
+                    success: function(res) {
+                        if (res.confirm) {
+                            console.log('批量删除:', Array.from(selectedWorks));
+                            selectedWorks.clear();
+                            updateSelectedCount();
+                            toggleBatchMode();
+                        }
+                    }
+                });
+            } else {
+                if (confirm(`确定要删除选中的 ${selectedWorks.size} 个作品吗？`)) {
+                    console.log('批量删除:', Array.from(selectedWorks));
+                    selectedWorks.clear();
+                    updateSelectedCount();
+                    toggleBatchMode();
+                }
+            }
+        }
+        
+        // 导出全部
+        function exportAll() {
+            if (typeof wx !== 'undefined') {
+                wx.showModal({
+                    title: '导出全部',
+                    content: '确定要导出所有作品吗？',
+                    success: function(res) {
+                        if (res.confirm) {
+                            wx.showLoading({
+                                title: '导出中...'
+                            });
+                            
+                            setTimeout(() => {
+                                wx.hideLoading();
+                                wx.showToast({
+                                    title: '导出完成',
+                                    icon: 'success'
+                                });
+                            }, 3000);
+                        }
+                    }
+                });
+            } else {
+                alert('导出全部作品...');
+            }
+        }
+        
+        // 清理作品
+        function clearAll() {
+            if (typeof wx !== 'undefined') {
+                wx.showActionSheet({
+                    itemList: ['清理失败作品', '清理7天前作品', '清理全部作品'],
+                    success: function(res) {
+                        const actions = ['清理失败作品', '清理7天前作品', '清理全部作品'];
+                        console.log('清理操作:', actions[res.tapIndex]);
+                    }
+                });
+            } else {
+                const action = prompt('清理选项:\n1. 清理失败作品\n2. 清理7天前作品\n3. 清理全部作品\n请输入数字:');
+                const actions = ['', '清理失败作品', '清理7天前作品', '清理全部作品'];
+                if (action && actions[action]) {
+                    console.log('清理操作:', actions[action]);
+                }
+            }
+        }
+        
+        // 刷新列表
+        function refreshList() {
+            if (typeof wx !== 'undefined') {
+                wx.showToast({
+                    title: '刷新成功',
+                    icon: 'success'
+                });
+            } else {
+                alert('刷新作品列表');
+            }
+        }
+        
+        // 返回上一页
+        function goBack() {
+            if (typeof wx !== 'undefined') {
+                wx.navigateBack();
+            } else {
+                alert('返回上一页');
+            }
+        }
+        
+        // 社区功能
+        function viewMoreCommunity() {
+            if (typeof wx !== 'undefined') {
+                wx.navigateTo({
+                    url: '/pages/community/community'
+                });
+            } else {
+                alert('跳转到社区页面');
+            }
+        }
+        
+        function viewCommunityWork(workTitle) {
+            if (typeof wx !== 'undefined') {
+                wx.vibrateShort();
+                wx.navigateTo({
+                    url: `/pages/community-detail/community-detail?work=${encodeURIComponent(workTitle)}`
+                });
+            } else {
+                alert(`查看社区作品: ${workTitle}`);
+            }
+        }
+        
+        function likeCommunityWork(event) {
+            event.stopPropagation();
+            
+            const action = event.currentTarget;
+            const isLiked = action.classList.contains('liked');
+            const countElement = action.querySelector('.mp-action-count');
+            let count = parseInt(countElement.textContent);
+            
+            if (isLiked) {
+                action.classList.remove('liked');
+                count--;
+            } else {
+                action.classList.add('liked');
+                count++;
+            }
+            
+            countElement.textContent = count;
+            
+            if (typeof wx !== 'undefined') {
+                wx.vibrateShort();
+                wx.showToast({
+                    title: isLiked ? '取消点赞' : '点赞成功',
+                    icon: 'success',
+                    duration: 1000
+                });
+            }
+        }
+        
+        function commentCommunityWork(event) {
+            event.stopPropagation();
+            
+            if (typeof wx !== 'undefined') {
+                wx.vibrateShort();
+                wx.navigateTo({
+                    url: '/pages/community-comment/community-comment'
+                });
+            } else {
+                alert('打开评论页面');
+            }
+        }
+        
+        function shareCommunityWork(event) {
+            event.stopPropagation();
+            
+            if (typeof wx !== 'undefined') {
+                wx.vibrateShort();
+                wx.showShareMenu({
+                    withShareTicket: true,
+                    menus: ['shareAppMessage', 'shareTimeline']
+                });
+            } else {
+                alert('分享社区作品');
+            }
+        }
+        
+        // 页面加载完成
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('作品列表页面加载完成');
+            console.log('作品数据:', works);
+            updateWorksList();
+            
+            // 模拟社区数据刷新
+            setTimeout(() => {
+                console.log('社区动态已加载');
+            }, 500);
+        });
+    </script>
+</body>
+</html>

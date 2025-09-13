@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>字帖预览 - 字帖生成器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* 🎨 中和设计主题色彩系统 */
+        :root {
+            --primary-color: #5B8DEE;      /* 智慧蓝 - 主品牌色 */
+            --secondary-color: #48D6A0;    /* 薄荷绿 - 活力点缀 */
+            --accent-color: #FFB547;       /* 暖橙 - 强调色 */
+            
+            --success-color: #52C41A;      /* 成功绿 */
+            --warning-color: #FAAD14;      /* 警告橙 */
+            --error-color: #F5222D;        /* 错误红 */
+            
+            --text-primary: #2C3E50;       /* 主文字 - 深墨色 */
+            --text-secondary: #8492A6;     /* 次要文字 */
+            --bg-primary: #FFFFFF;         /* 主背景 */
+            --bg-secondary: #F7F9FC;       /* 次背景 - 淡蓝灰 */
+            --bg-card: #FFFFFF;           /* 卡片背景 */
+            --border-color: #E8ECF1;       /* 边框色 */
+            
+            /* 新的渐变系统 */
+            --gradient-primary: linear-gradient(135deg, #5B8DEE 0%, #48D6A0 100%);
+            --gradient-card: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(247,249,252,0.95) 100%);
+            --gradient-bg: linear-gradient(135deg, #F7F9FC 0%, #E8F2FF 50%, #F0F8FF 100%);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .phone-container {
+            background: #000;
+            border-radius: 25px;
+            padding: 8px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
+        
+        .screen {
+            width: 375px;
+            height: 812px;
+            background: #fff;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* 微信小程序状态栏 */
+        .mp-status-bar {
+            background: #fff;
+            height: 44px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        /* 微信小程序导航栏 */
+        .mp-nav-bar {
+            background: var(--gradient-primary);
+            color: white;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            position: relative;
+            box-shadow: 0 2px 12px rgba(91, 141, 238, 0.2);
+        }
+        
+        .mp-nav-title {
+            flex: 1;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .mp-nav-back {
+            position: absolute;
+            left: 16px;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .mp-nav-action {
+            position: absolute;
+            right: 16px;
+            font-size: 14px;
+            background: rgba(255,255,255,0.1);
+            padding: 6px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+        
+        /* 主要内容区域 */
+        .mp-main-content {
+            height: calc(100% - 171px);
+            overflow-y: auto;
+            background: var(--gradient-bg);
+        }
+        
+        .mp-main-content::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* 预览信息卡片 */
+        .mp-info-card {
+            background: var(--gradient-primary);
+            color: white;
+            margin: 12px;
+            border-radius: 16px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(91, 141, 238, 0.25);
+        }
+        
+        .mp-info-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: float 8s ease-in-out infinite;
+        }
+        
+        .mp-info-bg {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 80px;
+            opacity: 0.1;
+            transform: rotate(-15deg);
+        }
+        
+        .mp-info-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .mp-info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .mp-info-item {
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 12px;
+        }
+        
+        .mp-info-label {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-bottom: 4px;
+        }
+        
+        .mp-info-value {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        /* 小程序卡片样式 */
+        .mp-card {
+            background: var(--bg-card);
+            margin: 12px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(91, 141, 238, 0.08);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        
+        .mp-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .mp-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(91, 141, 238, 0.12);
+            border-color: rgba(91, 141, 238, 0.2);
+        }
+        
+        .mp-card:hover::before {
+            opacity: 0.8;
+        }
+        
+        .mp-card-header {
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .mp-card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .mp-card-action {
+            color: #576b95;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        
+        .mp-card-content {
+            padding: 16px;
+        }
+        
+        /* 预览容器 */
+        .mp-preview-container {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
+            position: relative;
+        }
+        
+        .mp-preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .mp-page-indicator {
+            background: #576b95;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .mp-preview-controls {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .mp-preview-btn {
+            background: #f0f0f0;
+            border: none;
+            color: #666;
+            padding: 6px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .mp-preview-btn:active {
+            background: #e0e0e0;
+        }
+        
+        .mp-preview-btn.active {
+            background: #576b95;
+            color: white;
+        }
+        
+        /* 字帖预览网格 */
+        .mp-worksheet-preview {
+            background: white;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .mp-worksheet-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3px;
+        }
+        
+        .mp-worksheet-cell {
+            aspect-ratio: 1;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #333;
+            position: relative;
+            font-family: '楷体', 'KaiTi', serif;
+        }
+        
+        .mp-worksheet-cell.highlight {
+            background: #fff3cd;
+            border-color: #ffc107;
+        }
+        
+        .mp-worksheet-cell.traced {
+            color: #aaa;
+        }
+        
+        .mp-worksheet-cell::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 1px;
+            height: 80%;
+            background: #e0e0e0;
+        }
+        
+        .mp-worksheet-cell::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 1px;
+            background: #e0e0e0;
+        }
+        
+        .mp-cell-pinyin {
+            position: absolute;
+            top: 1px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 8px;
+            color: #999;
+            font-family: Arial, sans-serif;
+        }
+        
+        /* 页面切换器 */
+        .mp-page-switcher {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin: 12px 0;
+        }
+        
+        .mp-page-btn {
+            background: #f0f0f0;
+            border: none;
+            color: #666;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .mp-page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .mp-page-btn:not(:disabled):active {
+            background: #e0e0e0;
+        }
+        
+        .mp-page-info {
+            font-size: 13px;
+            color: #666;
+            min-width: 60px;
+            text-align: center;
+        }
+        
+        /* 导出选项 */
+        .mp-export-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+        
+        .mp-export-option {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .mp-export-option:active {
+            background: #e7f3ff;
+            border-color: #576b95;
+            transform: scale(0.98);
+        }
+        
+        .mp-export-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #576b95, #4a5d8a);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+        
+        .mp-export-info {
+            flex: 1;
+        }
+        
+        .mp-export-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        
+        .mp-export-desc {
+            font-size: 13px;
+            color: #999;
+            line-height: 1.3;
+        }
+        
+        .mp-export-arrow {
+            color: #999;
+            font-size: 16px;
+        }
+        
+        /* 设置调整 */
+        .mp-adjustment-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .mp-adjustment-item {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+        
+        .mp-adjustment-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        
+        .mp-adjustment-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .mp-adjustment-controls {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .mp-adjustment-btn {
+            width: 28px;
+            height: 28px;
+            background: #e0e0e0;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        
+        .mp-adjustment-btn:active {
+            background: #d0d0d0;
+            transform: scale(0.95);
+        }
+        
+        /* 底部操作栏 */
+        .mp-bottom-actions {
+            position: absolute;
+            bottom: 83px;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            padding: 12px 16px;
+            display: flex;
+            gap: 12px;
+        }
+        
+        .mp-action-button {
+            flex: 1;
+            padding: 14px 16px;
+            border: 2px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .mp-action-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .mp-action-button:hover::before {
+            left: 100%;
+        }
+        
+        .mp-action-button:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 12px rgba(91, 141, 238, 0.15);
+        }
+        
+        .mp-action-button:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+        
+        .mp-action-button.primary {
+            background: var(--gradient-primary);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 16px rgba(91, 141, 238, 0.3);
+        }
+        
+        .mp-action-button.primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(91, 141, 238, 0.4);
+        }
+        
+        .mp-action-button.primary:active {
+            transform: translateY(-2px) scale(0.98);
+            box-shadow: 0 4px 16px rgba(91, 141, 238, 0.3);
+        }
+        
+        .mp-action-button.secondary {
+            background: linear-gradient(135deg, var(--secondary-color), #3cb371);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 16px rgba(72, 214, 160, 0.3);
+        }
+        
+        .mp-action-button.secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(72, 214, 160, 0.4);
+        }
+        
+        .mp-action-button.secondary:active {
+            transform: translateY(-2px) scale(0.98);
+            box-shadow: 0 4px 16px rgba(72, 214, 160, 0.3);
+        }
+        
+        /* 底部导航 */
+        .mp-tabbar {
+            background: white;
+            height: 83px;
+            display: flex;
+            border-top: 1px solid #e5e5e5;
+            padding-bottom: 34px;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+        
+        .mp-tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding-top: 8px;
+            cursor: pointer;
+        }
+        
+        .mp-tab-icon {
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #999;
+        }
+        
+        .mp-tab-item.active .mp-tab-icon {
+            color: #07c160;
+        }
+        
+        .mp-tab-text {
+            font-size: 10px;
+            color: #999;
+        }
+        
+        .mp-tab-item.active .mp-tab-text {
+            color: #07c160;
+        }
+        
+        /* 加载状态 */
+        .mp-loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        
+        .mp-loading-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .mp-loading-text {
+            font-size: 14px;
+        }
+        
+        /* 社区分享样式 */
+        .mp-export-option.community-share {
+            background: linear-gradient(135deg, rgba(72, 214, 160, 0.12), rgba(72, 214, 160, 0.06));
+            border: 2px solid rgba(72, 214, 160, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .mp-export-option.community-share::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(135deg, var(--secondary-color), #3cb371);
+        }
+        
+        .mp-export-option.community-share:hover {
+            background: linear-gradient(135deg, rgba(72, 214, 160, 0.18), rgba(72, 214, 160, 0.08));
+            border-color: var(--secondary-color);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(72, 214, 160, 0.25);
+        }
+        
+        .mp-export-option.community-share .mp-export-icon {
+            background: linear-gradient(135deg, var(--secondary-color), #3cb371);
+            box-shadow: 0 4px 16px rgba(72, 214, 160, 0.3);
+        }
+        
+        /* 动画效果 */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(180deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <div class="screen">
+            <!-- 微信小程序状态栏 -->
+            <div class="mp-status-bar">
+                <div>9:41</div>
+                <div>📶 📶 🔋</div>
+            </div>
+            
+            <!-- 微信小程序导航栏 -->
+            <div class="mp-nav-bar">
+                <div class="mp-nav-back" onclick="goBack()">‹</div>
+                <div class="mp-nav-title">字帖预览</div>
+                <div class="mp-nav-action" onclick="shareWorksheet()">📤</div>
+            </div>
+            
+            <div class="mp-main-content">
+                <!-- 字帖信息 -->
+                <div class="mp-info-card">
+                    <div class="mp-info-bg">✨</div>
+                    <div class="mp-info-title">🎉 字帖制作完成</div>
+                    <div class="mp-info-grid">
+                        <div class="mp-info-item">
+                            <div class="mp-info-label">练习内容</div>
+                            <div class="mp-info-value" id="worksheetContent">你好世界</div>
+                        </div>
+                        <div class="mp-info-item">
+                            <div class="mp-info-label">字帖类型</div>
+                            <div class="mp-info-value" id="worksheetType">汉字练习</div>
+                        </div>
+                        <div class="mp-info-item">
+                            <div class="mp-info-label">字体样式</div>
+                            <div class="mp-info-value" id="worksheetFont">楷体 - 标准</div>
+                        </div>
+                        <div class="mp-info-item">
+                            <div class="mp-info-label">预计页数</div>
+                            <div class="mp-info-value" id="worksheetPages">2页 A4 (高清)</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 预览控制 -->
+                <div class="mp-card">
+                    <div class="mp-card-header">
+                        <div class="mp-card-title">
+                            👀 完整预览
+                        </div>
+                        <div class="mp-card-action" onclick="toggleFullscreen()">全屏</div>
+                    </div>
+                    <div class="mp-card-content">
+                        <div class="mp-preview-container">
+                            <div class="mp-preview-header">
+                                <div class="mp-page-indicator" id="pageIndicator">第1页</div>
+                                <div class="mp-preview-controls">
+                                    <button class="mp-preview-btn active" onclick="togglePreviewMode('grid', this)">网格</button>
+                                    <button class="mp-preview-btn" onclick="togglePreviewMode('list', this)">列表</button>
+                                    <button class="mp-preview-btn" onclick="togglePreviewMode('zoom', this)">放大</button>
+                                </div>
+                            </div>
+                            
+                            <div class="mp-worksheet-preview">
+                                <div class="mp-worksheet-grid" id="worksheetGrid">
+                                    <!-- 动态生成预览网格 -->
+                                </div>
+                            </div>
+                            
+                            <div class="mp-page-switcher">
+                                <button class="mp-page-btn" onclick="prevPage()" id="prevBtn" disabled>‹ 上一页</button>
+                                <div class="mp-page-info" id="pageInfo">1 / 2</div>
+                                <button class="mp-page-btn" onclick="nextPage()" id="nextBtn">下一页 ›</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 快速调整 -->
+                <div class="mp-card">
+                    <div class="mp-card-header">
+                        <div class="mp-card-title">
+                            ⚙️ 快速调整
+                        </div>
+                        <div class="mp-card-action" onclick="resetAdjustments()">重置</div>
+                    </div>
+                    <div class="mp-card-content">
+                        <div class="mp-adjustment-grid">
+                            <div class="mp-adjustment-item">
+                                <div class="mp-adjustment-label">字体大小</div>
+                                <div class="mp-adjustment-value" id="fontSizeValue">18px</div>
+                                <div class="mp-adjustment-controls">
+                                    <button class="mp-adjustment-btn" onclick="adjustValue('fontSize', -1)">-</button>
+                                    <button class="mp-adjustment-btn" onclick="adjustValue('fontSize', 1)">+</button>
+                                </div>
+                            </div>
+                            
+                            <div class="mp-adjustment-item">
+                                <div class="mp-adjustment-label">行间距</div>
+                                <div class="mp-adjustment-value" id="lineSpacingValue">1.5</div>
+                                <div class="mp-adjustment-controls">
+                                    <button class="mp-adjustment-btn" onclick="adjustValue('lineSpacing', -0.1)">-</button>
+                                    <button class="mp-adjustment-btn" onclick="adjustValue('lineSpacing', 0.1)">+</button>
+                                </div>
+                            </div>
+                            
+                            <div class="mp-adjustment-item">
+                                <div class="mp-adjustment-label">描红数量</div>
+                                <div class="mp-adjustment-value" id="tracedCountValue">2个</div>
+                                <div class="mp-adjustment-controls">
+                                    <button class="mp-adjustment-btn" onclick="adjustValue('tracedCount', -1)">-</button>
+                                    <button class="mp-adjustment-btn" onclick="adjustValue('tracedCount', 1)">+</button>
+                                </div>
+                            </div>
+                            
+                            <div class="mp-adjustment-item">
+                                <div class="mp-adjustment-label">每行字数</div>
+                                <div class="mp-adjustment-value" id="charsPerRowValue">4个</div>
+                                <div class="mp-adjustment-controls">
+                                    <button class="mp-adjustment-btn" onclick="adjustValue('charsPerRow', -1)">-</button>
+                                    <button class="mp-adjustment-btn" onclick="adjustValue('charsPerRow', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 导出选项 -->
+                <div class="mp-card">
+                    <div class="mp-card-header">
+                        <div class="mp-card-title">
+                            📤 导出选项
+                        </div>
+                    </div>
+                    <div class="mp-card-content">
+                        <div class="mp-export-grid">
+                            <div class="mp-export-option primary" onclick="exportWorksheet('pdf')">
+                                <div class="mp-export-icon">📄</div>
+                                <div class="mp-export-info">
+                                    <div class="mp-export-title">PDF格式 - 推荐</div>
+                                    <div class="mp-export-desc">高质量打印，支持A4纸张，文件小</div>
+                                </div>
+                                <div class="mp-export-arrow">›</div>
+                            </div>
+                            
+                            <div class="mp-export-option" onclick="exportWorksheet('image')">
+                                <div class="mp-export-icon">🖼️</div>
+                                <div class="mp-export-info">
+                                    <div class="mp-export-title">高清图片</div>
+                                    <div class="mp-export-desc">PNG格式，300DPI，便于分享</div>
+                                </div>
+                                <div class="mp-export-arrow">›</div>
+                            </div>
+                            
+                            <div class="mp-export-option" onclick="exportWorksheet('album')">
+                                <div class="mp-export-icon">📱</div>
+                                <div class="mp-export-info">
+                                    <div class="mp-export-title">保存到相册</div>
+                                    <div class="mp-export-desc">一键保存，随时查看练习</div>
+                                </div>
+                                <div class="mp-export-arrow">›</div>
+                            </div>
+                            
+                            <div class="mp-export-option" onclick="exportWorksheet('print')">
+                                <div class="mp-export-icon">🖨️</div>
+                                <div class="mp-export-info">
+                                    <div class="mp-export-title">云打印服务</div>
+                                    <div class="mp-export-desc">附近打印店，在线下单打印</div>
+                                </div>
+                                <div class="mp-export-arrow">›</div>
+                            </div>
+                            
+                            <div class="mp-export-option community-share" onclick="shareToCommunity()">
+                                <div class="mp-export-icon">👥</div>
+                                <div class="mp-export-info">
+                                    <div class="mp-export-title">分享到社区</div>
+                                    <div class="mp-export-desc">展示作品，获得点赞和评论</div>
+                                </div>
+                                <div class="mp-export-arrow">›</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 底部安全区域 -->
+                <div style="height: 100px;"></div>
+            </div>
+            
+            <!-- 底部操作栏 -->
+            <div class="mp-bottom-actions">
+                <button class="mp-action-button" onclick="editWorksheet()">
+                    ✏️ 重新编辑
+                </button>
+                <button class="mp-action-button secondary" onclick="saveWorksheet()">
+                    💾 保存作品
+                </button>
+                <button class="mp-action-button primary" onclick="generateWorksheet()">
+                    🚀 立即生成
+                </button>
+            </div>
+            
+            <!-- 微信小程序底部导航 -->
+            <div class="mp-tabbar">
+                <div class="mp-tab-item">
+                    <div class="mp-tab-icon">📝</div>
+                    <div class="mp-tab-text">制作</div>
+                </div>
+                <div class="mp-tab-item">
+                    <div class="mp-tab-icon">📚</div>
+                    <div class="mp-tab-text">模板</div>
+                </div>
+                <div class="mp-tab-item">
+                    <div class="mp-tab-icon">📋</div>
+                    <div class="mp-tab-text">我的作品</div>
+                </div>
+                <div class="mp-tab-item">
+                    <div class="mp-tab-icon">👤</div>
+                    <div class="mp-tab-text">设置</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 字帖数据
+        let worksheetData = {
+            content: '你好世界',
+            type: 'hanzi',
+            font: '楷体',
+            fontSize: 18,
+            lineSpacing: 1.5,
+            tracedCount: 2,
+            charsPerRow: 4,
+            showPinyin: true,
+            showGrid: true,
+            highlight: true,
+            pages: 2,
+            currentPage: 1
+        };
+        
+        // 拼音字典
+        const pinyinDict = {
+            '你': 'nǐ', '好': 'hǎo', '世': 'shì', '界': 'jiè',
+            '春': 'chūn', '夏': 'xià', '秋': 'qiū', '冬': 'dōng',
+            '一': 'yī', '二': 'èr', '三': 'sān', '四': 'sì'
+        };
+        
+        // 预览模式
+        let previewMode = 'grid';
+        
+        // 生成预览网格
+        function generatePreviewGrid() {
+            const grid = document.getElementById('worksheetGrid');
+            grid.innerHTML = '';
+            
+            const chars = worksheetData.content.split('');
+            const cellsPerPage = worksheetData.charsPerRow * 4; // 假设每页4行
+            const startIndex = (worksheetData.currentPage - 1) * cellsPerPage;
+            const endIndex = Math.min(startIndex + cellsPerPage, chars.length * (1 + worksheetData.tracedCount + 2));
+            
+            let cellIndex = 0;
+            chars.forEach((char, charIndex) => {
+                if (cellIndex >= startIndex && cellIndex < endIndex) {
+                    // 原字
+                    const originalCell = createPreviewCell(char, charIndex === 0 && worksheetData.highlight, false);
+                    grid.appendChild(originalCell);
+                }
+                cellIndex++;
+                
+                // 描红字
+                for (let i = 0; i < worksheetData.tracedCount; i++) {
+                    if (cellIndex >= startIndex && cellIndex < endIndex) {
+                        const tracedCell = createPreviewCell(char, false, true);
+                        grid.appendChild(tracedCell);
+                    }
+                    cellIndex++;
+                }
+                
+                // 空格
+                for (let i = 0; i < 2; i++) {
+                    if (cellIndex >= startIndex && cellIndex < endIndex) {
+                        const emptyCell = createPreviewCell('', false, false);
+                        grid.appendChild(emptyCell);
+                    }
+                    cellIndex++;
+                }
+            });
+            
+            // 填充剩余空格
+            while (grid.children.length < 16) {
+                const emptyCell = createPreviewCell('', false, false);
+                grid.appendChild(emptyCell);
+            }
+        }
+        
+        // 创建预览单元格
+        function createPreviewCell(char, highlight, traced) {
+            const cell = document.createElement('div');
+            cell.className = 'mp-worksheet-cell';
+            
+            if (highlight) cell.classList.add('highlight');
+            if (traced) cell.classList.add('traced');
+            
+            if (char) {
+                cell.textContent = char;
+                
+                // 添加拼音
+                if (worksheetData.showPinyin && pinyinDict[char]) {
+                    const pinyin = document.createElement('div');
+                    pinyin.className = 'mp-cell-pinyin';
+                    pinyin.textContent = pinyinDict[char];
+                    cell.appendChild(pinyin);
+                }
+            }
+            
+            return cell;
+        }
+        
+        // 切换预览模式
+        function togglePreviewMode(mode, element) {
+            document.querySelectorAll('.mp-preview-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            element.classList.add('active');
+            
+            previewMode = mode;
+            console.log('切换预览模式:', mode);
+            
+            // 根据模式调整显示
+            switch(mode) {
+                case 'grid':
+                    generatePreviewGrid();
+                    break;
+                case 'list':
+                    // 列表模式逻辑
+                    break;
+                case 'zoom':
+                    // 放大模式逻辑
+                    break;
+            }
+            
+            if (typeof wx !== 'undefined') {
+                wx.vibrateShort();
+            }
+        }
+        
+        // 上一页
+        function prevPage() {
+            if (worksheetData.currentPage > 1) {
+                worksheetData.currentPage--;
+                updatePageDisplay();
+                generatePreviewGrid();
+                
+                if (typeof wx !== 'undefined') {
+                    wx.vibrateShort();
+                }
+            }
+        }
+        
+        // 下一页
+        function nextPage() {
+            if (worksheetData.currentPage < worksheetData.pages) {
+                worksheetData.currentPage++;
+                updatePageDisplay();
+                generatePreviewGrid();
+                
+                if (typeof wx !== 'undefined') {
+                    wx.vibrateShort();
+                }
+            }
+        }
+        
+        // 更新页面显示
+        function updatePageDisplay() {
+            document.getElementById('pageIndicator').textContent = `第${worksheetData.currentPage}页`;
+            document.getElementById('pageInfo').textContent = `${worksheetData.currentPage} / ${worksheetData.pages}`;
+            
+            document.getElementById('prevBtn').disabled = worksheetData.currentPage === 1;
+            document.getElementById('nextBtn').disabled = worksheetData.currentPage === worksheetData.pages;
+        }
+        
+        // 调整参数
+        function adjustValue(param, delta) {
+            switch(param) {
+                case 'fontSize':
+                    worksheetData.fontSize = Math.max(12, Math.min(30, worksheetData.fontSize + delta));
+                    document.getElementById('fontSizeValue').textContent = worksheetData.fontSize + 'px';
+                    break;
+                case 'lineSpacing':
+                    worksheetData.lineSpacing = Math.max(1, Math.min(3, Math.round((worksheetData.lineSpacing + delta) * 10) / 10));
+                    document.getElementById('lineSpacingValue').textContent = worksheetData.lineSpacing;
+                    break;
+                case 'tracedCount':
+                    worksheetData.tracedCount = Math.max(0, Math.min(5, worksheetData.tracedCount + delta));
+                    document.getElementById('tracedCountValue').textContent = worksheetData.tracedCount + '个';
+                    break;
+                case 'charsPerRow':
+                    worksheetData.charsPerRow = Math.max(2, Math.min(8, worksheetData.charsPerRow + delta));
+                    document.getElementById('charsPerRowValue').textContent = worksheetData.charsPerRow + '个';
+                    break;
+            }
+            
+            generatePreviewGrid();
+            
+            if (typeof wx !== 'undefined') {
+                wx.vibrateShort();
+            }
+        }
+        
+        // 重置调整
+        function resetAdjustments() {
+            worksheetData.fontSize = 18;
+            worksheetData.lineSpacing = 1.5;
+            worksheetData.tracedCount = 2;
+            worksheetData.charsPerRow = 4;
+            
+            document.getElementById('fontSizeValue').textContent = '18px';
+            document.getElementById('lineSpacingValue').textContent = '1.5';
+            document.getElementById('tracedCountValue').textContent = '2个';
+            document.getElementById('charsPerRowValue').textContent = '4个';
+            
+            generatePreviewGrid();
+            
+            if (typeof wx !== 'undefined') {
+                wx.showToast({
+                    title: '已重置',
+                    icon: 'success'
+                });
+            }
+        }
+        
+        // 切换全屏
+        function toggleFullscreen() {
+            if (typeof wx !== 'undefined') {
+                wx.navigateTo({
+                    url: '/pages/fullscreen/fullscreen'
+                });
+            } else {
+                alert('进入全屏预览模式');
+            }
+        }
+        
+        // 导出字帖
+        function exportWorksheet(format) {
+            if (typeof wx !== 'undefined') {
+                wx.vibrateShort();
+                
+                let title = '';
+                switch(format) {
+                    case 'pdf':
+                        title = '生成PDF中...';
+                        break;
+                    case 'image':
+                        title = '生成图片中...';
+                        break;
+                    case 'album':
+                        title = '保存到相册中...';
+                        break;
+                    case 'print':
+                        title = '连接打印机...';
+                        break;
+                }
+                
+                wx.showLoading({ title });
+                
+                setTimeout(() => {
+                    wx.hideLoading();
+                    wx.showToast({
+                        title: '操作成功',
+                        icon: 'success'
+                    });
+                }, 2000);
+            } else {
+                alert(`导出格式: ${format}\n内容: ${worksheetData.content}\n字体: ${worksheetData.font}\n页数: ${worksheetData.pages}页`);
+            }
+        }
+        
+        // 重新编辑
+        function editWorksheet() {
+            if (typeof wx !== 'undefined') {
+                wx.navigateBack();
+            } else {
+                alert('返回编辑页面');
+            }
+        }
+        
+        // 保存作品
+        function saveWorksheet() {
+            if (typeof wx !== 'undefined') {
+                wx.showLoading({
+                    title: '保存中...'
+                });
+                
+                setTimeout(() => {
+                    wx.hideLoading();
+                    wx.showToast({
+                        title: '保存成功',
+                        icon: 'success'
+                    });
+                }, 1000);
+            } else {
+                alert('保存作品到我的作品列表');
+            }
+        }
+        
+        // 生成字帖
+        function generateWorksheet() {
+            if (typeof wx !== 'undefined') {
+                wx.showModal({
+                    title: '生成字帖',
+                    content: '确定要生成这个字帖吗？',
+                    success: function(res) {
+                        if (res.confirm) {
+                            wx.showLoading({
+                                title: '生成中...'
+                            });
+                            
+                            setTimeout(() => {
+                                wx.hideLoading();
+                                wx.showToast({
+                                    title: '生成成功',
+                                    icon: 'success'
+                                });
+                            }, 3000);
+                        }
+                    }
+                });
+            } else {
+                if (confirm('确定要生成这个字帖吗？')) {
+                    alert('正在生成字帖...');
+                }
+            }
+        }
+        
+        // 分享字帖
+        function shareWorksheet() {
+            if (typeof wx !== 'undefined') {
+                wx.showShareMenu({
+                    withShareTicket: true
+                });
+            } else {
+                alert('分享字帖');
+            }
+        }
+        
+        // 分享到社区
+        function shareToCommunity() {
+            if (typeof wx !== 'undefined') {
+                wx.vibrateShort();
+                wx.showModal({
+                    title: '分享到社区',
+                    content: '确定要将这个字帖作品分享到练字社区吗？',
+                    success: function(res) {
+                        if (res.confirm) {
+                            wx.showLoading({
+                                title: '分享中...'
+                            });
+                            
+                            setTimeout(() => {
+                                wx.hideLoading();
+                                wx.showToast({
+                                    title: '分享成功！',
+                                    icon: 'success'
+                                });
+                            }, 1500);
+                        }
+                    }
+                });
+            } else {
+                if (confirm('确定要将这个字帖作品分享到练字社区吗？')) {
+                    alert('分享到社区成功！你的作品将会在社区中展示，其他用户可以点赞和评论。');
+                }
+            }
+        }
+        
+        // 返回上一页
+        function goBack() {
+            if (typeof wx !== 'undefined') {
+                wx.navigateBack();
+            } else {
+                alert('返回上一页');
+            }
+        }
+        
+        // 页面加载完成
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('预览页面加载完成');
+            console.log('字帖数据:', worksheetData);
+            
+            // 初始化显示
+            updatePageDisplay();
+            generatePreviewGrid();
+            
+            // 更新信息显示
+            document.getElementById('worksheetContent').textContent = worksheetData.content;
+            document.getElementById('worksheetType').textContent = worksheetData.type === 'hanzi' ? '汉字练习' : '其他类型';
+            document.getElementById('worksheetFont').textContent = worksheetData.font;
+            document.getElementById('worksheetPages').textContent = worksheetData.pages + '页 A4';
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem"],
+      "env": {
+        "FILESYSTEM_ALLOWED_DIRECTORIES": "."
+      },
+      "description": "File system operations with controlled directory access",
+      "timeout": 30000,
+      "retry": {
+        "attempts": 3,
+        "delay": 1000
+      }
+    },
+    "git": {
+      "command": "npx", 
+      "args": ["-y", "@modelcontextprotocol/server-git"],
+      "env": {
+        "GIT_REPOSITORY_PATH": "."
+      },
+      "description": "Git repository operations and history access",
+      "timeout": 30000,
+      "retry": {
+        "attempts": 3,
+        "delay": 1000
+      }
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@context7/mcp-server"],
+      "env": {},
+      "description": "Documentation and library context provider",
+      "timeout": 60000,
+      "retry": {
+        "attempts": 2,
+        "delay": 2000
+      }
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
+      "env": {
+        "PUPPETEER_SKIP_CHROMIUM_DOWNLOAD": "false"
+      },
+      "description": "Browser automation for testing and screenshots (disabled by default for performance)",
+      "disabled": true,
+      "timeout": 45000,
+      "retry": {
+        "attempts": 2,
+        "delay": 3000
+      }
+    }
+  },
+  "validation": {
+    "required_commands": ["npx", "node"],
+    "environment_checks": [
+      "NODE_PATH",
+      "npm_config_prefix"
+    ]
+  },
+  "fallback": {
+    "mode": "graceful_degradation",
+    "essential_servers": ["filesystem", "git"]
+  }
+}

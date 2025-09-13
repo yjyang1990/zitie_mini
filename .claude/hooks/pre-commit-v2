@@ -1,0 +1,351 @@
+#!/bin/bash
+
+# CCPM Pre-commit Hook v2.0
+# Modern quality checks with configurable validation
+# Version: 2.0
+
+set -euo pipefail
+
+# Hook metadata
+HOOK_VERSION="2.0"
+HOOK_NAME="pre-commit"
+PROJECT_ROOT=$(git rev-parse --show-toplevel)
+CLAUDE_DIR="$PROJECT_ROOT/.claude"
+
+# Load CCPM core library
+if [[ -f "$CLAUDE_DIR/lib/core.sh" ]]; then
+    source "$CLAUDE_DIR/lib/core.sh"
+else
+    echo "❌ ERROR: Cannot find CCPM core library" >&2
+    echo "Make sure you're in a CCPM-enabled project" >&2
+    exit 1
+fi
+
+# Configuration
+HOOKS_CONFIG="$CLAUDE_DIR/hooks/config.json"
+LOG_FILE="$CLAUDE_DIR/logs/hooks.log"
+
+# Initialize logging
+init_hook_logging() {
+    ensure_directory "$(dirname "$LOG_FILE")"
+    local timestamp
+    timestamp=$(get_timestamp)
+    echo "[$timestamp] $HOOK_NAME v$HOOK_VERSION starting" >> "$LOG_FILE"
+}
+
+# Load hook configuration
+load_hook_config() {
+    if [[ ! -f "$HOOKS_CONFIG" ]]; then
+        log_warning "Hook configuration not found: $HOOKS_CONFIG"
+        log_warning "Using default settings"
+        return 1
+    fi
+    
+    # Check if hooks are enabled
+    local enabled
+    enabled=$(get_json_value "$HOOKS_CONFIG" ".hooks.\"$HOOK_NAME\".enabled" "true")
+    
+    if [[ "$enabled" != "true" ]]; then
+        log_info "Pre-commit hook disabled by configuration"
+        exit 0
+    fi
+    
+    return 0
+}
+
+# Get staged files
+get_staged_files() {
+    git diff --cached --name-only --diff-filter=ACM
+}
+
+# Check for large files
+check_large_files() {
+    local max_size_mb
+    max_size_mb=$(get_json_value "$HOOKS_CONFIG" ".hooks.\"$HOOK_NAME\".checks.large_files.max_size_mb" "10")
+    local max_size_bytes=$((max_size_mb * 1024 * 1024))
+    
+    log_info "Checking for large files (max: ${max_size_mb}MB)"
+    
+    local large_files=()
+    while IFS= read -r file; do
+        if [[ -f "$file" ]]; then
+            local file_size
+            file_size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null || echo 0)
+            
+            if [[ $file_size -gt $max_size_bytes ]]; then
+                local file_size_mb=$((file_size / 1024 / 1024))
+                large_files+=("$file (${file_size_mb}MB)")
+            fi
+        fi
+    done < <(get_staged_files)
+    
+    if [[ ${#large_files[@]} -gt 0 ]]; then
+        log_warning "Large files detected:"
+        for file in "${large_files[@]}"; do
+            echo "  - $file"
+        done
+        return 1
+    fi
+    
+    return 0
+}
+
+# Validate shell scripts
+check_shell_scripts() {
+    if ! command -v shellcheck >/dev/null 2>&1; then
+        log_warning "shellcheck not available, skipping shell script validation"
+        return 0
+    fi
+    
+    log_info "Validating shell scripts with shellcheck"
+    
+    local shell_files=()
+    while IFS= read -r file; do
+        if [[ "$file" == *.sh ]] || [[ "$(head -1 "$file" 2>/dev/null)" == "#!/bin/bash"* ]]; then
+            shell_files+=("$file")
+        fi
+    done < <(get_staged_files)
+    
+    if [[ ${#shell_files[@]} -eq 0 ]]; then
+        log_info "No shell scripts to validate"
+        return 0
+    fi
+    
+    local failed_files=()
+    for file in "${shell_files[@]}"; do
+        if [[ -f "$file" ]]; then
+            if ! shellcheck "$file" >/dev/null 2>&1; then
+                failed_files+=("$file")
+            fi
+        fi
+    done
+    
+    if [[ ${#failed_files[@]} -gt 0 ]]; then
+        log_error "Shell script validation failed:"
+        for file in "${failed_files[@]}"; do
+            echo "  - $file"
+            shellcheck "$file" || true
+        done
+        return 1
+    fi
+    
+    log_success "All shell scripts passed validation"
+    return 0
+}
+
+# Validate JSON files
+check_json_files() {
+    if ! command -v jq >/dev/null 2>&1; then
+        log_warning "jq not available, skipping JSON validation"
+        return 0
+    fi
+    
+    log_info "Validating JSON files"
+    
+    local json_files=()
+    while IFS= read -r file; do
+        if [[ "$file" == *.json ]]; then
+            json_files+=("$file")
+        fi
+    done < <(get_staged_files)
+    
+    if [[ ${#json_files[@]} -eq 0 ]]; then
+        log_info "No JSON files to validate"
+        return 0
+    fi
+    
+    local failed_files=()
+    for file in "${json_files[@]}"; do
+        if [[ -f "$file" ]]; then
+            if ! jq empty "$file" >/dev/null 2>&1; then
+                failed_files+=("$file")
+            fi
+        fi
+    done
+    
+    if [[ ${#failed_files[@]} -gt 0 ]]; then
+        log_error "JSON validation failed:"
+        for file in "${failed_files[@]}"; do
+            echo "  - $file"
+            jq empty "$file" || true
+        done
+        return 1
+    fi
+    
+    log_success "All JSON files are valid"
+    return 0
+}
+
+# Check for secrets
+check_secrets() {
+    log_info "Scanning for potential secrets"
+    
+    local secret_patterns=("password" "api_key" "secret" "token" "private_key")
+    local found_secrets=()
+    
+    while IFS= read -r file; do
+        if [[ -f "$file" && "$file" != *.log && "$file" != *.md ]]; then
+            for pattern in "${secret_patterns[@]}"; do
+                if grep -iq "$pattern" "$file" 2>/dev/null; then
+                    found_secrets+=("$file: $pattern")
+                fi
+            done
+        fi
+    done < <(get_staged_files)
+    
+    if [[ ${#found_secrets[@]} -gt 0 ]]; then
+        log_error "Potential secrets detected:"
+        for secret in "${found_secrets[@]}"; do
+            echo "  - $secret"
+        done
+        log_error "Please review these files and remove any sensitive information"
+        return 1
+    fi
+    
+    return 0
+}
+
+# Validate CCPM structure
+check_ccmp_structure() {
+    log_info "Validating CCPM project structure"
+    
+    local required_files=(
+        ".claude/lib/core.sh"
+        ".claude/config/defaults.json"
+        ".claude/agents/registry.json"
+    )
+    
+    local missing_files=()
+    for file in "${required_files[@]}"; do
+        if [[ ! -f "$file" ]]; then
+            missing_files+=("$file")
+        fi
+    done
+    
+    if [[ ${#missing_files[@]} -gt 0 ]]; then
+        log_error "CCPM structure validation failed. Missing files:"
+        for file in "${missing_files[@]}"; do
+            echo "  - $file"
+        done
+        log_error "Run '/pm:init' to restore CCPM structure"
+        return 1
+    fi
+    
+    # Validate core configuration
+    if ! validate_config_files >/dev/null 2>&1; then
+        log_error "CCPM configuration validation failed"
+        log_error "Run '/validate --config' for detailed information"
+        return 1
+    fi
+    
+    log_success "CCPM structure is valid"
+    return 0
+}
+
+# Main validation function
+run_pre_commit_checks() {
+    local overall_status=0
+    local checks_run=0
+    local checks_passed=0
+    
+    log_info "Starting pre-commit validation (v$HOOK_VERSION)"
+    
+    # Initialize logging
+    init_hook_logging
+    
+    # Load configuration
+    if ! load_hook_config; then
+        log_warning "Using default validation settings"
+    fi
+    
+    # Get staged files count
+    local staged_count
+    staged_count=$(get_staged_files | wc -l)
+    log_info "Validating $staged_count staged files"
+    
+    # Run enabled checks
+    local checks=(
+        "check_large_files:Large file check"
+        "check_shell_scripts:Shell script validation"
+        "check_json_files:JSON validation"
+        "check_secrets:Secret scanning"
+        "check_ccmp_structure:CCPM structure validation"
+    )
+    
+    for check in "${checks[@]}"; do
+        local check_function="${check%:*}"
+        local check_name="${check#*:}"
+        
+        ((checks_run++))
+        log_info "Running: $check_name"
+        
+        if $check_function; then
+            ((checks_passed++))
+        else
+            log_error "$check_name failed"
+            overall_status=1
+        fi
+        
+        echo "" # Add spacing between checks
+    done
+    
+    # Final report
+    echo "======================================"
+    if [[ $overall_status -eq 0 ]]; then
+        log_success "✅ All pre-commit checks passed ($checks_passed/$checks_run)"
+        log_info "Commit can proceed"
+    else
+        local checks_failed=$((checks_run - checks_passed))
+        log_error "❌ Pre-commit validation failed ($checks_failed/$checks_run checks failed)"
+        log_error "Please fix the issues above and try again"
+        echo ""
+        log_info "Troubleshooting:"
+        echo "  - Run '/validate --full' for comprehensive project validation"
+        echo "  - Use 'git commit --no-verify' to bypass hooks (not recommended)"
+        echo "  - Check hook configuration in .claude/hooks/config.json"
+    fi
+    
+    # Log result
+    local timestamp
+    timestamp=$(get_timestamp)
+    echo "[$timestamp] $HOOK_NAME completed with status $overall_status" >> "$LOG_FILE"
+    
+    return $overall_status
+}
+
+# Help function
+show_help() {
+    cat << EOF
+CCPM Pre-commit Hook v$HOOK_VERSION
+
+This hook runs automated quality checks before allowing commits.
+
+Checks performed:
+  ✓ Large file detection
+  ✓ Shell script validation (shellcheck)
+  ✓ JSON syntax validation
+  ✓ Secret scanning
+  ✓ CCPM structure validation
+
+Configuration: .claude/hooks/config.json
+Logs: .claude/logs/hooks.log
+
+To bypass (not recommended): git commit --no-verify
+
+EOF
+}
+
+# Handle special arguments
+case "${1:-}" in
+    --help|-h)
+        show_help
+        exit 0
+        ;;
+    --version)
+        echo "CCPM Pre-commit Hook v$HOOK_VERSION"
+        exit 0
+        ;;
+esac
+
+# Main execution
+run_pre_commit_checks

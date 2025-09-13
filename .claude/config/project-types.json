@@ -1,0 +1,279 @@
+{
+  "version": "1.0",
+  "description": "Project type templates for intelligent CCPM configuration",
+  "templates": {
+    "react": {
+      "name": "React Application",
+      "description": "Modern React application with hooks and component architecture",
+      "agents": {
+        "primary": ["frontend-engineer", "ui-expert", "test-runner"],
+        "secondary": ["system-architect", "devops-engineer"],
+        "workflows": ["feature_development", "component_review", "ui_testing"]
+      },
+      "tools": {
+        "required": ["npm", "node"],
+        "recommended": ["jest", "cypress", "eslint", "prettier"]
+      },
+      "testing": {
+        "framework": "jest",
+        "patterns": ["*.test.js", "*.spec.js", "__tests__/**"],
+        "coverage_threshold": 80
+      },
+      "claude_md_additions": [
+        "## React Development",
+        "- Use functional components with hooks",
+        "- Follow component composition patterns", 
+        "- Implement proper prop validation",
+        "- Use React.memo for performance optimization"
+      ]
+    },
+    "nodejs": {
+      "name": "Node.js Application",
+      "description": "Backend Node.js application with Express or similar framework",
+      "agents": {
+        "primary": ["backend-engineer", "test-runner", "system-architect"],
+        "secondary": ["devops-engineer", "shell-auditor"],
+        "workflows": ["feature_development", "api_development", "performance_testing"]
+      },
+      "tools": {
+        "required": ["npm", "node"],
+        "recommended": ["jest", "supertest", "eslint", "nodemon"]
+      },
+      "testing": {
+        "framework": "jest",
+        "patterns": ["*.test.js", "*.spec.js", "test/**"],
+        "coverage_threshold": 85
+      },
+      "claude_md_additions": [
+        "## Node.js Development",
+        "- Use async/await for asynchronous operations",
+        "- Implement proper error handling middleware",
+        "- Follow REST API conventions",
+        "- Use environment variables for configuration"
+      ]
+    },
+    "python": {
+      "name": "Python Application",
+      "description": "Python application with modern development practices",
+      "agents": {
+        "primary": ["backend-engineer", "test-engineer", "system-architect"],
+        "secondary": ["devops-engineer", "code-analyzer"],
+        "workflows": ["feature_development", "data_processing", "ml_pipeline"]
+      },
+      "tools": {
+        "required": ["python", "pip"],
+        "recommended": ["pytest", "black", "flake8", "mypy"]
+      },
+      "testing": {
+        "framework": "pytest",
+        "patterns": ["test_*.py", "*_test.py", "tests/**"],
+        "coverage_threshold": 90
+      },
+      "claude_md_additions": [
+        "## Python Development",
+        "- Follow PEP 8 style guidelines",
+        "- Use type hints for better code clarity",
+        "- Implement proper exception handling",
+        "- Use virtual environments for dependency management"
+      ]
+    },
+    "golang": {
+      "name": "Go Application",
+      "description": "Go application with standard project layout",
+      "agents": {
+        "primary": ["backend-engineer", "test-engineer", "system-architect"],
+        "secondary": ["devops-engineer", "code-analyzer"],
+        "workflows": ["feature_development", "microservice_development", "performance_optimization"]
+      },
+      "tools": {
+        "required": ["go"],
+        "recommended": ["golint", "gofmt", "go-staticcheck"]
+      },
+      "testing": {
+        "framework": "go-test",
+        "patterns": ["*_test.go"],
+        "coverage_threshold": 85
+      },
+      "claude_md_additions": [
+        "## Go Development",
+        "- Follow Go idioms and conventions",
+        "- Use proper error handling patterns",
+        "- Implement interfaces for testability",
+        "- Use go modules for dependency management"
+      ]
+    },
+    "rust": {
+      "name": "Rust Application", 
+      "description": "Rust application with Cargo build system",
+      "agents": {
+        "primary": ["backend-engineer", "test-engineer", "system-architect"],
+        "secondary": ["devops-engineer", "code-analyzer"],
+        "workflows": ["feature_development", "systems_programming", "performance_critical"]
+      },
+      "tools": {
+        "required": ["cargo", "rustc"],
+        "recommended": ["clippy", "rustfmt", "cargo-audit"]
+      },
+      "testing": {
+        "framework": "cargo-test",
+        "patterns": ["src/**/*.rs"],
+        "coverage_threshold": 80
+      },
+      "claude_md_additions": [
+        "## Rust Development",
+        "- Embrace ownership and borrowing principles",
+        "- Use Result<T, E> for error handling",
+        "- Leverage the type system for safety",
+        "- Write comprehensive unit and integration tests"
+      ]
+    },
+    "nextjs": {
+      "name": "Next.js Application",
+      "description": "Full-stack Next.js application with SSR/SSG capabilities", 
+      "agents": {
+        "primary": ["frontend-engineer", "backend-engineer", "ui-expert"],
+        "secondary": ["system-architect", "devops-engineer"],
+        "workflows": ["fullstack_development", "seo_optimization", "performance_optimization"]
+      },
+      "tools": {
+        "required": ["npm", "node"],
+        "recommended": ["jest", "playwright", "eslint", "tailwindcss"]
+      },
+      "testing": {
+        "framework": "jest",
+        "patterns": ["*.test.js", "*.spec.js", "__tests__/**", "e2e/**"],
+        "coverage_threshold": 75
+      },
+      "claude_md_additions": [
+        "## Next.js Development", 
+        "- Utilize SSR/SSG appropriately for performance",
+        "- Implement proper API route patterns",
+        "- Optimize images and assets",
+        "- Use Next.js built-in optimization features"
+      ]
+    },
+    "django": {
+      "name": "Django Application",
+      "description": "Django web application with MVT architecture",
+      "agents": {
+        "primary": ["backend-engineer", "test-engineer", "system-architect"],
+        "secondary": ["devops-engineer", "ui-expert"],
+        "workflows": ["web_development", "api_development", "admin_development"]
+      },
+      "tools": {
+        "required": ["python", "django"],
+        "recommended": ["pytest-django", "black", "flake8", "django-extensions"]
+      },
+      "testing": {
+        "framework": "pytest",
+        "patterns": ["test_*.py", "*_test.py", "tests/**"],
+        "coverage_threshold": 85
+      },
+      "claude_md_additions": [
+        "## Django Development",
+        "- Follow Django's MVT architectural pattern",
+        "- Use Django ORM effectively",
+        "- Implement proper authentication and permissions",
+        "- Write comprehensive model and view tests"
+      ]
+    },
+    "docker": {
+      "name": "Dockerized Application",
+      "description": "Containerized application with Docker configuration",
+      "agents": {
+        "primary": ["devops-engineer", "system-architect", "backend-engineer"],
+        "secondary": ["shell-auditor", "test-engineer"],
+        "workflows": ["containerization", "deployment", "infrastructure"]
+      },
+      "tools": {
+        "required": ["docker"],
+        "recommended": ["docker-compose", "hadolint", "dive"]
+      },
+      "testing": {
+        "framework": "auto-detect",
+        "patterns": ["tests/**", "*.test.*"],
+        "coverage_threshold": 75
+      },
+      "claude_md_additions": [
+        "## Docker Development",
+        "- Use multi-stage builds for optimization",
+        "- Implement proper security practices",
+        "- Use .dockerignore for build efficiency", 
+        "- Follow container best practices"
+      ]
+    },
+    "generic": {
+      "name": "Generic Project",
+      "description": "General purpose project without specific framework",
+      "agents": {
+        "primary": ["code-analyzer", "system-architect", "test-runner"],
+        "secondary": ["file-analyzer", "workflow-orchestrator"],
+        "workflows": ["feature_development", "code_review", "architecture_review"]
+      },
+      "tools": {
+        "required": ["git"],
+        "recommended": ["grep", "find", "sed", "awk"]
+      },
+      "testing": {
+        "framework": "auto-detect",
+        "patterns": ["test*", "*test*", "spec*"],
+        "coverage_threshold": 70
+      },
+      "claude_md_additions": [
+        "## General Development",
+        "- Follow consistent coding style",
+        "- Implement appropriate testing strategy",
+        "- Document code and decisions",
+        "- Use version control effectively"
+      ]
+    }
+  },
+  "detection_rules": {
+    "react": {
+      "files": ["package.json"],
+      "content_patterns": ["\"react\":", "\"@types/react\":", "\"next\":", "\"gatsby\":"],
+      "priority": 1
+    },
+    "nodejs": {
+      "files": ["package.json"],
+      "content_patterns": ["\"express\":", "\"koa\":", "\"fastify\":", "\"node\":", "\"typescript\":"],
+      "exclude_patterns": ["\"react\":", "\"vue\":", "\"angular\":"],
+      "priority": 2
+    },
+    "python": {
+      "files": ["requirements.txt", "pyproject.toml", "setup.py", "Pipfile"],
+      "content_patterns": ["python", "django", "flask", "fastapi"],
+      "priority": 1
+    },
+    "django": {
+      "files": ["manage.py", "settings.py"],
+      "content_patterns": ["django", "DJANGO_SETTINGS_MODULE"],
+      "priority": 1
+    },
+    "golang": {
+      "files": ["go.mod", "go.sum"],
+      "content_patterns": ["module ", "go \\d+\\.\\d+"],
+      "priority": 1
+    },
+    "rust": {
+      "files": ["Cargo.toml", "Cargo.lock"], 
+      "content_patterns": ["\\[package\\]", "edition = "],
+      "priority": 1
+    },
+    "nextjs": {
+      "files": ["package.json", "next.config.js"],
+      "content_patterns": ["\"next\":", "next/", "Next.js"],
+      "priority": 1
+    },
+    "docker": {
+      "files": ["Dockerfile", "docker-compose.yml", "docker-compose.yaml"],
+      "content_patterns": ["FROM ", "docker-compose"],
+      "priority": 3
+    }
+  },
+  "configuration_inheritance": {
+    "base": "generic",
+    "override_strategy": "merge",
+    "required_fields": ["name", "agents", "testing"]
+  }
+}

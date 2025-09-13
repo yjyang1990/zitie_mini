@@ -1,0 +1,227 @@
+# CCPM - Claude Code Project Manager
+
+Portable AI-assisted development framework for Claude Code, optimized for cross-project deployment and following official best practices.
+
+## Quick Start
+```bash
+# Most common commands
+bash setup-ccpm.sh <target_dir>    # Install to new project
+bash .claude/bootstrap.sh          # Re-initialize in current project
+bash tests/run_tests.sh            # Run full test suite
+bash tests/quick_test.sh           # Quick validation
+```
+
+## Bash Commands
+```bash
+# CCPM Framework
+bash setup-ccpm.sh <dir>           # Copy framework to target project
+bash .claude/bootstrap.sh          # Auto-configure for current project
+bash .claude/scripts/validate.sh   # Validate framework integrity
+
+# Testing
+bash tests/run_tests.sh            # Complete test suite with analysis
+bash tests/quick_test.sh           # Essential validation only
+bats tests/unit/*.bats             # Unit tests
+bats tests/integration/*.bats      # Integration tests
+bats -t tests/*.bats               # Tests with timing
+
+# Development Tools
+shellcheck *.sh .claude/scripts/*.sh   # Validate shell scripts
+find .claude -name "*.sh" -exec shellcheck {} \;  # Check all scripts
+tree .claude                       # Show framework structure
+```
+
+## Code Style Guidelines
+- **Shell Scripts**: POSIX compatible, validated with shellcheck
+- **Test Files**: Use bats framework for all tests
+- **Documentation**: Markdown format with clear examples
+- **Configuration**: JSON format with proper validation
+- **Error Handling**: Fail fast for critical issues, graceful degradation for optional features
+- **Naming**: Use descriptive names for functions and variables
+
+## Project Structure
+```
+/.claude/              # CCPM Framework Core
+  /agents/            # Specialized AI agents (15 agents)
+  /commands/          # Custom slash commands (24 commands)
+  /scripts/           # Utility scripts and automation
+  /lib/               # Shared library functions
+  /config/            # Configuration templates
+  /docs/              # Framework documentation
+  /tests/             # Framework self-tests
+  CLAUDE.md           # Project instructions (this file)
+  bootstrap.sh        # Auto-configuration script
+  settings.local.json # Permissions and local settings
+
+/tests/               # Project test suite
+  run_tests.sh        # Test runner with analysis
+  quick_test.sh       # Fast validation
+
+/.mcp.json            # MCP servers configuration
+/setup-ccpm.sh        # Framework installer
+```
+
+## Key Files to Know
+- **CLAUDE.md**: This instruction file - customize for your project
+- **.claude/settings.local.json**: Permissions and tool allowlist
+- **.mcp.json**: MCP server configuration (filesystem, git, context7, puppeteer)
+- **.claude/bootstrap.sh**: Auto-detects project type and configures framework
+- **setup-ccpm.sh**: Copies framework to new projects
+
+## Development Workflow (EPCC)
+
+### 1. **Explore** - Understand the codebase
+- **Simple tasks**: Read files directly with specific paths
+- **Complex analysis**: Use `code-analyzer` agent for multi-file logic tracing
+- **Large files**: Use `file-analyzer` agent for log analysis and summaries
+
+### 2. **Plan** - Think before coding
+- Use **"think"** keyword to trigger extended thinking mode
+- Levels: "think" < "think hard" < "think harder" < "ultrathink"
+- For complex architecture: Use `system-architect` agent
+- Create GitHub issues for major changes to preserve context
+
+### 3. **Code** - Implement iteratively
+- **Simple edits**: Direct file operations (Edit, Write tools)
+- **Complex features**: Use specialized agents:
+  - `backend-engineer`: APIs, databases, server logic
+  - `frontend-engineer`: UI components, state management
+  - `test-engineer`: Comprehensive testing strategies
+- **Real testing**: No mocks - test against actual services
+
+### 4. **Commit** - Auto-generated commit messages
+- Commits include context from diffs and recent history
+- Use `github-specialist` agent for PR creation and management
+
+## When to Use Agents
+
+### **Direct Interaction** (Preferred for simple tasks)
+- Single file edits
+- Running tests or builds  
+- Basic git operations
+- Reading specific files
+- Simple debugging
+
+### **Use Agents** (For complex tasks requiring expertise)
+- **code-analyzer**: Multi-file code analysis, logic tracing, bug hunting
+- **file-analyzer**: Large log analysis, extracting key info from verbose output
+- **test-runner**: Comprehensive test execution with failure analysis
+- **system-architect**: Architecture design, technology selection, scalability planning
+- **backend-engineer**: API design, database schema, server architecture
+- **frontend-engineer**: Component architecture, state management, performance
+- **github-specialist**: Issue management, PR workflows, repository operations
+- **workflow-orchestrator**: Coordinating multiple parallel development streams
+
+## Testing Strategy
+```bash
+# Test Execution
+bash tests/run_tests.sh              # Full suite with detailed analysis
+bash tests/quick_test.sh             # Essential validation only
+bats tests/unit/*.bats               # Unit tests only
+bats tests/integration/*.bats        # Integration tests only
+
+# Test Development
+# Write tests first, then implement (TDD approach)
+# Tests must reveal actual flaws, not pass blindly
+# Use real services, avoid mocks
+# Test runner agent provides comprehensive failure analysis
+```
+
+## Tool Permissions
+The framework pre-configures safe tool permissions in `.claude/settings.local.json`:
+
+**Always Allowed:**
+- File operations: Edit, Write, MultiEdit, NotebookEdit
+- Git operations: status, commit, push, pull, worktree management
+- Testing: bats execution, test runner scripts
+- Build tools: npm, composer, python, rust tools
+- Development: shellcheck, linting, formatting
+
+**Custom Commands:** All custom slash commands in `.claude/commands/`
+
+**MCP Tools:** All configured MCP servers (filesystem, git, context7, puppeteer)
+
+## MCP Servers
+Pre-configured in `.mcp.json`:
+- **filesystem**: File operations with controlled access
+- **git**: Repository operations and history
+- **context7**: Documentation and library context
+- **puppeteer**: Browser automation for testing
+
+## Thinking Modes
+Trigger deeper analysis with specific keywords:
+- **"think"** - Basic extended thinking
+- **"think hard"** - Thorough analysis with alternatives
+- **"think harder"** - Deep problem solving
+- **"ultrathink"** - Maximum thinking budget
+
+## Context Management
+- Use `/clear` between major tasks to maintain focus
+- Let Claude read relevant files rather than describing them
+- Provide images, screenshots, and URLs directly
+- Be specific in instructions to reduce iterations
+
+## Custom Commands
+Access with `/` - organized in categories:
+- **Project Management**: `/pm:*` commands for requirements, epics, issues
+- **Testing**: `/testing:*` commands for test execution and analysis  
+- **Core**: `/validate`, `/context` for framework operations
+- **Workflow**: Development lifecycle automation
+
+## Error Handling Philosophy
+- **Fail fast** for critical configuration issues
+- **Graceful degradation** for optional features
+- **User-friendly error messages** with actionable suggestions
+- **Agent-powered recovery** for complex error scenarios
+
+## Adaptation for New Projects
+
+### Automated Setup (Recommended)
+```bash
+# From CCPM source directory
+bash setup-ccpm.sh /path/to/your/project
+
+# The script will:
+# 1. Auto-detect project type (React, Python, Rust, etc.)
+# 2. Copy complete .claude framework
+# 3. Generate project-specific configuration
+# 4. Initialize MCP servers and permissions
+```
+
+### Manual Adaptation Steps
+1. **Copy framework**: Copy entire `.claude` directory to your project
+2. **Run bootstrap**: Execute `bash .claude/bootstrap.sh` for auto-configuration
+3. **Update commands**: Modify bash commands section for your project's tools
+4. **Adjust style guide**: Update code style guidelines for your standards
+5. **Configure MCP**: Add/remove MCP servers as needed in `.mcp.json`
+6. **Test framework**: Run `bash tests/quick_test.sh` to verify setup
+
+### Project-Specific Customization
+After setup, customize these sections:
+- **Bash Commands**: Replace with your project's build/test/deploy commands
+- **Code Style Guidelines**: Match your team's coding standards
+- **Key Files**: Document your project's important files and entry points
+- **Development Environment**: Add setup instructions for your tech stack
+
+## Framework Features
+- ✅ **15 Specialized Agents** for different development needs
+- ✅ **24 Custom Commands** for project management workflows
+- ✅ **Comprehensive Testing** with bats framework
+- ✅ **MCP Integration** for enhanced tool access
+- ✅ **Auto-Detection** of project types and configuration
+- ✅ **Permission Management** with sensible security defaults
+- ✅ **Cross-Platform** support (macOS, Linux, Windows/WSL)
+- ✅ **Git Worktree** support for parallel development
+
+## Best Practices Integration
+This configuration follows [official Claude Code best practices](https://anthropic.com/news/claude-code-best-practices):
+- Specific, actionable instructions over abstract guidance
+- Clear bash commands and development workflows
+- Appropriate tool permissions for productivity and security
+- Context management strategies to maintain focus
+- Integration with external tools (GitHub CLI, MCP servers)
+- Support for test-driven development and iterative improvement
+
+---
+
+**IMPORTANT**: This CLAUDE.md is designed to be portable across projects. When copying to a new project, run the setup script or bootstrap process to automatically adapt the configuration for your specific technology stack and development patterns.

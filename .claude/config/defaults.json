@@ -1,0 +1,59 @@
+{
+  "version": "2.0",
+  "system": {
+    "log_level": "info",
+    "max_concurrent_operations": 5,
+    "default_timeout_ms": 300000,
+    "cache_ttl_seconds": 86400,
+    "health_check_interval": 300,
+    "auto_recovery": true
+  },
+  "github": {
+    "api_timeout_ms": 30000,
+    "max_retries": 3,
+    "rate_limit_buffer": 0.8,
+    "base_url": "https://api.github.com",
+    "required_permissions": ["issues", "pull_requests", "contents"]
+  },
+  "epic": {
+    "default_parallel_tasks": 3,
+    "max_parallel_streams": 5,
+    "auto_sync_interval_seconds": 3600,
+    "task_completion_webhook": null,
+    "epic_template_version": "2.0"
+  },
+  "paths": {
+    "epics_dir": ".claude/epics",
+    "prds_dir": ".claude/prds",
+    "logs_dir": ".claude/tmp",
+    "cache_dir": ".claude/tmp",
+    "temp_dir": "/tmp",
+    "backup_dir": ".claude/tmp/backups",
+    "templates_dir": ".claude/templates"
+  },
+  "ui": {
+    "show_progress": true,
+    "color_output": true,
+    "verbose_errors": false,
+    "progress_update_interval": 5,
+    "terminal_width": "auto"
+  },
+  "security": {
+    "allowed_script_dirs": [".claude/scripts", "tests"],
+    "script_execution_timeout": 1800,
+    "validate_checksums": true,
+    "secure_temp_files": true
+  },
+  "performance": {
+    "max_file_size_mb": 100,
+    "max_log_size_mb": 50,
+    "cleanup_temp_after_hours": 24,
+    "cache_compression": true
+  },
+  "error_handling": {
+    "max_error_retries": 3,
+    "error_recovery_delay": 5,
+    "fallback_mode_enabled": true,
+    "detailed_error_logging": true
+  }
+}

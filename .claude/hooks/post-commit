@@ -1,0 +1,306 @@
+#!/bin/bash
+
+# CCPM Post-commit Hook  
+# Runs automated tasks after successful commits
+
+set -euo pipefail
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'  
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+
+# Hook configuration
+HOOK_NAME="post-commit"
+PROJECT_ROOT=$(git rev-parse --show-toplevel)
+CLAUDE_DIR="$PROJECT_ROOT/.claude"
+
+echo -e "${CYAN}🚀 Running CCPM post-commit tasks...${NC}"
+
+# Source common functions if available
+if [ -f "$CLAUDE_DIR/lib/common-functions.sh" ]; then
+    source "$CLAUDE_DIR/lib/common-functions.sh"
+fi
+
+# Get commit information
+COMMIT_HASH=$(git rev-parse HEAD)
+COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+COMMIT_AUTHOR=$(git log -1 --pretty=%an)
+COMMIT_DATE=$(git log -1 --pretty=%ad --date=iso)
+
+echo -e "${BLUE}📝 Commit Information:${NC}"
+echo "  Hash: $COMMIT_HASH"
+echo "  Author: $COMMIT_AUTHOR"
+echo "  Date: $COMMIT_DATE"
+echo "  Message: $COMMIT_MESSAGE"
+echo ""
+
+# Task 1: Log commit to operations log
+log_commit_operation() {
+    echo -e "${BLUE}📋 Logging commit operation...${NC}"
+    
+    local log_dir="$CLAUDE_DIR/logs"
+    mkdir -p "$log_dir"
+    
+    local log_file="$log_dir/operations.log"
+    local timestamp
+    
+    if command -v get_current_datetime >/dev/null 2>&1; then
+        timestamp=$(get_current_datetime)
+    else
+        timestamp=$(date -Iseconds)
+    fi
+    
+    # Log the commit
+    cat >> "$log_file" <<EOF
+[$timestamp] [COMMIT] [SUCCESS] Hash: $COMMIT_HASH, Author: $COMMIT_AUTHOR, Message: $COMMIT_MESSAGE
+EOF
+
+    echo -e "${GREEN}✅ Commit logged successfully${NC}"
+}
+
+# Task 2: Update project metadata
+update_project_metadata() {
+    echo -e "${BLUE}📊 Updating project metadata...${NC}"
+    
+    local cache_dir="$CLAUDE_DIR/cache"
+    mkdir -p "$cache_dir"
+    
+    local metadata_file="$cache_dir/metadata.json"
+    local timestamp
+    
+    if command -v get_current_datetime >/dev/null 2>&1; then
+        timestamp=$(get_current_datetime)
+    else
+        timestamp=$(date -Iseconds)
+    fi
+    
+    # Create or update metadata
+    if command -v jq >/dev/null 2>&1; then
+        local temp_file
+        temp_file=$(mktemp)
+        
+        # Initialize metadata if file doesn't exist
+        if [ ! -f "$metadata_file" ]; then
+            echo '{}' > "$metadata_file"
+        fi
+        
+        # Update metadata with commit info
+        jq --arg hash "$COMMIT_HASH" \
+           --arg author "$COMMIT_AUTHOR" \
+           --arg date "$timestamp" \
+           --arg message "$COMMIT_MESSAGE" \
+           '.last_commit = {
+             "hash": $hash,
+             "author": $author, 
+             "date": $date,
+             "message": $message
+           } | .updated = $date' "$metadata_file" > "$temp_file"
+        
+        mv "$temp_file" "$metadata_file"
+        
+        echo -e "${GREEN}✅ Project metadata updated${NC}"
+    else
+        echo -e "${YELLOW}⚠️  jq not available, skipping metadata update${NC}"
+    fi
+}
+
+# Task 3: Auto-update documentation if needed
+update_documentation() {
+    echo -e "${BLUE}📚 Checking for documentation updates...${NC}"
+    
+    # Get list of changed files in this commit
+    local changed_files
+    changed_files=$(git diff-tree --no-commit-id --name-only -r "$COMMIT_HASH")
+    
+    # Check if any .claude files were modified
+    local claude_files_changed
+    claude_files_changed=$(echo "$changed_files" | grep -c "^\.claude/" || echo "0")
+    
+    if [ "$claude_files_changed" -gt 0 ]; then
+        echo "  CCPM files were modified, checking documentation..."
+        
+        # Update last modified timestamp in CLAUDE.md if it exists
+        if [ -f ".claude/CLAUDE.md" ]; then
+            # Add a comment about the last update (if not already present today)
+            local today
+            today=$(date +%Y-%m-%d)
+            
+            if ! grep -q "Updated: $today" ".claude/CLAUDE.md"; then
+                # Create a backup
+                cp ".claude/CLAUDE.md" ".claude/CLAUDE.md.bak"
+                
+                # Add update note at the end
+                cat >> ".claude/CLAUDE.md" <<EOF
+
+---
+*Last updated: $today (auto-updated by post-commit hook)*
+EOF
+                
+                echo -e "${GREEN}✅ Documentation timestamp updated${NC}"
+            else
+                echo -e "${BLUE}ℹ️  Documentation already updated today${NC}"
+            fi
+        fi
+    else
+        echo -e "${BLUE}ℹ️  No CCPM files changed, skipping documentation update${NC}"
+    fi
+}
+
+# Task 4: Run quick health check  
+run_health_check() {
+    echo -e "${BLUE}🏥 Running post-commit health check...${NC}"
+    
+    local health_issues=0
+    
+    # Check critical files exist
+    local critical_files=(
+        ".claude/CLAUDE.md"
+        ".claude/lib/common-functions.sh"
+        ".claude/config/defaults.json"
+    )
+    
+    for file in "${critical_files[@]}"; do
+        if [ ! -f "$file" ]; then
+            echo -e "${YELLOW}⚠️  Critical file missing: $file${NC}"
+            ((health_issues++))
+        fi
+    done
+    
+    # Check directory structure
+    local required_dirs=(
+        ".claude/config"
+        ".claude/lib"
+        ".claude/scripts"
+        ".claude/logs"
+    )
+    
+    for dir in "${required_dirs[@]}"; do
+        if [ ! -d "$dir" ]; then
+            echo -e "${YELLOW}⚠️  Required directory missing: $dir${NC}"
+            ((health_issues++))
+        fi
+    done
+    
+    if [ $health_issues -eq 0 ]; then
+        echo -e "${GREEN}✅ Health check passed${NC}"
+    else
+        echo -e "${YELLOW}⚠️  Health check found $health_issues issues${NC}"
+    fi
+}
+
+# Task 5: Trigger integration checks (if in CI/CD environment)
+trigger_integration_checks() {
+    echo -e "${BLUE}🔄 Checking for integration triggers...${NC}"
+    
+    # Check if we're in a CI/CD environment
+    if [ -n "${GITHUB_ACTIONS:-}" ]; then
+        echo -e "${BLUE}ℹ️  Running in GitHub Actions, integration checks will be automatic${NC}"
+        return 0
+    fi
+    
+    # Check if this is a significant commit that should trigger tests
+    local commit_msg_lower
+    commit_msg_lower=$(echo "$COMMIT_MESSAGE" | tr '[:upper:]' '[:lower:]')
+    
+    local trigger_keywords=("feat" "fix" "refactor" "test" "breaking")
+    local should_trigger=false
+    
+    for keyword in "${trigger_keywords[@]}"; do
+        if [[ "$commit_msg_lower" == *"$keyword"* ]]; then
+            should_trigger=true
+            break
+        fi
+    done
+    
+    if [ "$should_trigger" = true ]; then
+        echo -e "${CYAN}🎯 Significant commit detected, consider running integration tests${NC}"
+        echo "  Suggestion: bats tests/integration/*.bats"
+    else
+        echo -e "${BLUE}ℹ️  Regular commit, integration checks not required${NC}"
+    fi
+}
+
+# Task 6: Update agent coordination if needed  
+update_agent_coordination() {
+    echo -e "${BLUE}🤖 Updating agent coordination status...${NC}"
+    
+    local coordination_dir="$CLAUDE_DIR/coordination"
+    
+    if [ -d "$coordination_dir" ]; then
+        local status_file="$coordination_dir/last_commit.json"
+        local timestamp
+        
+        if command -v get_current_datetime >/dev/null 2>&1; then
+            timestamp=$(get_current_datetime)
+        else
+            timestamp=$(date -Iseconds)
+        fi
+        
+        if command -v jq >/dev/null 2>&1; then
+            # Update coordination status
+            cat > "$status_file" <<EOF
+{
+  "last_commit": {
+    "hash": "$COMMIT_HASH",
+    "message": "$COMMIT_MESSAGE",
+    "author": "$COMMIT_AUTHOR",
+    "timestamp": "$timestamp"
+  },
+  "coordination_status": "updated",
+  "next_sync_recommended": "$(date -d '+1 hour' -Iseconds 2>/dev/null || date -Iseconds)"
+}
+EOF
+            
+            echo -e "${GREEN}✅ Agent coordination status updated${NC}"
+        else
+            echo -e "${YELLOW}⚠️  jq not available, skipping coordination update${NC}"
+        fi
+    else
+        echo -e "${BLUE}ℹ️  No agent coordination directory found${NC}"
+    fi
+}
+
+# Execute all post-commit tasks
+echo -e "${CYAN}Starting post-commit tasks...${NC}"
+echo ""
+
+log_commit_operation
+echo ""
+
+update_project_metadata  
+echo ""
+
+update_documentation
+echo ""
+
+run_health_check
+echo ""
+
+trigger_integration_checks
+echo ""
+
+update_agent_coordination
+echo ""
+
+# Final summary
+echo -e "${CYAN}🎉 Post-commit tasks completed successfully!${NC}"
+echo ""
+echo -e "${GREEN}📈 Summary:${NC}"
+echo "  - Commit operation logged"
+echo "  - Project metadata updated"  
+echo "  - Documentation status checked"
+echo "  - Health check completed"
+echo "  - Integration triggers evaluated"
+echo "  - Agent coordination updated"
+echo ""
+echo -e "${BLUE}💡 Next steps:${NC}"
+echo "  - Monitor CI/CD pipeline if configured"
+echo "  - Run tests if significant changes made"
+echo "  - Review agent coordination status"
+echo ""
+
+exit 0

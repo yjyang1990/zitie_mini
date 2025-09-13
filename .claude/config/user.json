@@ -1,0 +1,25 @@
+{
+  "_comment": "Configure your user settings. Replace empty values with your information.",
+  "user": {
+    "name": "",
+    "email": "", 
+    "preferred_editor": "code",
+    "timezone": "UTC"
+  },
+  "preferences": {
+    "auto_cleanup": true,
+    "confirm_destructive_actions": true,
+    "show_tips": true,
+    "max_parallel_agents": 5,
+    "default_branch": "main"
+  },
+  "integrations": {
+    "slack_webhook": "",
+    "email_notifications": false,
+    "github_notifications": true
+  },
+  "validation": {
+    "required_fields": ["user.name", "user.email"],
+    "optional_fields": ["integrations.slack_webhook"]
+  }
+}

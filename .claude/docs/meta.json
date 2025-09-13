@@ -1,0 +1,151 @@
+{
+  "version": "2.0",
+  "description": "CCPM Documentation Metadata and Management System",
+  "last_updated": "2024-01-20",
+  "maintenance": {
+    "review_cycle_days": 30,
+    "auto_validation": true,
+    "broken_link_check": true,
+    "content_freshness_check": true
+  },
+  "categories": {
+    "workflows": {
+      "description": "Development process guides and methodologies",
+      "priority": 1,
+      "review_frequency": "monthly",
+      "documents": [
+        {
+          "file": "epcc-workflow-guide.md",
+          "title": "EPCC Workflow Guide",
+          "status": "current",
+          "dependencies": ["patterns/agent-coordination.md", "guidelines/github-operations.md"],
+          "validates_against": ["../scripts/validation/workflow-compliance.sh"]
+        },
+        {
+          "file": "context-manager.md",
+          "title": "Context Management Strategies", 
+          "status": "current",
+          "dependencies": ["patterns/standard-patterns.md"]
+        },
+        {
+          "file": "project-overview.md",
+          "title": "Project Overview Generation",
+          "status": "current",
+          "dependencies": []
+        },
+        {
+          "file": "context-overview.md",
+          "title": "Context System Overview",
+          "status": "current", 
+          "dependencies": ["context-manager.md"]
+        }
+      ]
+    },
+    "patterns": {
+      "description": "Reusable development patterns and best practices",
+      "priority": 2,
+      "review_frequency": "bi-monthly",
+      "documents": [
+        {
+          "file": "standard-patterns.md",
+          "title": "Standard Development Patterns",
+          "status": "current",
+          "dependencies": [],
+          "referenced_by": ["../workflows/epcc-workflow-guide.md"]
+        },
+        {
+          "file": "agent-coordination.md", 
+          "title": "Agent Coordination Patterns",
+          "status": "current",
+          "dependencies": ["../agents/registry.json"],
+          "referenced_by": ["../workflows/epcc-workflow-guide.md"]
+        },
+        {
+          "file": "worktree-operations.md",
+          "title": "Git Worktree Usage Patterns",
+          "status": "current",
+          "dependencies": ["../guidelines/branch-operations.md"]
+        }
+      ]
+    },
+    "guidelines": {
+      "description": "Technical rules and operational procedures",
+      "priority": 3,
+      "review_frequency": "quarterly",
+      "documents": [
+        {
+          "file": "github-operations.md",
+          "title": "GitHub Integration Guidelines",
+          "status": "current",
+          "dependencies": [],
+          "validates_against": ["../scripts/validation/github-check.sh"]
+        },
+        {
+          "file": "branch-operations.md",
+          "title": "Git Branch Management",
+          "status": "current",
+          "dependencies": []
+        },
+        {
+          "file": "frontmatter-operations.md",
+          "title": "Frontmatter Handling Rules", 
+          "status": "current",
+          "dependencies": []
+        },
+        {
+          "file": "datetime.md",
+          "title": "Date/Time Operations",
+          "status": "current",
+          "dependencies": []
+        },
+        {
+          "file": "use-ast-grep.md",
+          "title": "AST-grep Usage Guidelines",
+          "status": "current",
+          "dependencies": []
+        },
+        {
+          "file": "strip-frontmatter.md",
+          "title": "Frontmatter Stripping Rules",
+          "status": "current", 
+          "dependencies": ["frontmatter-operations.md"]
+        },
+        {
+          "file": "test-execution.md",
+          "title": "Test Execution Guidelines", 
+          "status": "current",
+          "dependencies": []
+        }
+      ]
+    }
+  },
+  "cross_references": {
+    "workflows/epcc-workflow-guide.md": [
+      "patterns/agent-coordination.md",
+      "guidelines/github-operations.md",
+      "patterns/standard-patterns.md"
+    ],
+    "patterns/agent-coordination.md": [
+      "../agents/registry.json",
+      "guidelines/branch-operations.md"
+    ],
+    "patterns/worktree-operations.md": [
+      "guidelines/branch-operations.md"
+    ]
+  },
+  "validation_rules": {
+    "required_sections": [
+      "## Overview",
+      "## Usage",
+      "## Examples"
+    ],
+    "link_validation": true,
+    "code_block_validation": true,
+    "example_execution": true
+  },
+  "auto_generation": {
+    "table_of_contents": true,
+    "cross_reference_index": true,
+    "usage_statistics": true
+  }
+}

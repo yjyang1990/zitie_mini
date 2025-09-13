@@ -1,0 +1,114 @@
+{
+  "version": "2.0",
+  "description": "CCPM Testing Framework Configuration",
+  "last_updated": "2024-01-20",
+  "framework": {
+    "primary": "bats",
+    "description": "Bash Automated Testing System for shell script testing",
+    "version_required": "1.8.0"
+  },
+  "test_categories": {
+    "unit": {
+      "description": "Individual component and function testing",
+      "pattern": "test_*.bats",
+      "timeout_seconds": 30,
+      "parallel": true,
+      "coverage_target": 90
+    },
+    "integration": {
+      "description": "Component interaction and workflow testing",
+      "pattern": "integration_*.bats", 
+      "timeout_seconds": 120,
+      "parallel": false,
+      "coverage_target": 80
+    },
+    "fixtures": {
+      "description": "Test data and mock configurations",
+      "includes": ["sample_configs", "mock_data", "test_repositories"]
+    }
+  },
+  "test_execution": {
+    "default_timeout": 300,
+    "max_parallel_jobs": 4,
+    "retry_failed_tests": true,
+    "max_retries": 2,
+    "generate_reports": true,
+    "cleanup_after_tests": true
+  },
+  "reporting": {
+    "formats": ["json", "junit", "html"],
+    "output_directory": ".claude/tmp/test-reports",
+    "include_coverage": true,
+    "include_performance": true,
+    "archive_reports": true,
+    "retention_days": 30
+  },
+  "quality_gates": {
+    "minimum_coverage": 80,
+    "maximum_test_duration": 600,
+    "allow_flaky_tests": false,
+    "require_all_pass": true
+  },
+  "test_environment": {
+    "setup_script": "tests/fixtures/setup_test_env.sh",
+    "teardown_script": "tests/fixtures/teardown_test_env.sh",
+    "test_data_dir": "tests/fixtures/data",
+    "temp_dir": ".claude/tmp/test-workspace"
+  },
+  "components_to_test": {
+    "core_library": {
+      "test_file": "unit/test_core_lib.bats",
+      "source": ".claude/lib/core.sh",
+      "priority": "high",
+      "coverage_target": 95
+    },
+    "configuration": {
+      "test_file": "unit/test_config.bats", 
+      "source": ".claude/config/",
+      "priority": "high",
+      "coverage_target": 90
+    },
+    "agents": {
+      "test_file": "unit/test_agents.bats",
+      "source": ".claude/agents/",
+      "priority": "medium",
+      "coverage_target": 80
+    },
+    "scripts": {
+      "test_file": "unit/test_scripts.bats",
+      "source": ".claude/scripts/",
+      "priority": "high",
+      "coverage_target": 85
+    },
+    "templates": {
+      "test_file": "unit/test_templates.bats",
+      "source": ".claude/templates/",
+      "priority": "medium",
+      "coverage_target": 75
+    },
+    "hooks": {
+      "test_file": "unit/test_hooks.bats",
+      "source": ".claude/hooks/",
+      "priority": "high",
+      "coverage_target": 85
+    },
+    "workflows": {
+      "test_file": "integration/test_workflows.bats",
+      "source": "end-to-end workflows",
+      "priority": "high", 
+      "coverage_target": 70
+    }
+  },
+  "mock_services": {
+    "github_api": {
+      "enabled": true,
+      "mock_server": "tests/fixtures/mock_github.sh",
+      "test_data": "tests/fixtures/data/github_responses.json"
+    },
+    "file_system": {
+      "enabled": true,
+      "temp_workspace": true,
+      "cleanup_on_exit": true
+    }
+  }
+}

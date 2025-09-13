@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>字帖生成小程序 - 完整原型展示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* 🎨 中和设计主题色彩系统 */
+        :root {
+            --primary-color: #5B8DEE;      /* 智慧蓝 - 主品牌色 */
+            --secondary-color: #48D6A0;    /* 薄荷绿 - 活力点缀 */
+            --accent-color: #FFB547;       /* 暖橙 - 强调色 */
+            
+            --success-color: #52C41A;      /* 成功绿 */
+            --warning-color: #FAAD14;      /* 警告橙 */
+            --error-color: #F5222D;        /* 错误红 */
+            
+            --text-primary: #2C3E50;       /* 主文字 - 深墨色 */
+            --text-secondary: #8492A6;     /* 次要文字 */
+            --bg-primary: #FFFFFF;         /* 主背景 */
+            --bg-secondary: #F7F9FC;       /* 次背景 - 淡蓝灰 */
+            --bg-card: #FFFFFF;           /* 卡片背景 */
+            --border-color: #E8ECF1;       /* 边框色 */
+            
+            /* 新的渐变系统 */
+            --gradient-primary: linear-gradient(135deg, #5B8DEE 0%, #48D6A0 100%);
+            --gradient-card: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(247,249,252,0.95) 100%);
+            --gradient-bg: linear-gradient(135deg, #F7F9FC 0%, #E8F2FF 50%, #F0F8FF 100%);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: var(--gradient-bg);
+            padding: 40px 20px;
+            min-height: 100vh;
+            color: var(--text-primary);
+            position: relative;
+        }
+        
+        /* 宣纸纹理背景 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(255,255,255,0.05) 1px, transparent 1px),
+                radial-gradient(circle at 75% 75%, rgba(255,255,255,0.03) 1px, transparent 1px),
+                radial-gradient(circle at 45% 15%, rgba(255,255,255,0.02) 2px, transparent 2px),
+                radial-gradient(circle at 85% 45%, rgba(255,255,255,0.02) 1.5px, transparent 1.5px);
+            background-size: 60px 60px, 80px 80px, 40px 40px, 70px 70px;
+            opacity: 0.6;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            color: white;
+            position: relative;
+        }
+        
+        .header h1 {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f8ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 4px 16px rgba(255,255,255,0.1);
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
+        }
+        
+        .header p {
+            font-size: 18px;
+            opacity: 0.95;
+            line-height: 1.6;
+            color: #f0f8ff;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+        }
+        
+        /* 分区标题 */
+        .section-header {
+            text-align: center;
+            margin: 40px 0 30px;
+            color: white;
+            position: relative;
+        }
+        
+        .section-header h2 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #ffffff 0%, #e8f2ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
+        }
+        
+        .section-header p {
+            font-size: 16px;
+            opacity: 0.85;
+            color: #e8f2ff;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+        }
+        
+        .prototype-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .prototype-grid.primary {
+            margin-bottom: 60px;
+        }
+        
+        .prototype-grid.secondary {
+            margin-bottom: 50px;
+        }
+        
+        .prototype-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(91, 141, 238, 0.08);
+            transform-origin: center;
+        }
+        
+        .prototype-card:hover {
+            animation: cardFloat 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        
+        @keyframes cardFloat {
+            0% { transform: translateY(0) rotateX(0); }
+            50% { transform: translateY(-8px) rotateX(5deg); }
+            100% { transform: translateY(-6px) rotateX(0); }
+        }
+        
+        .prototype-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .prototype-card:hover::before {
+            opacity: 1;
+        }
+        
+        .prototype-card.primary {
+            background: var(--gradient-card);
+            border: 2px solid var(--primary-color);
+            box-shadow: 0 4px 20px rgba(91, 141, 238, 0.12);
+        }
+        
+        .prototype-card.primary::before {
+            opacity: 1;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+        
+        .prototype-card.primary::after {
+            content: '';
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            width: 16px;
+            height: 16px;
+            border-right: 2px solid var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            opacity: 0.6;
+        }
+        
+        .prototype-card.primary:hover {
+            transform: translateY(-6px);
+            border-color: var(--secondary-color);
+            box-shadow: 0 12px 40px rgba(91, 141, 238, 0.2);
+        }
+        
+        /* 流程数字 */
+        .flow-number {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 32px;
+            height: 32px;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(91, 141, 238, 0.4);
+            z-index: 2;
+            animation: numberGlow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes numberGlow {
+            0% { 
+                box-shadow: 0 4px 12px rgba(91, 141, 238, 0.4);
+                transform: scale(1);
+            }
+            100% { 
+                box-shadow: 0 6px 20px rgba(91, 141, 238, 0.6);
+                transform: scale(1.05);
+            }
+        }
+        
+        .prototype-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .prototype-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .prototype-desc {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .prototype-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .feature-tag {
+            background: rgba(91, 141, 238, 0.1);
+            color: var(--primary-color);
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            border: 1px solid rgba(91, 141, 238, 0.2);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: tagPulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes tagPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        
+        .feature-tag.primary {
+            background: var(--gradient-primary);
+            border-color: transparent;
+            color: white;
+            box-shadow: 0 2px 8px rgba(91, 141, 238, 0.3);
+        }
+        
+        .prototype-link {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .prototype-link:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 4px 16px rgba(255,255,255,0.2);
+        }
+        
+        .overview-section {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 40px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .overview-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            opacity: 0.6;
+        }
+        
+        .overview-section::after {
+            content: '◈';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 20px;
+            color: var(--primary-color);
+            background: var(--bg-primary);
+            padding: 0 12px;
+            opacity: 0.8;
+        }
+        
+        .overview-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 2px 4px rgba(255,255,255,0.1));
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .feature-item {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            backdrop-filter: blur(8px);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+        
+        .feature-item:nth-child(1) { animation-delay: 0.1s; }
+        .feature-item:nth-child(2) { animation-delay: 0.2s; }
+        .feature-item:nth-child(3) { animation-delay: 0.3s; }
+        .feature-item:nth-child(4) { animation-delay: 0.4s; }
+        .feature-item:nth-child(5) { animation-delay: 0.5s; }
+        .feature-item:nth-child(6) { animation-delay: 0.6s; }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .feature-item:hover {
+            transform: translateY(-6px) scale(1.02);
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.2);
+            box-shadow: 0 12px 32px rgba(91, 141, 238, 0.2);
+        }
+        
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .feature-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        
+        .feature-desc {
+            font-size: 13px;
+            opacity: 0.8;
+            line-height: 1.3;
+        }
+        
+        .tech-specs {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 30px;
+            position: relative;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .tech-specs::before {
+            content: '❖';
+            position: absolute;
+            top: -8px;
+            left: 20px;
+            font-size: 16px;
+            color: var(--accent-color);
+            background: rgba(255,255,255,0.05);
+            padding: 0 8px;
+        }
+        
+        .tech-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .tech-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .footer {
+            text-align: center;
+            color: rgba(255,255,255,0.8);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .footer-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: white;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 32px;
+            }
+            
+            .prototype-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .prototype-card {
+                padding: 20px;
+            }
+            
+            .overview-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✍️ 字帖生成小程序</h1>
+            <p>完整的微信小程序页面原型设计<br>按产品使用流程展示，接近真实小程序效果</p>
+        </div>
+        
+        <!-- 核心流程页面 -->
+        <div class="section-header">
+            <h2>🎯 核心使用流程</h2>
+            <p>按照用户实际使用顺序排列</p>
+        </div>
+        <div class="prototype-grid primary">
+            <div class="prototype-card primary" onclick="openPage('01-main-create.html')">
+                <div class="flow-number">1</div>
+                <div class="prototype-icon">✍️</div>
+                <div class="prototype-title">字帖制作</div>
+                <div class="prototype-desc">选择类型、输入内容、实时预览，快速创建个性化字帖</div>
+                <div class="prototype-features">
+                    <span class="feature-tag primary">实时预览</span>
+                    <span class="feature-tag">类型选择</span>
+                    <span class="feature-tag">快速设置</span>
+                </div>
+                <a href="01-main-create.html" class="prototype-link">开始制作</a>
+            </div>
+            
+            <div class="prototype-card" onclick="openPage('05-preview-export.html')">
+                <div class="flow-number">2</div>
+                <div class="prototype-icon">👀</div>
+                <div class="prototype-title">预览导出</div>
+                <div class="prototype-desc">完整预览字帖效果，调整参数，选择导出格式</div>
+                <div class="prototype-features">
+                    <span class="feature-tag">完整预览</span>
+                    <span class="feature-tag">参数调整</span>
+                    <span class="feature-tag primary">多格式导出</span>
+                </div>
+                <a href="05-preview-export.html" class="prototype-link">预览导出</a>
+            </div>
+            
+            <div class="prototype-card" onclick="openPage('04-history.html')">
+                <div class="flow-number">3</div>
+                <div class="prototype-icon">📋</div>
+                <div class="prototype-title">我的作品</div>
+                <div class="prototype-desc">管理已创建的字帖，查看统计数据，批量操作</div>
+                <div class="prototype-features">
+                    <span class="feature-tag">作品管理</span>
+                    <span class="feature-tag primary">数据统计</span>
+                    <span class="feature-tag">批量操作</span>
+                </div>
+                <a href="04-history.html" class="prototype-link">我的作品</a>
+            </div>
+        </div>
+        
+        <!-- 辅助功能页面 -->
+        <div class="section-header">
+            <h2>⚙️ 辅助功能模块</h2>
+            <p>提供更多选择和个性化设置</p>
+        </div>
+        <div class="prototype-grid secondary">
+            <div class="prototype-card" onclick="openPage('03-templates.html')">
+                <div class="prototype-icon">📚</div>
+                <div class="prototype-title">字帖模板</div>
+                <div class="prototype-desc">精选模板库，快速选择适合的练字内容</div>
+                <div class="prototype-features">
+                    <span class="feature-tag">模板库</span>
+                    <span class="feature-tag">分类筛选</span>
+                    <span class="feature-tag">搜索收藏</span>
+                </div>
+                <a href="03-templates.html" class="prototype-link">浏览模板</a>
+            </div>
+            
+            <div class="prototype-card" onclick="openPage('02-advanced-settings.html')">
+                <div class="prototype-icon">⚙️</div>
+                <div class="prototype-title">高级设置</div>
+                <div class="prototype-desc">4步专业配置：方格→字体→描红→特殊功能</div>
+                <div class="prototype-features">
+                    <span class="feature-tag">4步配置</span>
+                    <span class="feature-tag">专业参数</span>
+                    <span class="feature-tag">精细控制</span>
+                </div>
+                <a href="02-advanced-settings.html" class="prototype-link">高级设置</a>
+            </div>
+            
+            <div class="prototype-card" onclick="openPage('06-profile.html')">
+                <div class="prototype-icon">👤</div>
+                <div class="prototype-title">个人中心</div>
+                <div class="prototype-desc">用户信息、应用设置、会员功能和帮助支持</div>
+                <div class="prototype-features">
+                    <span class="feature-tag">用户中心</span>
+                    <span class="feature-tag">应用设置</span>
+                    <span class="feature-tag">会员功能</span>
+                </div>
+                <a href="06-profile.html" class="prototype-link">个人中心</a>
+            </div>
+        </div>
+        
+        <!-- 功能概览 -->
+        <div class="overview-section">
+            <div class="overview-title">🌟 核心功能特色</div>
+            
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">🎯</div>
+                    <div class="feature-name">实时预览</div>
+                    <div class="feature-desc">所见即所得，修改设置立即看到效果</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">👥</div>
+                    <div class="feature-name">练字社区</div>
+                    <div class="feature-desc">分享作品、互动点赞、学习交流</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🎨</div>
+                    <div class="feature-name">专业设置</div>
+                    <div class="feature-desc">田字格、字体、描红等专业参数</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">📱</div>
+                    <div class="feature-name">现代设计</div>
+                    <div class="feature-desc">符合2024年微信小程序设计趋势</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🔧</div>
+                    <div class="feature-name">高度定制</div>
+                    <div class="feature-desc">4步配置流程，丰富个性化选项</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">📤</div>
+                    <div class="feature-name">多格式导出</div>
+                    <div class="feature-desc">支持PDF、图片、云打印、社区分享</div>
+                </div>
+            </div>
+            
+            <div class="tech-specs">
+                <div class="tech-title">🛠️ 技术规格</div>
+                <div class="tech-list">
+                    <div>• 响应式设计，适配各种屏幕尺寸</div>
+                    <div>• 微信小程序UI组件和交互规范</div>
+                    <div>• 原生JavaScript实现所有交互功能</div>
+                    <div>• CSS3动画和过渡效果</div>
+                    <div>• 模块化HTML结构，便于开发维护</div>
+                    <div>• 支持触摸和鼠标操作</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 页脚信息 -->
+        <div class="footer">
+            <div class="footer-title">📋 原型说明</div>
+            <p>
+                本原型展示了字帖生成小程序的完整用户界面设计<br>
+                每个HTML文件都是独立的页面模块，可以单独预览和开发<br>
+                设计遵循微信小程序的官方设计规范，具有良好的用户体验<br><br>
+                
+                <strong>设计特点：</strong>接近真实效果 • 交互完整 • 代码简洁 • 易于维护
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        function openPage(filename) {
+            // 在新窗口或标签页中打开页面
+            window.open(filename, '_blank');
+        }
+        
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('字帖生成小程序原型索引页面加载完成');
+            
+            // 为所有卡片添加点击声效（如果支持）
+            const cards = document.querySelectorAll('.prototype-card');
+            cards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // 模拟点击反馈
+                    this.style.transform = 'translateY(-8px) scale(0.98)';
+                    setTimeout(() => {
+                        this.style.transform = 'translateY(-8px) scale(1)';
+                    }, 100);
+                });
+            });
+            
+            // 添加键盘导航支持
+            document.addEventListener('keydown', function(e) {
+                if (e.key >= '1' && e.key <= '6') {
+                    const index = parseInt(e.key) - 1;
+                    const filenames = [
+                        '01-main-create.html',
+                        '02-advanced-settings.html',
+                        '03-templates.html',
+                        '04-history.html',
+                        '05-preview-export.html',
+                        '06-profile.html'
+                    ];
+                    if (filenames[index]) {
+                        openPage(filenames[index]);
+                    }
+                }
+            });
+            
+            // 显示键盘快捷键提示
+            console.log('键盘快捷键: 1-6 数字键快速打开对应页面');
+        });
+    </script>
+</body>
+</html>

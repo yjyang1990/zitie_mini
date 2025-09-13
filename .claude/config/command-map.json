@@ -1,0 +1,124 @@
+{
+  "commands": {
+    "pm:init": {
+      "description": "Initialize CCPM project structure",
+      "script": ".claude/scripts/pm/init.sh",
+      "category": "project-management",
+      "requires_git": false,
+      "requires_auth": false
+    },
+    "pm:status": {
+      "description": "Show project status and progress overview",
+      "script": ".claude/scripts/pm/status.sh", 
+      "category": "project-management",
+      "requires_git": true,
+      "requires_auth": false
+    },
+    "pm:prd-new": {
+      "description": "Create new Product Requirements Document",
+      "script": ".claude/scripts/pm/prd-new.sh",
+      "category": "project-management",
+      "requires_git": true,
+      "requires_auth": false,
+      "args": ["name"]
+    },
+    "pm:prd-parse": {
+      "description": "Transform PRD into actionable epic with tasks",
+      "script": ".claude/scripts/pm/prd-parse.sh",
+      "category": "project-management", 
+      "requires_git": true,
+      "requires_auth": false,
+      "args": ["prd-name"]
+    },
+    "pm:epic-sync": {
+      "description": "Sync epic tasks to GitHub Issues",
+      "script": ".claude/scripts/pm/epic-sync.sh",
+      "category": "project-management",
+      "requires_git": true,
+      "requires_auth": true,
+      "args": ["epic-name"]
+    },
+    "pm:issue-start": {
+      "description": "Start working on specific GitHub issue",
+      "script": ".claude/scripts/pm/issue-start.sh",
+      "category": "project-management",
+      "requires_git": true,
+      "requires_auth": true,
+      "args": ["issue-number"]
+    },
+    "pm:next": {
+      "description": "Show next priority task to work on",
+      "script": ".claude/scripts/pm/next.sh",
+      "category": "project-management",
+      "requires_git": true,
+      "requires_auth": false
+    },
+    "validate": {
+      "description": "Validate CCPM configuration and setup",
+      "script": ".claude/scripts/validation/validate-project.sh",
+      "category": "validation",
+      "requires_git": false,
+      "requires_auth": false,
+      "options": {
+        "--quick": "Essential files and structure check",
+        "--config": "Deep CCPM configuration validation",
+        "--full": "Comprehensive project validation"
+      }
+    },
+    "test-all": {
+      "description": "Run complete test suite with reporting",
+      "script": "tests/run_tests.sh",
+      "category": "testing",
+      "requires_git": false,
+      "requires_auth": false,
+      "options": {
+        "-v": "Verbose output",
+        "-q": "Quiet output",
+        "-c": "Show coverage",
+        "--parallel": "Run in parallel"
+      }
+    },
+    "context": {
+      "description": "Generate project context overview",
+      "script": ".claude/scripts/context-manager.sh", 
+      "category": "utility",
+      "requires_git": true,
+      "requires_auth": false,
+      "subcommands": {
+        "create": "Generate project context overview",
+        "update": "Update existing context",
+        "show": "Display current context"
+      }
+    }
+  },
+  "categories": {
+    "project-management": {
+      "description": "Project management and workflow commands",
+      "color": "blue"
+    },
+    "validation": {
+      "description": "Configuration and system validation",
+      "color": "green"  
+    },
+    "testing": {
+      "description": "Test execution and quality assurance",
+      "color": "yellow"
+    },
+    "utility": {
+      "description": "Utility and helper commands",
+      "color": "cyan"
+    }
+  },
+  "aliases": {
+    "init": "pm:init",
+    "status": "pm:status",
+    "test": "test-all",
+    "check": "validate --quick"
+  },
+  "help": {
+    "format": "markdown",
+    "show_categories": true,
+    "show_requirements": true,
+    "show_examples": true
+  }
+}

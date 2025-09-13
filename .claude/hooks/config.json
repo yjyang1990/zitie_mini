@@ -1,0 +1,133 @@
+{
+  "version": "2.0",
+  "description": "CCPM Git Hooks Configuration",
+  "last_updated": "2024-01-20",
+  "hooks": {
+    "pre-commit": {
+      "enabled": true,
+      "description": "Quality checks before commit",
+      "checks": {
+        "shell_scripts": {
+          "enabled": true,
+          "tools": ["shellcheck"],
+          "severity": "error",
+          "patterns": ["*.sh"]
+        },
+        "json_validation": {
+          "enabled": true,
+          "tools": ["jq"],
+          "severity": "error", 
+          "patterns": ["*.json"]
+        },
+        "markdown_lint": {
+          "enabled": false,
+          "tools": ["markdownlint"],
+          "severity": "warning",
+          "patterns": ["*.md"]
+        },
+        "code_formatting": {
+          "enabled": true,
+          "tools": ["prettier"],
+          "severity": "warning",
+          "auto_fix": true
+        },
+        "secrets_scan": {
+          "enabled": true,
+          "tools": ["grep"],
+          "severity": "error",
+          "patterns": ["password", "api_key", "secret", "token"]
+        },
+        "large_files": {
+          "enabled": true,
+          "max_size_mb": 10,
+          "severity": "warning"
+        },
+        "ccpm_structure": {
+          "enabled": true,
+          "validates": [
+            ".claude/lib/core.sh",
+            ".claude/config/defaults.json",
+            ".claude/agents/registry.json"
+          ],
+          "severity": "error"
+        }
+      },
+      "performance": {
+        "timeout_seconds": 30,
+        "parallel_execution": true,
+        "cache_results": true
+      }
+    },
+    "post-commit": {
+      "enabled": true,
+      "description": "Automated tasks after commit",
+      "tasks": {
+        "update_context": {
+          "enabled": true,
+          "script": "scripts/context-manager.sh update",
+          "async": true
+        },
+        "sync_github": {
+          "enabled": false,
+          "script": "scripts/pm/sync.sh",
+          "async": true,
+          "conditions": ["epic_files_changed"]
+        },
+        "notify_team": {
+          "enabled": false,
+          "webhook_url": "",
+          "conditions": ["main_branch", "significant_changes"]
+        },
+        "trigger_ci": {
+          "enabled": false,
+          "conditions": ["test_files_changed", "main_branch"]
+        }
+      },
+      "performance": {
+        "timeout_seconds": 60,
+        "parallel_execution": true,
+        "background_execution": true
+      }
+    },
+    "pre-push": {
+      "enabled": false,
+      "description": "Validation before pushing to remote",
+      "checks": {
+        "run_tests": {
+          "enabled": true,
+          "command": "npm test",
+          "severity": "error"
+        },
+        "build_check": {
+          "enabled": true,
+          "command": "npm run build",
+          "severity": "error"
+        }
+      }
+    }
+  },
+  "global_settings": {
+    "skip_on_ci": true,
+    "verbose_output": false,
+    "log_file": ".claude/logs/hooks.log",
+    "error_reporting": {
+      "enabled": true,
+      "include_context": true,
+      "max_log_size_mb": 10
+    }
+  },
+  "project_specific": {
+    "detect_project_type": true,
+    "override_by_type": {
+      "react": {
+        "pre-commit.checks.code_formatting.tools": ["prettier", "eslint"]
+      },
+      "python": {
+        "pre-commit.checks.code_formatting.tools": ["black", "ruff"]  
+      },
+      "rust": {
+        "pre-commit.checks.code_formatting.tools": ["rustfmt", "clippy"]
+      }
+    }
+  }
+}

@@ -1,0 +1,346 @@
+{
+  "version": "1.0",
+  "description": "CCPM Workflow Automation Engine - Predefined development workflows",
+  "workflows": {
+    "feature_development": {
+      "name": "Feature Development",
+      "description": "Complete feature development from design to deployment",
+      "steps": [
+        {
+          "id": "analysis",
+          "name": "Requirements Analysis",
+          "agent": "pm-specialist", 
+          "description": "Analyze requirements and create technical specifications",
+          "inputs": ["requirements", "existing_architecture"],
+          "outputs": ["technical_spec", "implementation_plan"],
+          "estimated_time": "30m"
+        },
+        {
+          "id": "design",
+          "name": "Architecture Design",
+          "agent": "system-architect",
+          "description": "Design technical architecture and approach",
+          "inputs": ["technical_spec", "system_constraints"],
+          "outputs": ["architecture_design", "technology_decisions"],
+          "estimated_time": "45m",
+          "depends_on": ["analysis"]
+        },
+        {
+          "id": "implementation",
+          "name": "Parallel Implementation",
+          "description": "Implement backend and frontend components in parallel",
+          "parallel": true,
+          "tasks": [
+            {
+              "id": "backend_impl",
+              "agent": "backend-engineer",
+              "description": "Implement backend APIs and business logic",
+              "inputs": ["architecture_design", "api_specifications"],
+              "outputs": ["backend_implementation", "api_tests"],
+              "estimated_time": "2h"
+            },
+            {
+              "id": "frontend_impl", 
+              "agent": "frontend-engineer",
+              "description": "Implement frontend components and integration",
+              "inputs": ["architecture_design", "ui_mockups"],
+              "outputs": ["frontend_implementation", "component_tests"],
+              "estimated_time": "2h"
+            }
+          ],
+          "depends_on": ["design"]
+        },
+        {
+          "id": "integration_testing",
+          "name": "Integration Testing",
+          "agent": "test-runner",
+          "description": "Execute comprehensive integration tests",
+          "inputs": ["backend_implementation", "frontend_implementation"],
+          "outputs": ["test_results", "coverage_report"],
+          "estimated_time": "30m",
+          "depends_on": ["implementation"]
+        },
+        {
+          "id": "code_review",
+          "name": "Code Review",
+          "agent": "code-analyzer", 
+          "description": "Analyze code quality and security",
+          "inputs": ["all_implementations"],
+          "outputs": ["code_review_report", "improvement_suggestions"],
+          "estimated_time": "20m",
+          "depends_on": ["integration_testing"]
+        },
+        {
+          "id": "deployment_prep",
+          "name": "Deployment Preparation",
+          "agent": "github-specialist",
+          "description": "Create PR and prepare for deployment",
+          "inputs": ["reviewed_code", "test_results"],
+          "outputs": ["pull_request", "deployment_checklist"],
+          "estimated_time": "15m",
+          "depends_on": ["code_review"]
+        }
+      ],
+      "total_estimated_time": "4h",
+      "triggers": ["new feature", "implement feature", "feature request"],
+      "success_criteria": [
+        "All tests pass",
+        "Code review approved", 
+        "PR created successfully"
+      ]
+    },
+    "bug_fix": {
+      "name": "Bug Investigation and Fix",
+      "description": "Systematic bug analysis and resolution",
+      "steps": [
+        {
+          "id": "investigation",
+          "name": "Bug Analysis",
+          "agent": "code-analyzer",
+          "description": "Analyze bug reports and trace root cause",
+          "inputs": ["bug_report", "logs", "reproduction_steps"],
+          "outputs": ["root_cause_analysis", "affected_components"],
+          "estimated_time": "30m"
+        },
+        {
+          "id": "impact_assessment",
+          "name": "Impact Assessment", 
+          "agent": "system-architect",
+          "description": "Assess impact and design fix strategy",
+          "inputs": ["root_cause_analysis", "system_architecture"],
+          "outputs": ["impact_assessment", "fix_strategy"],
+          "estimated_time": "20m",
+          "depends_on": ["investigation"]
+        },
+        {
+          "id": "implementation",
+          "name": "Fix Implementation",
+          "agent": "auto-select",
+          "description": "Implement appropriate fix based on bug type",
+          "inputs": ["fix_strategy", "affected_code"],
+          "outputs": ["bug_fix", "fix_tests"],
+          "estimated_time": "45m",
+          "depends_on": ["impact_assessment"]
+        },
+        {
+          "id": "verification",
+          "name": "Fix Verification",
+          "agent": "test-runner",
+          "description": "Verify fix resolves issue without regressions",
+          "inputs": ["bug_fix", "original_bug_report"],
+          "outputs": ["verification_results", "regression_tests"],
+          "estimated_time": "20m", 
+          "depends_on": ["implementation"]
+        },
+        {
+          "id": "integration",
+          "name": "Integration and Documentation",
+          "agent": "github-specialist",
+          "description": "Integrate fix and update documentation",
+          "inputs": ["verified_fix", "test_results"],
+          "outputs": ["merged_fix", "updated_documentation"],
+          "estimated_time": "15m",
+          "depends_on": ["verification"]
+        }
+      ],
+      "total_estimated_time": "2h30m",
+      "triggers": ["bug", "fix", "error", "issue", "broken"],
+      "success_criteria": [
+        "Root cause identified",
+        "Fix resolves original issue",
+        "No regressions introduced",
+        "Tests pass"
+      ]
+    },
+    "architecture_review": {
+      "name": "Architecture Review and Improvement", 
+      "description": "Comprehensive architecture analysis and improvement recommendations",
+      "steps": [
+        {
+          "id": "current_analysis",
+          "name": "Current Architecture Analysis",
+          "agent": "system-architect",
+          "description": "Analyze existing architecture and identify areas for improvement",
+          "inputs": ["codebase", "documentation", "performance_metrics"],
+          "outputs": ["architecture_assessment", "improvement_areas"],
+          "estimated_time": "1h"
+        },
+        {
+          "id": "performance_analysis",
+          "name": "Performance Analysis",
+          "agent": "code-analyzer",
+          "description": "Identify performance bottlenecks and inefficiencies",
+          "inputs": ["codebase", "performance_data"],
+          "outputs": ["performance_report", "optimization_opportunities"],
+          "estimated_time": "45m",
+          "depends_on": ["current_analysis"]
+        },
+        {
+          "id": "security_review",
+          "name": "Security Review", 
+          "agent": "shell-auditor",
+          "description": "Review security practices and identify vulnerabilities",
+          "inputs": ["codebase", "security_policies"],
+          "outputs": ["security_assessment", "security_recommendations"],
+          "estimated_time": "30m",
+          "depends_on": ["current_analysis"]
+        },
+        {
+          "id": "recommendations",
+          "name": "Improvement Recommendations",
+          "agent": "system-architect",
+          "description": "Synthesize findings into actionable recommendations",
+          "inputs": ["architecture_assessment", "performance_report", "security_assessment"],
+          "outputs": ["improvement_plan", "implementation_roadmap"],
+          "estimated_time": "45m",
+          "depends_on": ["performance_analysis", "security_review"]
+        },
+        {
+          "id": "implementation_planning",
+          "name": "Implementation Planning",
+          "agent": "workflow-orchestrator",
+          "description": "Create detailed implementation plan with timelines",
+          "inputs": ["improvement_plan", "team_capacity"],
+          "outputs": ["detailed_roadmap", "resource_allocation"],
+          "estimated_time": "30m",
+          "depends_on": ["recommendations"]
+        }
+      ],
+      "total_estimated_time": "3h30m",
+      "triggers": ["architecture review", "performance review", "system analysis"],
+      "success_criteria": [
+        "Complete architecture assessment",
+        "Actionable improvement plan",
+        "Realistic implementation timeline"
+      ]
+    },
+    "code_review": {
+      "name": "Comprehensive Code Review",
+      "description": "Multi-agent code review process",
+      "steps": [
+        {
+          "id": "automated_analysis",
+          "name": "Automated Code Analysis",
+          "agent": "code-analyzer",
+          "description": "Perform automated code quality and security analysis",
+          "inputs": ["code_changes", "style_guidelines"],
+          "outputs": ["quality_report", "security_findings"],
+          "estimated_time": "15m"
+        },
+        {
+          "id": "architecture_review",
+          "name": "Architecture Review",
+          "agent": "system-architect", 
+          "description": "Review architectural decisions and patterns",
+          "inputs": ["code_changes", "architecture_guidelines"],
+          "outputs": ["architecture_feedback", "pattern_analysis"],
+          "estimated_time": "20m",
+          "depends_on": ["automated_analysis"]
+        },
+        {
+          "id": "security_audit",
+          "name": "Security Audit",
+          "agent": "shell-auditor",
+          "description": "Security-focused code review",
+          "inputs": ["code_changes", "security_policies"],
+          "outputs": ["security_report", "vulnerability_assessment"],
+          "estimated_time": "15m",
+          "depends_on": ["automated_analysis"]
+        },
+        {
+          "id": "test_review",
+          "name": "Test Coverage Review",
+          "agent": "test-engineer",
+          "description": "Review test coverage and quality",
+          "inputs": ["code_changes", "test_files"],
+          "outputs": ["test_assessment", "coverage_recommendations"],
+          "estimated_time": "10m",
+          "depends_on": ["automated_analysis"]
+        },
+        {
+          "id": "consolidation",
+          "name": "Review Consolidation",
+          "agent": "workflow-orchestrator",
+          "description": "Consolidate all review feedback into actionable items",
+          "inputs": ["quality_report", "architecture_feedback", "security_report", "test_assessment"],
+          "outputs": ["consolidated_review", "action_items"],
+          "estimated_time": "10m",
+          "depends_on": ["architecture_review", "security_audit", "test_review"]
+        }
+      ],
+      "total_estimated_time": "1h10m", 
+      "triggers": ["code review", "review code", "pull request review"],
+      "success_criteria": [
+        "All review aspects covered",
+        "Actionable feedback provided",
+        "Security verified"
+      ]
+    },
+    "hotfix": {
+      "name": "Emergency Hotfix",
+      "description": "Fast-track critical issue resolution",
+      "steps": [
+        {
+          "id": "triage",
+          "name": "Issue Triage",
+          "agent": "code-analyzer",
+          "description": "Rapidly assess issue severity and impact",
+          "inputs": ["issue_report", "system_status"],
+          "outputs": ["severity_assessment", "immediate_actions"],
+          "estimated_time": "10m"
+        },
+        {
+          "id": "quick_fix",
+          "name": "Quick Fix Implementation",
+          "agent": "auto-select",
+          "description": "Implement minimal viable fix",
+          "inputs": ["severity_assessment", "affected_code"],
+          "outputs": ["hotfix_implementation"],
+          "estimated_time": "20m",
+          "depends_on": ["triage"]
+        },
+        {
+          "id": "rapid_testing",
+          "name": "Rapid Testing",
+          "agent": "test-runner",
+          "description": "Execute critical path tests",
+          "inputs": ["hotfix_implementation"],
+          "outputs": ["critical_test_results"],
+          "estimated_time": "10m",
+          "depends_on": ["quick_fix"]
+        },
+        {
+          "id": "emergency_deploy", 
+          "name": "Emergency Deployment",
+          "agent": "github-specialist",
+          "description": "Deploy hotfix with minimal process",
+          "inputs": ["hotfix_implementation", "critical_test_results"],
+          "outputs": ["deployed_hotfix"],
+          "estimated_time": "10m",
+          "depends_on": ["rapid_testing"]
+        }
+      ],
+      "total_estimated_time": "50m",
+      "triggers": ["hotfix", "emergency", "critical", "urgent"],
+      "success_criteria": [
+        "Issue resolved quickly",
+        "Critical tests pass",
+        "System stability maintained"
+      ]
+    }
+  },
+  "execution_settings": {
+    "max_parallel_agents": 3,
+    "timeout_per_step": "30m",
+    "retry_failed_steps": true,
+    "max_retries": 2,
+    "continue_on_warnings": true,
+    "save_intermediate_results": true
+  },
+  "notification_settings": {
+    "notify_on_completion": true,
+    "notify_on_failure": true,
+    "notify_on_long_running": true,
+    "long_running_threshold": "1h"
+  }
+}

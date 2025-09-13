@@ -1,0 +1,237 @@
+{
+  "version": "2.0",
+  "description": "CCPM Agent Registry - Centralized agent definitions and selection rules",
+  "agents": {
+    "code-analyzer": {
+      "category": "core",
+      "description": "Search code, analyze bugs, trace logic flow",
+      "triggers": ["analyze", "search", "trace", "find", "bug", "logic"],
+      "capabilities": ["code_search", "bug_detection", "flow_analysis"],
+      "priority": 1,
+      "tools": ["Grep", "Read", "Glob", "WebFetch"],
+      "file_path": "agents/core/code-analyzer.md"
+    },
+    "file-analyzer": {
+      "category": "core", 
+      "description": "Extract and summarize file contents, especially logs",
+      "triggers": ["analyze file", "summarize", "extract", "log", "large file"],
+      "capabilities": ["file_analysis", "content_extraction", "log_parsing"],
+      "priority": 1,
+      "tools": ["Read", "Grep", "Glob"],
+      "file_path": "agents/core/file-analyzer.md"
+    },
+    "test-runner": {
+      "category": "core",
+      "description": "Execute tests with comprehensive analysis and reporting",
+      "triggers": ["test", "run tests", "testing", "verify", "validate"],
+      "capabilities": ["test_execution", "result_analysis", "failure_diagnosis"],
+      "priority": 1,
+      "tools": ["Bash", "Read", "Write", "Grep"],
+      "file_path": "agents/core/test-runner.md"
+    },
+    "system-architect": {
+      "category": "specialists",
+      "description": "Design architecture and technical approaches",
+      "triggers": ["design", "architecture", "technical approach", "scale"],
+      "capabilities": ["system_design", "architecture_planning", "technology_selection"],
+      "priority": 2,
+      "tools": ["Read", "Write", "WebFetch", "WebSearch"],
+      "file_path": "agents/specialists/system-architect.md"
+    },
+    "backend-engineer": {
+      "category": "specialists",
+      "description": "APIs, databases, server-side development",
+      "triggers": ["api", "backend", "server", "database", "microservice"],
+      "capabilities": ["api_development", "database_design", "server_optimization"],
+      "priority": 2,
+      "tools": ["Read", "Write", "Edit", "Bash", "WebFetch"],
+      "file_path": "agents/specialists/backend-engineer.md"
+    },
+    "frontend-engineer": {
+      "category": "specialists",
+      "description": "UI components, state management, modern frameworks",
+      "triggers": ["frontend", "ui", "react", "vue", "component", "interface"],
+      "capabilities": ["ui_development", "state_management", "responsive_design"],
+      "priority": 2,
+      "tools": ["Read", "Write", "Edit", "Bash", "WebFetch"],
+      "file_path": "agents/specialists/frontend-engineer.md"
+    },
+    "devops-engineer": {
+      "category": "specialists",
+      "description": "CI/CD, containers, cloud infrastructure",
+      "triggers": ["deploy", "ci/cd", "docker", "kubernetes", "cloud", "infrastructure"],
+      "capabilities": ["cicd_setup", "containerization", "cloud_deployment"],
+      "priority": 2,
+      "tools": ["Read", "Write", "Edit", "Bash", "WebFetch"],
+      "file_path": "agents/specialists/devops-engineer.md"
+    },
+    "test-engineer": {
+      "category": "specialists",
+      "description": "Comprehensive testing strategies and automation",
+      "triggers": ["test strategy", "automation", "quality", "coverage"],
+      "capabilities": ["test_planning", "automation_frameworks", "quality_assurance"],
+      "priority": 2,
+      "tools": ["Read", "Write", "Bash", "WebFetch"],
+      "file_path": "agents/specialists/test-engineer.md"
+    },
+    "ui-expert": {
+      "category": "specialists",
+      "description": "UI/UX design implementation and optimization",
+      "triggers": ["ui design", "user experience", "responsive", "accessibility"],
+      "capabilities": ["ui_design", "user_experience", "accessibility"],
+      "priority": 2,
+      "tools": ["Read", "Write", "Edit", "WebFetch"],
+      "file_path": "agents/specialists/ui-expert.md"
+    },
+    "shell-auditor": {
+      "category": "specialists",
+      "description": "Shell script security and quality auditing", 
+      "triggers": ["shell", "bash", "script", "security", "audit"],
+      "capabilities": ["shell_analysis", "security_audit", "best_practices"],
+      "priority": 2,
+      "tools": ["Read", "Edit", "Bash", "Grep"],
+      "file_path": "agents/specialists/shell-auditor.md"
+    },
+    "workflow-orchestrator": {
+      "category": "coordinators",
+      "description": "Multi-agent workflow coordination and orchestration",
+      "triggers": ["orchestrate", "coordinate", "workflow", "multi-agent"],
+      "capabilities": ["workflow_coordination", "agent_orchestration", "parallel_processing"],
+      "priority": 3,
+      "tools": ["Read", "Write", "Task", "TodoWrite", "Bash"],
+      "file_path": "agents/coordinators/workflow-orchestrator.md"
+    },
+    "parallel-worker": {
+      "category": "coordinators", 
+      "description": "Execute parallel work streams in git worktrees",
+      "triggers": ["parallel", "worktree", "concurrent", "multi-branch"],
+      "capabilities": ["parallel_execution", "worktree_management", "concurrent_development"],
+      "priority": 3,
+      "tools": ["Read", "Write", "Bash", "Task", "Agent"],
+      "file_path": "agents/coordinators/parallel-worker.md"
+    },
+    "pm-specialist": {
+      "category": "coordinators",
+      "description": "Project management and requirements analysis",
+      "triggers": ["project", "requirements", "epic", "prd", "planning"],
+      "capabilities": ["project_management", "requirements_analysis", "epic_planning"],
+      "priority": 3,
+      "tools": ["Read", "Write", "Edit", "Task", "TodoWrite"],
+      "file_path": "agents/coordinators/pm-specialist.md"
+    },
+    "github-specialist": {
+      "category": "coordinators",
+      "description": "GitHub integration and repository management",
+      "triggers": ["github", "issue", "pr", "pull request", "repository"],
+      "capabilities": ["github_integration", "issue_management", "pr_workflows"],
+      "priority": 3,
+      "tools": ["Bash", "WebFetch", "Read", "Edit"],
+      "file_path": "agents/coordinators/github-specialist.md"
+    }
+  },
+  "selection_rules": {
+    "auto_select": true,
+    "match_method": "keyword_priority",
+    "fallback_agent": "workflow-orchestrator",
+    "priority_weights": {
+      "exact_match": 10,
+      "partial_match": 5,
+      "category_match": 2,
+      "performance_bonus": 1.5
+    },
+    "selection_criteria": {
+      "minimum_confidence": 0.6,
+      "prefer_recent_success": true,
+      "load_balancing": true
+    }
+  },
+  "performance_tracking": {
+    "enabled": true,
+    "metrics": {
+      "success_rate": "percentage",
+      "average_duration": "seconds", 
+      "user_satisfaction": "rating"
+    },
+    "retention_days": 30
+  },
+  "agent_versioning": {
+    "current_version": "2.0",
+    "compatibility_matrix": {
+      "1.x": "deprecated",
+      "2.0": "current", 
+      "2.1": "beta"
+    },
+    "migration_rules": {
+      "auto_upgrade": false,
+      "breaking_changes": true
+    }
+  },
+  "workflows": {
+    "feature_development": {
+      "description": "Complete feature development workflow",
+      "sequence": [
+        {
+          "phase": "analysis",
+          "agent": "system-architect",
+          "description": "Design technical approach"
+        },
+        {
+          "phase": "implementation",
+          "agents": ["backend-engineer", "frontend-engineer"],
+          "parallel": true,
+          "description": "Implement backend and frontend"
+        },
+        {
+          "phase": "testing",
+          "agent": "test-runner",
+          "description": "Execute comprehensive tests"
+        },
+        {
+          "phase": "integration",
+          "agent": "github-specialist",
+          "description": "Create PR and manage integration"
+        }
+      ]
+    },
+    "bug_fix": {
+      "description": "Bug investigation and resolution workflow",
+      "sequence": [
+        {
+          "phase": "analysis",
+          "agent": "code-analyzer",
+          "description": "Analyze bug and trace root cause"
+        },
+        {
+          "phase": "fix",
+          "agent": "auto-select",
+          "description": "Implement appropriate fix"
+        },
+        {
+          "phase": "verification",
+          "agent": "test-runner", 
+          "description": "Verify fix with tests"
+        }
+      ]
+    },
+    "architecture_review": {
+      "description": "System architecture analysis and improvement",
+      "sequence": [
+        {
+          "phase": "analysis",
+          "agent": "system-architect",
+          "description": "Analyze current architecture"
+        },
+        {
+          "phase": "recommendations",
+          "agent": "system-architect",
+          "description": "Provide improvement recommendations"
+        },
+        {
+          "phase": "implementation_planning",
+          "agent": "workflow-orchestrator",
+          "description": "Plan implementation across teams"
+        }
+      ]
+    }
+  }
+}

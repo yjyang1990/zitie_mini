@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>字帖模板 - 字帖生成器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .phone-container {
+            background: #000;
+            border-radius: 25px;
+            padding: 8px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
+        
+        .screen {
+            width: 375px;
+            height: 812px;
+            background: #fff;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* 微信小程序状态栏 */
+        .mp-status-bar {
+            background: #fff;
+            height: 44px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        /* 微信小程序导航栏 */
+        .mp-nav-bar {
+            background: #576b95;
+            color: white;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            position: relative;
+        }
+        
+        .mp-nav-title {
+            flex: 1;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .mp-nav-back {
+            position: absolute;
+            left: 16px;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .mp-nav-action {
+            position: absolute;
+            right: 16px;
+            font-size: 14px;
+            background: rgba(255,255,255,0.1);
+            padding: 6px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+        
+        /* 主要内容区域 */
+        .mp-main-content {
+            height: calc(100% - 171px);
+            overflow-y: auto;
+            background: #f7f7f7;
+        }
+        
+        .mp-main-content::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* 搜索栏 */
+        .mp-search-bar {
+            background: white;
+            margin: 12px;
+            border-radius: 12px;
+            padding: 12px 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .mp-search-input {
+            width: 100%;
+            height: 36px;
+            background: #f5f5f5;
+            border: none;
+            border-radius: 18px;
+            padding: 0 16px 0 40px;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .mp-search-input:focus {
+            outline: none;
+            background: #eef4ff;
+        }
+        
+        .mp-search-container {
+            position: relative;
+        }
+        
+        .mp-search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            color: #999;
+        }
+        
+        /* 分类标签 */
+        .mp-category-tabs {
+            background: white;
+            margin: 0 12px 12px;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .mp-tab-list {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+        
+        .mp-tab-list::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .mp-tab-item {
+            background: #f5f5f5;
+            color: #666;
+            padding: 8px 16px;
+            border-radius: 16px;
+            font-size: 13px;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .mp-tab-item.active {
+            background: #576b95;
+            color: white;
+            border-color: #576b95;
+        }
+        
+        /* 小程序卡片样式 */
+        .mp-card {
+            background: white;
+            margin: 12px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .mp-card-header {
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .mp-card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .mp-card-content {
+            padding: 16px;
+        }
+        
+        /* 模板网格 */
+        .mp-template-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .mp-template-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .mp-template-card:active {
+            transform: scale(0.98);
+            background: #e7f3ff;
+            border-color: #576b95;
+        }
+        
+        .mp-template-preview {
+            height: 80px;
+            background: linear-gradient(135deg, #f0f8ff, #e7f3ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #576b95;
+            font-family: '楷体', 'KaiTi', serif;
+            position: relative;
+        }
+        
+        .mp-template-info {
+            padding: 12px;
+        }
+        
+        .mp-template-name {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #333;
+        }
+        
+        .mp-template-desc {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 8px;
+        }
+        
+        .mp-template-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: #666;
+        }
+        
+        .mp-template-usage {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .mp-template-rating {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+        
+        /* 热门标签 */
+        .mp-hot-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #ff4757;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 8px;
+        }
+        
+        .mp-new-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #07c160;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 8px;
+        }
+        
+        /* 推荐模板大卡片 */
+        .mp-featured-template {
+            background: linear-gradient(135deg, #576b95, #4a5d8a);
+            color: white;
+            margin: 12px;
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .mp-featured-bg {
+            position: absolute;
+            top: 0;
+            right: 0;
+            font-size: 120px;
+            opacity: 0.1;
+            line-height: 1;
+        }
+        
+        .mp-featured-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .mp-featured-desc {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+        
+        .mp-featured-action {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .mp-featured-action:active {
+            background: rgba(255,255,255,0.3);
+            transform: scale(0.95);
+        }
+        
+        /* 分类网格 */
+        .mp-category-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+        
+        .mp-category-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .mp-category-card:active {
+            transform: scale(0.95);
+            background: #e7f3ff;
+            border-color: #576b95;
+        }
+        
+        .mp-category-card.popular {
+            background: linear-gradient(135deg, #fff8e1, #ffecb3);
+            border-color: #ffc107;
+            position: relative;
+        }
+        
+        .mp-category-card.popular::before {
+            content: "🔥";
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff4757;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+        
+        .mp-category-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        
+        .mp-category-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        
+        .mp-category-count {
+            font-size: 11px;
+            color: #999;
+        }
+        
+        /* 空状态 */
+        .mp-empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        
+        .mp-empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        
+        .mp-empty-text {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .mp-empty-action {
+            background: #576b95;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        /* 底部导航 */
+        .mp-tabbar {
+            background: white;
+            height: 83px;
+            display: flex;
+            border-top: 1px solid #e5e5e5;
+            padding-bottom: 34px;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+        
+        .mp-tab-item-nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding-top: 8px;
+            cursor: pointer;
+        }
+        
+        .mp-tab-icon {
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #999;
+        }
+        
+        .mp-tab-item-nav.active .mp-tab-icon {
+            color: #07c160;
+        }
+        
+        .mp-tab-text {
+            font-size: 10px;
+            color: #999;
+        }
+        
+        .mp-tab-item-nav.active .mp-tab-text {
+            color: #07c160;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <div class="screen">
+            <!-- 微信小程序状态栏 -->
+            <div class="mp-status-bar">
+                <div>9:41</div>
+                <div>📶 📶 🔋</div>
+            </div>
+            
+            <!-- 微信小程序导航栏 -->
+            <div class="mp-nav-bar">
+                <div class="mp-nav-back" onclick="goBack()">‹</div>
+                <div class="mp-nav-title">字帖模板</div>
+                <div class="mp-nav-action" onclick="openSearch()">🔍</div>
+            </div>
+            
+            <div class="mp-main-content">
+                <!-- 搜索栏 -->
+                <div class="mp-search-bar">
+                    <div class="mp-search-container">
+                        <span class="mp-search-icon">🔍</span>
+                        <input type="text" class="mp-search-input" placeholder="搜索模板..." 
+                               oninput="searchTemplates(this.value)">
+                    </div>
+                </div>
+                
+                <!-- 分类标签 -->
+                <div class="mp-category-tabs">
+                    <div class="mp-tab-list">
+                        <div class="mp-tab-item active" onclick="filterCategory('all', this)">全部</div>
+                        <div class="mp-tab-item" onclick="filterCategory('hot', this)">热门</div>
+                        <div class="mp-tab-item" onclick="filterCategory('hanzi', this)">汉字</div>
+                        <div class="mp-tab-item" onclick="filterCategory('english', this)">英文</div>
+                        <div class="mp-tab-item" onclick="filterCategory('number', this)">数字</div>
+                        <div class="mp-tab-item" onclick="filterCategory('poem', this)">古诗</div>
+                        <div class="mp-tab-item" onclick="filterCategory('course', this)">课本</div>
+                    </div>
+                </div>
+                
+                <!-- 今日推荐 -->
+                <div class="mp-featured-template" onclick="useTemplate('每日一句')">
+                    <div class="mp-featured-bg">⭐</div>
+                    <div class="mp-featured-title">🔥 今日推荐：经典古诗</div>
+                    <div class="mp-featured-desc">春江花月夜、静夜思、望庐山瀑布等经典诗词，提升文学素养和书法水平</div>
+                    <button class="mp-featured-action">立即体验</button>
+                </div>
+                
+                <!-- 热门模板 -->
+                <div class="mp-card">
+                    <div class="mp-card-header">
+                        <div class="mp-card-title">
+                            🔥 热门模板
+                        </div>
+                    </div>
+                    <div class="mp-card-content">
+                        <div class="mp-template-grid">
+                            <div class="mp-template-card" onclick="useTemplate('基础问候语')">
+                                <div class="mp-template-preview">
+                                    <div class="mp-hot-badge">热门</div>
+                                    你好世界
+                                </div>
+                                <div class="mp-template-info">
+                                    <div class="mp-template-name">基础问候语</div>
+                                    <div class="mp-template-desc">日常问候语练习</div>
+                                    <div class="mp-template-stats">
+                                        <div class="mp-template-usage">
+                                            <span>👥</span>
+                                            <span>1.2万次</span>
+                                        </div>
+                                        <div class="mp-template-rating">
+                                            <span>⭐</span>
+                                            <span>4.9</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mp-template-card" onclick="useTemplate('四季词汇')">
+                                <div class="mp-template-preview">
+                                    <div class="mp-hot-badge">热门</div>
+                                    春夏秋冬
+                                </div>
+                                <div class="mp-template-info">
+                                    <div class="mp-template-name">四季词汇</div>
+                                    <div class="mp-template-desc">四季相关汉字</div>
+                                    <div class="mp-template-stats">
+                                        <div class="mp-template-usage">
+                                            <span>👥</span>
+                                            <span>8.5千次</span>
+                                        </div>
+                                        <div class="mp-template-rating">
+                                            <span>⭐</span>
+                                            <span>4.8</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mp-template-card" onclick="useTemplate('数字练习')">
+                                <div class="mp-template-preview">
+                                    一二三四
+                                </div>
+                                <div class="mp-template-info">
+                                    <div class="mp-template-name">数字练习</div>
+                                    <div class="mp-template-desc">中文数字书写</div>
+                                    <div class="mp-template-stats">
+                                        <div class="mp-template-usage">
+                                            <span>👥</span>
+                                            <span>6.3千次</span>
+                                        </div>
+                                        <div class="mp-template-rating">
+                                            <span>⭐</span>
+                                            <span>4.7</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mp-template-card" onclick="useTemplate('英文字母')">
+                                <div class="mp-template-preview">
+                                    <div class="mp-new-badge">新</div>
+                                    ABCD
+                                </div>
+                                <div class="mp-template-info">
+                                    <div class="mp-template-name">英文字母</div>
+                                    <div class="mp-template-desc">26个英文字母</div>
+                                    <div class="mp-template-stats">
+                                        <div class="mp-template-usage">
+                                            <span>👥</span>
+                                            <span>4.1千次</span>
+                                        </div>
+                                        <div class="mp-template-rating">
+                                            <span>⭐</span>
+                                            <span>4.6</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 分类浏览 -->
+                <div class="mp-card">
+                    <div class="mp-card-header">
+                        <div class="mp-card-title">
+                            📚 分类浏览
+                        </div>
+                    </div>
+                    <div class="mp-card-content">
+                        <div class="mp-category-grid">
+                            <div class="mp-category-card popular" onclick="browseCategoryDetail('primary')">
+                                <div class="mp-category-icon">🏫</div>
+                                <div class="mp-category-name">小学语文</div>
+                                <div class="mp-category-count">120个模板</div>
+                            </div>
+                            
+                            <div class="mp-category-card popular" onclick="browseCategoryDetail('poem')">
+                                <div class="mp-category-icon">📖</div>
+                                <div class="mp-category-name">古诗词</div>
+                                <div class="mp-category-count">89个模板</div>
+                            </div>
+                            
+                            <div class="mp-category-card" onclick="browseCategoryDetail('phrase')">
+                                <div class="mp-category-icon">💭</div>
+                                <div class="mp-category-name">成语故事</div>
+                                <div class="mp-category-count">76个模板</div>
+                            </div>
+                            
+                            <div class="mp-category-card" onclick="browseCategoryDetail('basic')">
+                                <div class="mp-category-icon">🌟</div>
+                                <div class="mp-category-name">基础汉字</div>
+                                <div class="mp-category-count">156个模板</div>
+                            </div>
+                            
+                            <div class="mp-category-card" onclick="browseCategoryDetail('english')">
+                                <div class="mp-category-icon">🔤</div>
+                                <div class="mp-category-name">英文字母</div>
+                                <div class="mp-category-count">88个模板</div>
+                            </div>
+                            
+                            <div class="mp-category-card" onclick="browseCategoryDetail('calligraphy')">
+                                <div class="mp-category-icon">🖌️</div>
+                                <div class="mp-category-name">书法练习</div>
+                                <div class="mp-category-count">42个模板</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 最近使用 -->
+                <div class="mp-card">
+                    <div class="mp-card-header">
+                        <div class="mp-card-title">
+                            🕐 最近使用
+                        </div>
+                    </div>
+                    <div class="mp-card-content">
+                        <div class="mp-template-grid">
+                            <div class="mp-template-card" onclick="useTemplate('上下左右')">
+                                <div class="mp-template-preview">
+                                    上下左右
+                                </div>
+                                <div class="mp-template-info">
+                                    <div class="mp-template-name">方位词汇</div>
+                                    <div class="mp-template-desc">基础方位汉字</div>
+                                    <div class="mp-template-stats">
+                                        <div class="mp-template-usage">
+                                            <span>📅</span>
+                                            <span>今天</span>
+                                        </div>
+                                        <div class="mp-template-rating">
+                                            <span>⭐</span>
+                                            <span>4.5</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mp-template-card" onclick="useTemplate('颜色词汇')">
+                                <div class="mp-template-preview">
+                                    红黄蓝绿
+                                </div>
+                                <div class="mp-template-info">
+                                    <div class="mp-template-name">颜色词汇</div>
+                                    <div class="mp-template-desc">常用颜色汉字</div>
+                                    <div class="mp-template-stats">
+                                        <div class="mp-template-usage">
+                                            <span>📅</span>
+                                            <span>昨天</span>
+                                        </div>
+                                        <div class="mp-template-rating">
+                                            <span>⭐</span>
+                                            <span>4.4</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 底部安全区域 -->
+                <div style="height: 20px;"></div>
+            </div>
+            
+            <!-- 微信小程序底部导航 -->
+            <div class="mp-tabbar">
+                <div class="mp-tab-item-nav">
+                    <div class="mp-tab-icon">📝</div>
+                    <div class="mp-tab-text">制作</div>
+                </div>
+                <div class="mp-tab-item-nav active">
+                    <div class="mp-tab-icon">📚</div>
+                    <div class="mp-tab-text">模板</div>
+                </div>
+                <div class="mp-tab-item-nav">
+                    <div class="mp-tab-icon">📋</div>
+                    <div class="mp-tab-text">我的作品</div>
+                </div>
+                <div class="mp-tab-item-nav">
+                    <div class="mp-tab-icon">👤</div>
+                    <div class="mp-tab-text">设置</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 模板数据
+        const templates = {
+            '基础问候语': {
+                content: '你好世界',
+                category: 'hanzi',
+                usage: 12000,
+                rating: 4.9,
+                hot: true
+            },
+            '四季词汇': {
+                content: '春夏秋冬',
+                category: 'hanzi',
+                usage: 8500,
+                rating: 4.8,
+                hot: true
+            },
+            '数字练习': {
+                content: '一二三四',
+                category: 'number',
+                usage: 6300,
+                rating: 4.7,
+                hot: false
+            },
+            '英文字母': {
+                content: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+                category: 'english',
+                usage: 4100,
+                rating: 4.6,
+                hot: false,
+                new: true
+            },
+            '上下左右': {
+                content: '上下左右',
+                category: 'hanzi',
+                usage: 3800,
+                rating: 4.5,
+                hot: false
+            },
+            '颜色词汇': {
+                content: '红黄蓝绿',
+                category: 'hanzi',
+                usage: 3200,
+                rating: 4.4,
+                hot: false
+            }
+        };
+        
+        // 当前筛选类别
+        let currentCategory = 'all';
+        
+        // 使用模板
+        function useTemplate(templateName) {
+            const template = templates[templateName];
+            if (!template) {
+                console.error('模板不存在:', templateName);
+                return;
+            }
+            
+            if (typeof wx !== 'undefined') {
+                wx.vibrateShort();
+                wx.showLoading({
+                    title: '加载模板...'
+                });
+                
+                setTimeout(() => {
+                    wx.hideLoading();
+                    wx.navigateTo({
+                        url: `/pages/create/create?template=${encodeURIComponent(template.content)}`
+                    });
+                }, 800);
+            } else {
+                alert(`使用模板: ${templateName}\n内容: ${template.content}`);
+            }
+        }
+        
+        // 筛选分类
+        function filterCategory(category, element) {
+            // 更新活跃标签
+            document.querySelectorAll('.mp-tab-item').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            element.classList.add('active');
+            
+            currentCategory = category;
+            
+            // 模拟筛选逻辑
+            console.log('筛选分类:', category);
+            
+            if (typeof wx !== 'undefined') {
+                wx.vibrateShort();
+            }
+            
+            // 这里可以根据分类筛选显示不同的模板
+            updateTemplateDisplay();
+        }
+        
+        // 更新模板显示
+        function updateTemplateDisplay() {
+            // 模拟根据分类更新模板显示
+            console.log('更新模板显示，当前分类:', currentCategory);
+        }
+        
+        // 搜索模板
+        function searchTemplates(keyword) {
+            console.log('搜索关键词:', keyword);
+            
+            if (keyword.trim() === '') {
+                // 显示所有模板
+                updateTemplateDisplay();
+                return;
+            }
+            
+            // 模拟搜索逻辑
+            const matchingTemplates = Object.keys(templates).filter(name => 
+                name.includes(keyword) || templates[name].content.includes(keyword)
+            );
+            
+            console.log('匹配的模板:', matchingTemplates);
+        }
+        
+        // 浏览分类详情
+        function browseCategoryDetail(categoryId) {
+            if (typeof wx !== 'undefined') {
+                wx.vibrateShort();
+                wx.navigateTo({
+                    url: `/pages/category/category?id=${categoryId}`
+                });
+            } else {
+                alert(`浏览分类详情: ${categoryId}`);
+            }
+        }
+        
+        // 打开搜索
+        function openSearch() {
+            const searchInput = document.querySelector('.mp-search-input');
+            searchInput.focus();
+            
+            if (typeof wx !== 'undefined') {
+                wx.vibrateShort();
+            }
+        }
+        
+        // 返回上一页
+        function goBack() {
+            if (typeof wx !== 'undefined') {
+                wx.navigateBack();
+            } else {
+                alert('返回上一页');
+            }
+        }
+        
+        // 页面加载完成
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('模板页面加载完成');
+            console.log('可用模板:', Object.keys(templates));
+            
+            // 模拟加载用户最近使用的模板
+            setTimeout(() => {
+                console.log('最近使用模板加载完成');
+            }, 500);
+        });
+        
+        // 模拟下拉刷新
+        let startY = 0;
+        let currentY = 0;
+        let pulling = false;
+        
+        document.addEventListener('touchstart', function(e) {
+            startY = e.touches[0].clientY;
+        });
+        
+        document.addEventListener('touchmove', function(e) {
+            currentY = e.touches[0].clientY;
+            const mainContent = document.querySelector('.mp-main-content');
+            
+            if (mainContent.scrollTop === 0 && currentY > startY) {
+                pulling = true;
+                // 可以在这里添加下拉刷新的视觉效果
+            }
+        });
+        
+        document.addEventListener('touchend', function(e) {
+            if (pulling && currentY - startY > 50) {
+                // 触发刷新
+                if (typeof wx !== 'undefined') {
+                    wx.showToast({
+                        title: '刷新成功',
+                        icon: 'success'
+                    });
+                }
+                console.log('下拉刷新触发');
+            }
+            pulling = false;
+        });
+    </script>
+</body>
+</html>

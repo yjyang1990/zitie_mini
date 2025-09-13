@@ -1,0 +1,131 @@
+{
+  "version": "2.0",
+  "description": "CCPM Template Registry and Management System",
+  "last_updated": "2024-01-20",
+  "template_categories": {
+    "prd": {
+      "name": "Product Requirements Documents",
+      "description": "Templates for creating comprehensive PRDs",
+      "templates": [
+        {
+          "name": "standard-prd",
+          "file": "prd/standard-prd.md",
+          "title": "Standard PRD Template",
+          "description": "Comprehensive PRD template with all standard sections",
+          "variables": ["product_name", "version", "author", "date"],
+          "category": "standard",
+          "usage_frequency": "high"
+        },
+        {
+          "name": "feature-prd", 
+          "file": "prd/feature-prd.md",
+          "title": "Feature PRD Template",
+          "description": "Focused template for single feature development",
+          "variables": ["feature_name", "epic_name", "author", "date"],
+          "category": "feature",
+          "usage_frequency": "high"
+        },
+        {
+          "name": "api-prd",
+          "file": "prd/api-prd.md", 
+          "title": "API PRD Template",
+          "description": "Specialized template for API development",
+          "variables": ["api_name", "version", "endpoints", "author", "date"],
+          "category": "technical",
+          "usage_frequency": "medium"
+        }
+      ]
+    },
+    "epic": {
+      "name": "Epic Breakdowns",
+      "description": "Templates for breaking down PRDs into actionable epics",
+      "templates": [
+        {
+          "name": "standard-epic",
+          "file": "epic/standard-epic.md",
+          "title": "Standard Epic Template", 
+          "description": "Standard epic breakdown with tasks and sub-tasks",
+          "variables": ["epic_name", "prd_reference", "author", "date"],
+          "category": "standard",
+          "usage_frequency": "high"
+        },
+        {
+          "name": "technical-epic",
+          "file": "epic/technical-epic.md",
+          "title": "Technical Epic Template",
+          "description": "Technical implementation focused epic template",
+          "variables": ["epic_name", "architecture", "tech_stack", "author", "date"],
+          "category": "technical",
+          "usage_frequency": "medium"
+        },
+        {
+          "name": "parallel-epic",
+          "file": "epic/parallel-epic.md",
+          "title": "Parallel Development Epic",
+          "description": "Epic template for parallel development workflows", 
+          "variables": ["epic_name", "work_streams", "coordinators", "author", "date"],
+          "category": "workflow",
+          "usage_frequency": "medium"
+        }
+      ]
+    },
+    "project": {
+      "name": "Project Initialization",
+      "description": "Templates for initializing different types of projects",
+      "templates": [
+        {
+          "name": "react-project",
+          "file": "project/react-claude.md",
+          "title": "React Project CLAUDE.md",
+          "description": "CLAUDE.md template optimized for React projects",
+          "variables": ["project_name", "tech_stack", "testing_framework"],
+          "category": "frontend",
+          "usage_frequency": "high"
+        },
+        {
+          "name": "nodejs-project",
+          "file": "project/nodejs-claude.md", 
+          "title": "Node.js Project CLAUDE.md",
+          "description": "CLAUDE.md template for Node.js backend projects",
+          "variables": ["project_name", "database", "api_framework"],
+          "category": "backend",
+          "usage_frequency": "high"
+        },
+        {
+          "name": "python-project",
+          "file": "project/python-claude.md",
+          "title": "Python Project CLAUDE.md", 
+          "description": "CLAUDE.md template for Python applications",
+          "variables": ["project_name", "framework", "testing_tools"],
+          "category": "backend",
+          "usage_frequency": "medium"
+        },
+        {
+          "name": "generic-project",
+          "file": "project/generic-claude.md",
+          "title": "Generic Project CLAUDE.md",
+          "description": "Generic CLAUDE.md template for any project type",
+          "variables": ["project_name", "project_type", "key_tools"],
+          "category": "generic",
+          "usage_frequency": "medium"
+        }
+      ]
+    }
+  },
+  "template_management": {
+    "auto_update": true,
+    "version_tracking": true,
+    "custom_template_support": true,
+    "validation": {
+      "required_sections": ["description", "variables", "usage"],
+      "syntax_validation": true,
+      "variable_validation": true
+    }
+  },
+  "template_generation": {
+    "variable_substitution": true,
+    "conditional_sections": true,
+    "date_auto_generation": true,
+    "metadata_injection": true
+  }
+}

@@ -3,22 +3,35 @@ Page({
         appTitle: '字帖生成器',
         features: [
             {
+                icon: 'library',
+                title: '精选模板库',
+                description: '100+精心策划的书法练习模板',
+                action: 'template_library'
+            },
+            {
                 icon: 'edit',
-                title: '个性化字帖创建',
-                description: '支持自定义内容和样式'
+                title: '自定义创建',
+                description: '输入任意文字生成个性化字帖',
+                action: 'custom_create'
             },
             {
                 icon: 'palette',
-                title: '多种书法字体',
-                description: '楷书、行书、隶书等多种选择'
+                title: '多种字体',
+                description: '楷书、行书、隶书等多种选择',
+                action: 'font_options'
             },
             {
                 icon: 'mobile',
-                title: '便捷移动体验',
-                description: '随时随地创建和分享'
+                title: '便捷分享',
+                description: '一键生成PDF，随时分享练习',
+                action: 'share_options'
             }
         ],
-        loading: false
+        recentTemplates: [],
+        selectedTemplate: null,
+        customText: '',
+        loading: false,
+        showCustomInput: false
     },
     onLoad(options) {
         console.log('字帖生成小程序首页加载完成', options);
@@ -26,6 +39,13 @@ Page({
     },
     onShow() {
         console.log('首页显示');
+        this.loadRecentTemplates();
+        // 检查是否有从模板库选择的模板
+        const app = getApp();
+        if (app.globalData.selectedTemplate) {
+            this.loadTemplate(app.globalData.selectedTemplate);
+            app.globalData.selectedTemplate = null; // 清空全局模板
+        }
     },
     onReady() {
         console.log('首页准备完成');
@@ -36,21 +56,128 @@ Page({
             loading: false
         });
     },
+    // 加载最近使用的模板
+    async loadRecentTemplates() {
+        try {
+            const history = wx.getStorageSync('template_usage_history') || [];
+            const templatesData = await this.getTemplatesData();
+            // 获取最近使用的前4个模板
+            const recentTemplates = history
+                .slice(0, 4)
+                .map((record) => templatesData.templates.find((t) => t.id === record.templateId))
+                .filter((template) => template); // 过滤掉未找到的模板
+            this.setData({ recentTemplates });
+        }
+        catch (error) {
+            console.error('加载最近模板失败:', error);
+        }
+    },
+    // 获取模板数据
+    async getTemplatesData() {
+        return new Promise((resolve, reject) => {
+            try {
+                const data = require('../../data/templates.json');
+                resolve(data);
+            }
+            catch (error) {
+                reject(error);
+            }
+        });
+    },
+    // 加载指定模板（从模板库选择后调用）
+    loadTemplate(template) {
+        this.setData({ selectedTemplate: template });
+        wx.showToast({
+            title: `已选择：${template.title}`,
+            icon: 'success',
+            duration: 2000
+        });
+    },
     // 开始创建字帖
     startCreate() {
+        if (!this.data.selectedTemplate && !this.data.customText.trim()) {
+            wx.showModal({
+                title: '提示',
+                content: '请先选择模板或输入自定义文字',
+                showCancel: false,
+                confirmText: '知道了'
+            });
+            return;
+        }
         this.setData({ loading: true });
+        // 模拟字帖生成过程
         setTimeout(() => {
             this.setData({ loading: false });
-            wx.showToast({
-                title: '功能开发中...',
-                icon: 'none',
-                duration: 2000
+            const content = this.data.selectedTemplate
+                ? this.data.selectedTemplate.content
+                : this.data.customText;
+            wx.showModal({
+                title: '字帖生成完成',
+                content: `已生成包含 "${content.substring(0, 10)}${content.length > 10 ? '...' : ''}" 的字帖`,
+                showCancel: false,
+                confirmText: '知道了',
+                success: () => {
+                    // TODO: 跳转到字帖预览页面
+                    console.log('字帖生成完成，内容:', content);
+                }
             });
-        }, 1000);
-        // TODO: 跳转到字帖创建页面
-        // wx.navigateTo({
-        //   url: '/pages/create/index'
-        // });
+        }, 1500);
+    },
+    // 打开模板库
+    openTemplateLibrary() {
+        wx.switchTab({
+            url: '/pages/template-library/template-library'
+        });
+    },
+    // 显示自定义输入框
+    showCustomInput() {
+        this.setData({
+            showCustomInput: true,
+            selectedTemplate: null // 清空已选择的模板
+        });
+    },
+    // 自定义文字输入改变
+    onCustomTextChange(event) {
+        this.setData({
+            customText: event.detail.value
+        });
+    },
+    // 确认自定义文字输入
+    onCustomTextConfirm() {
+        if (!this.data.customText.trim()) {
+            wx.showToast({
+                title: '请输入文字内容',
+                icon: 'none'
+            });
+            return;
+        }
+        if (this.data.customText.length > 500) {
+            wx.showToast({
+                title: '文字内容不能超过500字',
+                icon: 'none'
+            });
+            return;
+        }
+        this.setData({
+            showCustomInput: false,
+            selectedTemplate: null
+        });
+        wx.showToast({
+            title: `已输入${this.data.customText.length}个字符`,
+            icon: 'success'
+        });
+    },
+    // 最近模板点击
+    onTemplateClick(event) {
+        const templateId = event.currentTarget.dataset.id;
+        const template = this.data.recentTemplates.find(t => t.id === templateId);
+        if (template) {
+            this.setData({
+                selectedTemplate: template,
+                customText: '', // 清空自定义文字
+                showCustomInput: false
+            });
+        }
     },
     // 查看原型设计
     viewPrototype() {
@@ -70,11 +197,27 @@ Page({
     onFeatureClick(event) {
         const index = event.currentTarget.dataset.index;
         const feature = this.data.features[index];
-        if (feature) {
-            wx.showToast({
-                title: feature.title,
-                icon: 'none'
-            });
+        if (!feature)
+            return;
+        switch (feature.action) {
+            case 'template_library':
+                this.openTemplateLibrary();
+                break;
+            case 'custom_create':
+                this.showCustomInput();
+                break;
+            case 'font_options':
+            case 'share_options':
+                wx.showToast({
+                    title: `${feature.title}功能开发中...`,
+                    icon: 'none'
+                });
+                break;
+            default:
+                wx.showToast({
+                    title: feature.title,
+                    icon: 'none'
+                });
         }
     }
 });

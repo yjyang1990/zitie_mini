@@ -27,12 +27,19 @@
     ]
   },
   "include": [
-    "**/*.ts",
-    "**/*.d.ts",
-    "./types/**/*"
+    "pages/**/*.ts",
+    "components/**/*.ts",
+    "utils/**/*.ts",
+    "types/**/*.ts",
+    "app.ts"
   ],
   "exclude": [
     "node_modules/**/*",
-    "dist/**/*"
-  ]
+    "dist/**/*",
+    ".claude/**/*",
+    "prototype/**/*",
+    "**/*.md",
+    "**/*.html"
+  ],
+  "compileOnSave": false
 }

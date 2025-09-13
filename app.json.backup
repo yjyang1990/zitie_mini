@@ -1,7 +1,6 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/template-library/template-library",
     "pages/profile/profile"
   ],
   "window": {
@@ -22,12 +21,6 @@
         "text": "首页",
         "iconPath": "images/home.png",
         "selectedIconPath": "images/home-active.png"
-      },
-      {
-        "pagePath": "pages/template-library/template-library",
-        "text": "模板库",
-        "iconPath": "images/template.png",
-        "selectedIconPath": "images/template-active.png"
       },
       {
         "pagePath": "pages/profile/profile",
@@ -52,15 +45,7 @@
     "t-toast": "tdesign-miniprogram/miniprogram_dist/toast/toast",
     "t-swipe-cell": "tdesign-miniprogram/miniprogram_dist/swipe-cell/swipe-cell",
     "t-picker": "tdesign-miniprogram/miniprogram_dist/picker/picker",
-    "t-switch": "tdesign-miniprogram/miniprogram_dist/switch/switch",
-    "t-search": "tdesign-miniprogram/miniprogram_dist/search/search",
-    "t-tabs": "tdesign-miniprogram/miniprogram_dist/tabs/tabs",
-    "t-tab-panel": "tdesign-miniprogram/miniprogram_dist/tab-panel/tab-panel",
-    "t-tag": "tdesign-miniprogram/miniprogram_dist/tag/tag",
-    "t-image": "tdesign-miniprogram/miniprogram_dist/image/image",
-    "t-popup": "tdesign-miniprogram/miniprogram_dist/popup/popup",
-    "t-sticky": "tdesign-miniprogram/miniprogram_dist/sticky/sticky",
-    "t-divider": "tdesign-miniprogram/miniprogram_dist/divider/divider"
+    "t-switch": "tdesign-miniprogram/miniprogram_dist/switch/switch"
   },
   "style": "v2",
   "sitemapLocation": "sitemap.json",

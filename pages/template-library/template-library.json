@@ -1,0 +1,20 @@
+{
+  "navigationBarTitleText": "模板库",
+  "navigationBarBackgroundColor": "#5B8DEE",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#F5F7FA",
+  "enablePullDownRefresh": true,
+  "onReachBottomDistance": 100,
+  "usingComponents": {
+    "t-search": "tdesign-miniprogram/miniprogram_dist/search/search",
+    "t-tag": "tdesign-miniprogram/miniprogram_dist/tag/tag",
+    "t-icon": "tdesign-miniprogram/miniprogram_dist/icon/icon",
+    "t-button": "tdesign-miniprogram/miniprogram_dist/button/button",
+    "t-loading": "tdesign-miniprogram/miniprogram_dist/loading/loading",
+    "t-cell": "tdesign-miniprogram/miniprogram_dist/cell/cell",
+    "t-cell-group": "tdesign-miniprogram/miniprogram_dist/cell-group/cell-group",
+    "t-popup": "tdesign-miniprogram/miniprogram_dist/popup/popup",
+    "t-sticky": "tdesign-miniprogram/miniprogram_dist/sticky/sticky",
+    "t-picker": "tdesign-miniprogram/miniprogram_dist/picker/picker"
+  }
+}

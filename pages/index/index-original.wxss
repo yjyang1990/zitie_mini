@@ -1,0 +1,371 @@
+/* pages/index/index.wxss */
+.container {
+  padding: 32rpx;
+  min-height: 100vh;
+  background-color: #F7F9FC;
+}
+
+.page-header {
+  text-align: center;
+  padding: 48rpx 0;
+  margin-bottom: 32rpx;
+}
+
+.page-title {
+  font-size: 48rpx;
+  font-weight: 600;
+  color: #333;
+  margin: 24rpx 0 16rpx;
+}
+
+.page-subtitle {
+  font-size: 28rpx;
+  color: #666;
+  line-height: 1.6;
+}
+
+.action-section {
+  margin: 48rpx 0;
+  padding: 0 16rpx;
+}
+
+/* TDesign 组件样式覆盖 */
+.t-cell-group {
+  margin-bottom: 32rpx;
+}
+
+.t-cell {
+  border-radius: 12rpx;
+}
+
+.t-button {
+  border-radius: 12rpx;
+}
+
+/* 响应式设计 */
+@media (max-width: 600px) {
+  .container {
+    padding: 24rpx;
+  }
+  
+  .page-header {
+    padding: 32rpx 0;
+  }
+  
+  .page-title {
+    font-size: 42rpx;
+  }
+  
+  .page-subtitle {
+    font-size: 26rpx;
+  }
+}
+
+/* 当前选择的内容 */
+.selected-content {
+  margin: 32rpx 0;
+  background-color: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+  border-left: 4rpx solid #52c41a;
+}
+
+.content-header {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 16rpx;
+}
+
+.content-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #52c41a;
+}
+
+.selected-template,
+.selected-custom {
+  margin-bottom: 16rpx;
+}
+
+.template-info,
+.custom-info {
+  margin-bottom: 12rpx;
+}
+
+.template-name,
+.custom-name {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 6rpx;
+}
+
+.template-desc {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.4;
+}
+
+.custom-count {
+  font-size: 26rpx;
+  color: #666;
+}
+
+.template-preview,
+.custom-preview {
+  font-size: 28rpx;
+  line-height: 1.6;
+  color: #333;
+  padding: 16rpx;
+  background-color: #f8f9fa;
+  border-radius: 12rpx;
+  font-family: "STKaiti", "KaiTi", serif;
+}
+
+/* 最近使用模板 */
+.recent-section {
+  margin: 32rpx 0;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 20rpx;
+  padding: 0 20rpx;
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.recent-scroll {
+  white-space: nowrap;
+}
+
+.recent-list {
+  display: flex;
+  gap: 16rpx;
+  padding: 0 20rpx;
+}
+
+.recent-item {
+  flex-shrink: 0;
+  width: 200rpx;
+  background-color: #fff;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.recent-item:active {
+  transform: scale(0.95);
+}
+
+.recent-item.selected {
+  background-color: #e6f3ff;
+  border: 2rpx solid #5b8dee;
+}
+
+.recent-content {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8rpx;
+  text-align: center;
+  font-family: "STKaiti", "KaiTi", serif;
+}
+
+.recent-title {
+  font-size: 24rpx;
+  color: #666;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 自定义输入弹窗 */
+.custom-input-popup {
+  width: 90vw;
+  max-width: 600rpx;
+}
+
+.custom-input-content {
+  background-color: #fff;
+  border-radius: 16rpx;
+  padding: 32rpx;
+}
+
+.input-header {
+  text-align: center;
+  margin-bottom: 32rpx;
+}
+
+.input-title {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 12rpx;
+}
+
+.input-subtitle {
+  font-size: 28rpx;
+  color: #666;
+  line-height: 1.4;
+}
+
+.input-body {
+  margin-bottom: 32rpx;
+}
+
+.input-actions {
+  display: flex;
+  gap: 20rpx;
+}
+
+.input-actions t-button {
+  flex: 1;
+}
+
+/* 操作按钮区域增强 */
+.action-section {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 32rpx 20rpx;
+  padding-bottom: calc(32rpx + env(safe-area-inset-bottom));
+  background-color: #fff;
+  border-top: 1rpx solid #ebedf0;
+}
+
+.action-tips {
+  margin: 16rpx 0;
+  text-align: center;
+}
+
+.tips-text {
+  font-size: 26rpx;
+  color: #999;
+}
+
+.tips-success {
+  font-size: 26rpx;
+  color: #52c41a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+}
+
+/* 为底部固定按钮留出空间 */
+.container {
+  padding-bottom: 200rpx;
+}
+
+/* 响应式设计 */
+@media (max-width: 600rpx) {
+  .recent-item {
+    width: 160rpx;
+    padding: 16rpx;
+  }
+  
+  .recent-content {
+    font-size: 28rpx;
+  }
+  
+  .recent-title {
+    font-size: 22rpx;
+  }
+  
+  .custom-input-popup {
+    width: 95vw;
+  }
+  
+  .selected-content {
+    margin: 24rpx 16rpx;
+  }
+}
+
+/* 暗色主题支持 */
+@media (prefers-color-scheme: dark) {
+  .selected-content,
+  .recent-item,
+  .custom-input-content,
+  .action-section {
+    background-color: #2d2d2d;
+  }
+  
+  .template-name,
+  .custom-name,
+  .section-title,
+  .input-title,
+  .recent-content {
+    color: #fff;
+  }
+  
+  .template-desc,
+  .custom-count,
+  .input-subtitle,
+  .recent-title {
+    color: #ccc;
+  }
+  
+  .template-preview,
+  .custom-preview {
+    background-color: #404040;
+    color: #e0e0e0;
+  }
+  
+  .recent-item.selected {
+    background-color: #1a3a5c;
+    border-color: #5b8dee;
+  }
+  
+  .action-section {
+    border-top-color: #404040;
+  }
+}
+
+/* 动画效果 */
+@keyframes slideInUp {
+  from {
+    transform: translateY(30rpx);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.selected-content,
+.recent-section {
+  animation: slideInUp 0.3s ease-out;
+}
+
+/* 滚动条样式 */
+.recent-scroll::-webkit-scrollbar {
+  height: 6rpx;
+}
+
+.recent-scroll::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3rpx;
+}
+
+.recent-scroll::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3rpx;
+}
+
+.recent-scroll::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}

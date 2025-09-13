@@ -128,11 +128,11 @@
 
   <!-- Custom Input Modal - iOS Style -->
   <view wx:if="{{showCustomInput}}" class="ios-modal">
-    <view class="ios-modal-backdrop" bind:tap="hideCustomInput"></view>
+    <view class="ios-modal-backdrop" bind:tap="{{() => setData({showCustomInput: false})}}"></view>
     <view class="ios-modal-content ios-card-large">
       <view class="modal-header">
         <view class="modal-title ios-headline">输入自定义文字</view>
-        <button class="modal-close ios-button-secondary" bind:tap="hideCustomInput">
+        <button class="modal-close ios-button-secondary" bind:tap="{{() => setData({showCustomInput: false})}}">
           取消
         </button>
       </view>

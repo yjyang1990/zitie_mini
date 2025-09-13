@@ -236,7 +236,7 @@
 
   <!-- Picker Modals -->
   <view wx:if="{{showDifficultyPicker}}" class="picker-modal">
-    <view class="ios-modal-backdrop" bind:tap="hideDifficultyPicker"></view>
+    <view class="ios-modal-backdrop" bind:tap="{{() => setData({showDifficultyPicker: false})}}"></view>
     <view class="picker-content ios-card-large">
       <view class="picker-header ios-headline">选择难度</view>
       <view class="picker-options">
@@ -252,7 +252,7 @@
   </view>
 
   <view wx:if="{{showSortPicker}}" class="picker-modal">
-    <view class="ios-modal-backdrop" bind:tap="hideSortPicker"></view>
+    <view class="ios-modal-backdrop" bind:tap="{{() => setData({showSortPicker: false})}}"></view>
     <view class="picker-content ios-card-large">
       <view class="picker-header ios-headline">排序方式</view>
       <view class="picker-options">

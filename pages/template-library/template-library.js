@@ -12,7 +12,18 @@ Page({
         favorites: [],
         loading: true,
         showPreview: false,
-        selectedTemplate: null
+        selectedTemplate: null,
+        showDifficultyPicker: false,
+        showSortPicker: false,
+        sortOptions: [
+            { label: '默认排序', value: 'default' },
+            { label: '难度：低到高', value: 'difficulty_asc' },
+            { label: '难度：高到低', value: 'difficulty_desc' },
+            { label: '笔画：少到多', value: 'stroke_count_asc' },
+            { label: '笔画：多到少', value: 'stroke_count_desc' },
+            { label: '使用频率', value: 'frequency' },
+            { label: '推荐模板', value: 'featured' }
+        ]
     },
     onLoad() {
         this.loadTemplates();
@@ -69,6 +80,17 @@ Page({
         this.setData({ searchQuery: query });
         this.applyFilters();
     },
+    // 搜索输入处理（iOS版本）
+    onSearchInput(event) {
+        const query = event.detail.value || '';
+        this.setData({ searchQuery: query });
+        this.applyFilters();
+    },
+    // 清空搜索（iOS版本）
+    onSearchClear() {
+        this.setData({ searchQuery: '' });
+        this.applyFilters();
+    },
     // 分类筛选
     onCategoryChange(event) {
         const categoryId = event.currentTarget.dataset.category;
@@ -77,14 +99,20 @@ Page({
     },
     // 难度筛选
     onDifficultyChange(event) {
-        const difficulty = parseInt(event.detail.value);
-        this.setData({ difficulty });
+        const difficulty = parseInt(event.currentTarget.dataset.value);
+        this.setData({
+            difficulty,
+            showDifficultyPicker: false
+        });
         this.applyFilters();
     },
     // 排序方式改变
     onSortChange(event) {
-        const sortBy = event.detail.value;
-        this.setData({ sortBy });
+        const sortBy = event.currentTarget.dataset.value;
+        this.setData({
+            sortBy,
+            showSortPicker: false
+        });
         this.applyFilters();
     },
     // 视图模式切换
@@ -193,6 +221,10 @@ Page({
         this.setData({ favorites });
         wx.setStorageSync('template_favorites', favorites);
     },
+    // 切换收藏状态（iOS版本别名）
+    toggleFavorite(event) {
+        this.onToggleFavorite(event);
+    },
     // 使用模板
     onUseTemplate(event) {
         const templateId = event.currentTarget.dataset.id;
@@ -228,6 +260,23 @@ Page({
         // 保持最多50条记录
         const limitedHistory = filteredHistory.slice(0, 50);
         wx.setStorageSync('template_usage_history', limitedHistory);
+    },
+    // iOS版本的picker显示方法
+    showDifficultyPicker() {
+        this.setData({ showDifficultyPicker: true });
+    },
+    showSortPicker() {
+        this.setData({ showSortPicker: true });
+    },
+    hideDifficultyPicker() {
+        this.setData({ showDifficultyPicker: false });
+    },
+    hideSortPicker() {
+        this.setData({ showSortPicker: false });
+    },
+    // 返回上一页（iOS版本新增）
+    goBack() {
+        wx.navigateBack();
     },
     // 分享模板
     onShareTemplate(event) {

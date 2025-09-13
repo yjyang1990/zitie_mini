@@ -6,15 +6,15 @@
   "enablePullDownRefresh": true,
   "onReachBottomDistance": 100,
   "usingComponents": {
-    "t-search": "tdesign-miniprogram/miniprogram_dist/search/search",
-    "t-tag": "tdesign-miniprogram/miniprogram_dist/tag/tag",
-    "t-icon": "tdesign-miniprogram/miniprogram_dist/icon/icon",
-    "t-button": "tdesign-miniprogram/miniprogram_dist/button/button",
-    "t-loading": "tdesign-miniprogram/miniprogram_dist/loading/loading",
-    "t-cell": "tdesign-miniprogram/miniprogram_dist/cell/cell",
-    "t-cell-group": "tdesign-miniprogram/miniprogram_dist/cell-group/cell-group",
-    "t-popup": "tdesign-miniprogram/miniprogram_dist/popup/popup",
-    "t-sticky": "tdesign-miniprogram/miniprogram_dist/sticky/sticky",
-    "t-picker": "tdesign-miniprogram/miniprogram_dist/picker/picker"
+    "t-search": "tdesign-miniprogram/search/search",
+    "t-tag": "tdesign-miniprogram/tag/tag",
+    "t-icon": "tdesign-miniprogram/icon/icon",
+    "t-button": "tdesign-miniprogram/button/button",
+    "t-loading": "tdesign-miniprogram/loading/loading",
+    "t-cell": "tdesign-miniprogram/cell/cell",
+    "t-cell-group": "tdesign-miniprogram/cell-group/cell-group",
+    "t-popup": "tdesign-miniprogram/popup/popup",
+    "t-sticky": "tdesign-miniprogram/sticky/sticky",
+    "t-picker": "tdesign-miniprogram/picker/picker"
   }
 }

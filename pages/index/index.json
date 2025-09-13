@@ -3,11 +3,11 @@
   "navigationBarBackgroundColor": "#5B8DEE",
   "navigationBarTextStyle": "white",
   "usingComponents": {
-    "t-icon": "tdesign-miniprogram/miniprogram_dist/icon/icon",
-    "t-cell": "tdesign-miniprogram/miniprogram_dist/cell/cell",
-    "t-cell-group": "tdesign-miniprogram/miniprogram_dist/cell-group/cell-group",
-    "t-button": "tdesign-miniprogram/miniprogram_dist/button/button",
-    "t-popup": "tdesign-miniprogram/miniprogram_dist/popup/popup",
-    "t-textarea": "tdesign-miniprogram/miniprogram_dist/textarea/textarea"
+    "t-icon": "tdesign-miniprogram/icon/icon",
+    "t-cell": "tdesign-miniprogram/cell/cell",
+    "t-cell-group": "tdesign-miniprogram/cell-group/cell-group",
+    "t-button": "tdesign-miniprogram/button/button",
+    "t-popup": "tdesign-miniprogram/popup/popup",
+    "t-textarea": "tdesign-miniprogram/textarea/textarea"
   }
 }

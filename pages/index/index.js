@@ -136,6 +136,12 @@ Page({
             selectedTemplate: null // 清空已选择的模板
         });
     },
+    // 隐藏自定义输入框
+    hideCustomInput() {
+        this.setData({
+            showCustomInput: false
+        });
+    },
     // 自定义文字输入改变
     onCustomTextChange(event) {
         this.setData({

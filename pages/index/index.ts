@@ -36,6 +36,7 @@ interface IndexPageMethods {
   startCreate(): void;
   openTemplateLibrary(): void;
   showCustomInput(): void;
+  hideCustomInput(): void;
   onCustomTextChange(event: WechatMiniprogram.CustomEvent): void;
   onCustomTextConfirm(): void;
   onTemplateClick(event: WechatMiniprogram.CustomEvent): void;
@@ -197,6 +198,13 @@ Page<IndexPageData, IndexPageMethods>({
     this.setData({ 
       showCustomInput: true,
       selectedTemplate: null // 清空已选择的模板
+    });
+  },
+
+  // 隐藏自定义输入框
+  hideCustomInput() {
+    this.setData({ 
+      showCustomInput: false
     });
   },
 

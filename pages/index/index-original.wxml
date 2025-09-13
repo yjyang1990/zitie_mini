@@ -1,0 +1,135 @@
+<!--pages/index/index.wxml-->
+<view class="container">
+  <view class="page-header">
+    <t-icon name="edit" size="48rpx" color="#5B8DEE" />
+    <view class="page-title">{{appTitle}}</view>
+    <view class="page-subtitle">基于TDesign UI框架开发的智能字帖生成工具</view>
+  </view>
+  
+  <!-- 当前选择的内容 -->
+  <view wx:if="{{selectedTemplate || customText}}" class="selected-content">
+    <view class="content-header">
+      <t-icon name="check-circle" size="32rpx" color="#52c41a" />
+      <text class="content-title">当前选择</text>
+    </view>
+    
+    <view wx:if="{{selectedTemplate}}" class="selected-template">
+      <view class="template-info">
+        <view class="template-name">{{selectedTemplate.title}}</view>
+        <view class="template-desc">{{selectedTemplate.description}}</view>
+      </view>
+      <view class="template-preview">{{selectedTemplate.content}}</view>
+    </view>
+    
+    <view wx:if="{{customText && !selectedTemplate}}" class="selected-custom">
+      <view class="custom-info">
+        <view class="custom-name">自定义文字</view>
+        <view class="custom-count">共{{customText.length}}个字符</view>
+      </view>
+      <view class="custom-preview">{{customText}}</view>
+    </view>
+  </view>
+  
+  <!-- 最近使用的模板 -->
+  <view wx:if="{{recentTemplates.length > 0}}" class="recent-section">
+    <view class="section-header">
+      <t-icon name="time" size="32rpx" color="#666" />
+      <text class="section-title">最近使用</text>
+    </view>
+    
+    <scroll-view scroll-x="true" class="recent-scroll">
+      <view class="recent-list">
+        <view
+          wx:for="{{recentTemplates}}"
+          wx:key="id"
+          class="recent-item {{selectedTemplate && selectedTemplate.id === item.id ? 'selected' : ''}}"
+          data-id="{{item.id}}"
+          bind:tap="onTemplateClick"
+        >
+          <view class="recent-content">{{item.content.substring(0, 8)}}</view>
+          <view class="recent-title">{{item.title}}</view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+  
+  <!-- 功能特性网格 -->
+  <t-cell-group title="创建方式" theme="card">
+    <t-cell
+      wx:for="{{features}}"
+      wx:key="title"
+      title="{{item.title}}"
+      description="{{item.description}}"
+      leftIcon="{{item.icon}}"
+      hover
+      clickable
+      data-index="{{index}}"
+      bind:click="onFeatureClick"
+    />
+  </t-cell-group>
+  
+  <!-- 自定义输入弹窗 -->
+  <t-popup 
+    visible="{{showCustomInput}}" 
+    placement="center" 
+    bind:visible-change="showCustomInput"
+    class="custom-input-popup"
+  >
+    <view class="custom-input-content">
+      <view class="input-header">
+        <view class="input-title">自定义文字内容</view>
+        <view class="input-subtitle">请输入要练习的文字内容</view>
+      </view>
+      
+      <view class="input-body">
+        <t-textarea
+          value="{{customText}}"
+          placeholder="请输入要生成字帖的文字内容，支持中文、数字、标点符号"
+          maxlength="500"
+          indicator
+          autosize
+          bind:change="onCustomTextChange"
+        />
+      </view>
+      
+      <view class="input-actions">
+        <t-button theme="light" bind:tap="showCustomInput">取消</t-button>
+        <t-button theme="primary" bind:tap="onCustomTextConfirm">确认</t-button>
+      </view>
+    </view>
+  </t-popup>
+  
+  <!-- 主要操作按钮 -->
+  <view class="action-section">
+    <t-button
+      theme="primary"
+      size="large"
+      block
+      loading="{{loading}}"
+      bind:tap="startCreate"
+      disabled="{{!selectedTemplate && !customText.trim()}}"
+    >
+      {{loading ? '生成中...' : '开始生成字帖'}}
+    </t-button>
+    
+    <view class="action-tips">
+      <text wx:if="{{!selectedTemplate && !customText.trim()}}" class="tips-text">
+        请先选择模板或输入自定义文字
+      </text>
+      <text wx:else class="tips-success">
+        <t-icon name="check-circle" size="24rpx" color="#52c41a" />
+        内容已选择，点击按钮开始生成
+      </text>
+    </view>
+    
+    <t-button
+      theme="light"
+      size="large"
+      block
+      bind:tap="viewPrototype"
+      style="margin-top: 24rpx;"
+    >
+      查看原型设计
+    </t-button>
+  </view>
+</view>

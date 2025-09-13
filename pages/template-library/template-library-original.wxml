@@ -1,0 +1,332 @@
+<view class="template-library">
+  <!-- 搜索栏 -->
+  <t-sticky offset-top="0">
+    <view class="search-bar">
+      <t-search
+        model:value="{{searchQuery}}"
+        placeholder="搜索模板内容、标签或描述"
+        bind:change="onSearch"
+        bind:clear="onClearSearch"
+        shape="round"
+        left-icon="search"
+        right-icon="{{searchQuery ? 'close-circle-filled' : ''}}"
+      />
+    </view>
+  </t-sticky>
+
+  <!-- 筛选栏 -->
+  <view class="filter-bar">
+    <scroll-view scroll-x="true" class="category-scroll">
+      <view class="category-list">
+        <view 
+          class="category-item {{currentCategory === 'all' ? 'active' : ''}}"
+          data-category="all"
+          bind:tap="onCategoryChange"
+        >
+          <t-tag variant="light" theme="{{currentCategory === 'all' ? 'primary' : 'default'}}">
+            全部
+          </t-tag>
+        </view>
+        <view 
+          wx:for="{{categories}}" 
+          wx:key="id"
+          class="category-item {{currentCategory === item.id ? 'active' : ''}}"
+          data-category="{{item.id}}"
+          bind:tap="onCategoryChange"
+        >
+          <t-tag 
+            variant="light" 
+            theme="{{currentCategory === item.id ? 'primary' : 'default'}}"
+          >
+            <t-icon name="{{item.icon}}" size="16rpx" />
+            {{item.name}}
+          </t-tag>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 工具栏 -->
+  <view class="toolbar">
+    <view class="left-tools">
+      <t-picker
+        visible="{{false}}"
+        title="难度筛选"
+        keys="{{['label', 'value']}}"
+        bind:change="onDifficultyChange"
+      >
+        <view class="tool-item" slot="trigger">
+          <t-icon name="filter" size="32rpx" />
+          <text class="tool-text">难度</text>
+          <text wx:if="{{difficulty > 0}}" class="filter-badge">{{difficulty}}</text>
+        </view>
+      </t-picker>
+
+      <t-picker
+        visible="{{false}}"
+        title="排序方式"
+        keys="{{['label', 'value']}}"
+        bind:change="onSortChange"
+      >
+        <view class="tool-item" slot="trigger">
+          <t-icon name="sort" size="32rpx" />
+          <text class="tool-text">排序</text>
+        </view>
+      </t-picker>
+    </view>
+
+    <view class="right-tools">
+      <view class="view-mode">
+        <view 
+          class="mode-btn {{viewMode === 'grid' ? 'active' : ''}}"
+          data-mode="grid"
+          bind:tap="onViewModeChange"
+        >
+          <t-icon name="view-module" size="32rpx" />
+        </view>
+        <view 
+          class="mode-btn {{viewMode === 'list' ? 'active' : ''}}"
+          data-mode="list"
+          bind:tap="onViewModeChange"
+        >
+          <t-icon name="format-list-bulleted" size="32rpx" />
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <t-loading 
+    wx:if="{{loading}}" 
+    theme="circular" 
+    size="60rpx" 
+    text="加载模板中..." 
+    class="loading-container"
+  />
+
+  <!-- 模板列表 -->
+  <view wx:else class="template-content">
+    <!-- 网格视图 -->
+    <view wx:if="{{viewMode === 'grid'}}" class="template-grid">
+      <view 
+        wx:for="{{filteredTemplates}}" 
+        wx:key="id"
+        class="template-card"
+        data-id="{{item.id}}"
+        bind:tap="onTemplateClick"
+      >
+        <!-- 特色标签 -->
+        <view wx:if="{{item.featured}}" class="featured-badge">
+          <t-tag theme="warning" variant="light" size="small">
+            <t-icon name="star-filled" size="24rpx" />
+            精选
+          </t-tag>
+        </view>
+
+        <!-- 收藏按钮 -->
+        <view 
+          class="favorite-btn"
+          data-id="{{item.id}}"
+          bind:tap="onToggleFavorite"
+          catch:tap="true"
+        >
+          <t-icon 
+            name="heart" 
+            size="32rpx" 
+            color="{{favorites.indexOf(item.id) > -1 ? '#e53e3e' : '#999'}}"
+          />
+        </view>
+
+        <view class="card-header">
+          <view class="template-title">{{item.title}}</view>
+          <view class="template-category">
+            <t-tag 
+              variant="outline" 
+              size="small"
+              theme="{{currentCategory === item.category ? 'primary' : 'default'}}"
+            >
+              {{item.categoryName}}
+            </t-tag>
+          </view>
+        </view>
+
+        <view class="template-preview">
+          <text class="preview-text">{{item.contentPreview}}</text>
+        </view>
+
+        <view class="card-info">
+          <view class="info-item">
+            <t-icon name="layers" size="24rpx" color="#666" />
+            <text class="info-text">难度{{item.difficulty}}</text>
+          </view>
+          <view class="info-item">
+            <t-icon name="edit" size="24rpx" color="#666" />
+            <text class="info-text">{{item.strokeCount}}笔</text>
+          </view>
+          <view class="info-item">
+            <t-icon name="thumb-up" size="24rpx" color="#666" />
+            <text class="info-text">频率{{item.frequency}}</text>
+          </view>
+        </view>
+
+        <view class="card-footer">
+          <t-button 
+            theme="primary" 
+            variant="light" 
+            size="small"
+            data-id="{{item.id}}"
+            bind:tap="onUseTemplate"
+            catch:tap="true"
+          >
+            使用模板
+          </t-button>
+        </view>
+      </view>
+    </view>
+
+    <!-- 列表视图 -->
+    <view wx:else class="template-list">
+      <t-cell-group>
+        <t-cell 
+          wx:for="{{filteredTemplates}}" 
+          wx:key="id"
+          title="{{item.title}}"
+          description="{{item.description}}"
+          note="{{item.contentNote}}"
+          arrow="{{true}}"
+          data-id="{{item.id}}"
+          bind:click="onTemplateClick"
+        >
+          <view slot="left-icon" class="list-icon">
+            <t-icon 
+              name="{{item.categoryIcon}}" 
+              size="40rpx" 
+              color="{{item.categoryColor}}"
+            />
+          </view>
+          
+          <view slot="right-icon" class="list-actions">
+            <view 
+              class="action-btn favorite-action"
+              data-id="{{item.id}}"
+              bind:tap="onToggleFavorite"
+              catch:tap="true"
+            >
+              <t-icon 
+                name="heart" 
+                size="32rpx" 
+                color="{{favorites.indexOf(item.id) > -1 ? '#e53e3e' : '#ccc'}}"
+              />
+            </view>
+          </view>
+
+          <view slot="note" class="list-tags">
+            <t-tag 
+              wx:for="{{item.tags}}" 
+              wx:for-item="tag" 
+              wx:key="*this"
+              size="small" 
+              variant="outline"
+              class="tag-item"
+            >
+              {{tag}}
+            </t-tag>
+          </view>
+        </t-cell>
+      </t-cell-group>
+    </view>
+
+    <!-- 空状态 -->
+    <view wx:if="{{filteredTemplates.length === 0 && !loading}}" class="empty-state">
+      <t-icon name="search" size="120rpx" color="#ddd" />
+      <view class="empty-text">没有找到匹配的模板</view>
+      <t-button theme="primary" variant="light" bind:tap="onResetFilters">
+        重置筛选条件
+      </t-button>
+    </view>
+  </view>
+
+  <!-- 模板预览弹窗 -->
+  <t-popup 
+    visible="{{showPreview}}" 
+    placement="bottom" 
+    bind:visible-change="onClosePreview"
+    class="preview-popup"
+  >
+    <view wx:if="{{selectedTemplate}}" class="preview-content">
+      <view class="preview-header">
+        <view class="preview-title">{{selectedTemplate.title}}</view>
+        <view class="preview-close" bind:tap="onClosePreview">
+          <t-icon name="close" size="40rpx" />
+        </view>
+      </view>
+
+      <view class="preview-body">
+        <view class="template-full-content">
+          {{selectedTemplate.content}}
+        </view>
+
+        <view class="template-details">
+          <view class="detail-row">
+            <text class="detail-label">分类：</text>
+            <text class="detail-value">{{selectedTemplate.categoryName}}</text>
+          </view>
+          <view class="detail-row">
+            <text class="detail-label">难度：</text>
+            <text class="detail-value">{{selectedTemplate.difficulty}}/5</text>
+          </view>
+          <view class="detail-row">
+            <text class="detail-label">笔画数：</text>
+            <text class="detail-value">约{{selectedTemplate.strokeCount}}笔</text>
+          </view>
+          <view wx:if="{{selectedTemplate.author}}" class="detail-row">
+            <text class="detail-label">作者：</text>
+            <text class="detail-value">{{selectedTemplate.author}}</text>
+          </view>
+          <view class="detail-row">
+            <text class="detail-label">描述：</text>
+            <text class="detail-value">{{selectedTemplate.description}}</text>
+          </view>
+        </view>
+
+        <view class="template-tags">
+          <t-tag 
+            wx:for="{{selectedTemplate.tags}}" 
+            wx:key="*this"
+            variant="light" 
+            size="small"
+            class="preview-tag"
+          >
+            {{item}}
+          </t-tag>
+        </view>
+      </view>
+
+      <view class="preview-actions">
+        <t-button 
+          theme="default" 
+          variant="outline"
+          data-id="{{selectedTemplate.id}}"
+          bind:tap="onToggleFavorite"
+          catch:tap="true"
+        >
+          <t-icon 
+            name="heart" 
+            size="32rpx" 
+            color="{{favorites.indexOf(selectedTemplate.id) > -1 ? '#e53e3e' : '#999'}}"
+          />
+          {{favorites.indexOf(selectedTemplate.id) > -1 ? '取消收藏' : '收藏'}}
+        </t-button>
+        
+        <t-button 
+          theme="primary"
+          data-id="{{selectedTemplate.id}}"
+          bind:tap="onUseTemplate"
+          catch:tap="true"
+        >
+          使用此模板
+        </t-button>
+      </view>
+    </view>
+  </t-popup>
+</view>

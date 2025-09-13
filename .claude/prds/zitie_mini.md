@@ -1,3 +1,12 @@
+---
+name: zitie_mini
+template: standard
+status: draft
+created: 2025-01-13T08:00:00Z
+author: Product Team
+version: 1.0
+---
+
 # 字帖生成小程序 (zitie_mini) - 产品需求文档
 
 **版本:** 1.0  

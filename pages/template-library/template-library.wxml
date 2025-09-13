@@ -145,13 +145,13 @@
               size="small"
               theme="{{currentCategory === item.category ? 'primary' : 'default'}}"
             >
-              {{categories.find(cat => cat.id === item.category).name}}
+              {{item.categoryName}}
             </t-tag>
           </view>
         </view>
 
         <view class="template-preview">
-          <text class="preview-text">{{item.content.substring(0, 20)}}{{item.content.length > 20 ? '...' : ''}}</text>
+          <text class="preview-text">{{item.contentPreview}}</text>
         </view>
 
         <view class="card-info">
@@ -192,16 +192,16 @@
           wx:key="id"
           title="{{item.title}}"
           description="{{item.description}}"
-          note="{{item.content.substring(0, 15)}}{{item.content.length > 15 ? '...' : ''}}"
+          note="{{item.contentNote}}"
           arrow="{{true}}"
           data-id="{{item.id}}"
           bind:click="onTemplateClick"
         >
           <view slot="left-icon" class="list-icon">
             <t-icon 
-              name="{{categories.find(cat => cat.id === item.category).icon}}" 
+              name="{{item.categoryIcon}}" 
               size="40rpx" 
-              color="{{categories.find(cat => cat.id === item.category).color}}"
+              color="{{item.categoryColor}}"
             />
           </view>
           
@@ -269,7 +269,7 @@
         <view class="template-details">
           <view class="detail-row">
             <text class="detail-label">分类：</text>
-            <text class="detail-value">{{categories.find(cat => cat.id === selectedTemplate.category).name}}</text>
+            <text class="detail-value">{{selectedTemplate.categoryName}}</text>
           </view>
           <view class="detail-row">
             <text class="detail-label">难度：</text>

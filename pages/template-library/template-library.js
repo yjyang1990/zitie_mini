@@ -28,9 +28,11 @@ Page({
         try {
             // 这里模拟加载模板数据，实际项目中可能从服务器或本地文件加载
             const templateData = await this.getTemplateData();
+            // 预处理模板数据
+            const processedTemplates = this.preprocessTemplates(templateData.templates);
             this.setData({
-                templates: templateData.templates,
-                filteredTemplates: templateData.templates,
+                templates: processedTemplates,
+                filteredTemplates: processedTemplates,
                 categories: templateData.categories,
                 loading: false
             });
@@ -91,6 +93,20 @@ Page({
         this.setData({ viewMode });
         wx.setStorageSync('template_view_mode', viewMode);
     },
+    // 预处理模板数据，添加计算属性
+    preprocessTemplates(templates) {
+        return templates.map(template => {
+            const category = this.data.categories.find(cat => cat.id === template.category);
+            return {
+                ...template,
+                categoryName: category ? category.name : '未知',
+                categoryIcon: category ? category.icon : 'help-circle',
+                categoryColor: category ? category.color : '#999999',
+                contentPreview: template.content.length > 20 ? template.content.substring(0, 20) + '...' : template.content,
+                contentNote: template.content.length > 15 ? template.content.substring(0, 15) + '...' : template.content
+            };
+        });
+    },
     // 应用筛选条件
     applyFilters() {
         let filtered = [...this.data.templates];
@@ -112,7 +128,9 @@ Page({
         }
         // 排序
         filtered = this.sortTemplates(filtered, this.data.sortBy);
-        this.setData({ filteredTemplates: filtered });
+        // 确保预处理过的数据包含计算属性
+        const processedFiltered = this.preprocessTemplates(filtered);
+        this.setData({ filteredTemplates: processedFiltered });
     },
     // 排序模板
     sortTemplates(templates, sortBy) {

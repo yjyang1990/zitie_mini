@@ -1,7 +1,41 @@
 <!--pages/profile/profile.wxml-->
 <view class="container">
-  <view class="page-title">我的</view>
-  <view class="empty-content">
-    <text>功能开发中...</text>
+  <!-- 用户信息区域 -->
+  <view class="user-section">
+    <view wx:if="{{hasLogin}}" class="user-info">
+      <image class="avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill" />
+      <view class="user-details">
+        <view class="nickname">{{userInfo.nickName}}</view>
+        <view class="user-desc">欢迎使用字帖生成器</view>
+      </view>
+    </view>
+    
+    <view wx:else class="login-prompt">
+      <t-icon name="user" size="48rpx" color="#999" />
+      <view class="login-text">点击登录获取更好体验</view>
+      <t-button
+        theme="primary"
+        size="small"
+        bind:tap="getUserProfile"
+      >
+        立即登录
+      </t-button>
+    </view>
   </view>
+  
+  <!-- 设置选项 -->
+  <t-cell-group title="设置" theme="card">
+    <t-cell
+      wx:for="{{settings}}"
+      wx:key="key"
+      title="{{item.title}}"
+      note="{{item.value}}"
+      leftIcon="{{item.icon}}"
+      rightIcon="chevron-right"
+      hover
+      clickable
+      data-key="{{item.key}}"
+      bind:click="onSettingClick"
+    />
+  </t-cell-group>
 </view>

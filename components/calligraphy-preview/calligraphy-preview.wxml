@@ -1,0 +1,70 @@
+<!--components/calligraphy-preview/calligraphy-preview.wxml-->
+<view class="calligraphy-preview">
+  <!-- 预览标题 -->
+  <view class="preview-header">
+    <t-icon name="palette" size="32rpx" color="#5B8DEE" />
+    <text class="preview-title">字帖预览</text>
+  </view>
+
+  <!-- 字体选择 -->
+  <view class="font-selector" wx:if="{{showFontSelector}}">
+    <text class="selector-label">字体样式：</text>
+    <view class="font-options">
+      <view 
+        wx:for="{{fontOptions}}" 
+        wx:key="id"
+        class="font-option {{selectedFont === item.id ? 'selected' : ''}}"
+        data-font="{{item.id}}"
+        bind:tap="onFontChange"
+      >
+        {{item.name}}
+      </view>
+    </view>
+  </view>
+
+  <!-- 预览区域 -->
+  <view class="preview-area">
+    <view wx:if="{{loading}}" class="loading-container">
+      <t-loading theme="circular" size="48rpx" text="生成中..." />
+    </view>
+    
+    <view wx:else class="preview-content">
+      <!-- 字帖网格 -->
+      <view class="grid-container">
+        <view 
+          wx:for="{{gridData}}" 
+          wx:key="index"
+          class="grid-cell {{showGrid ? 'with-grid' : ''}}"
+          style="width: {{cellSize}}rpx; height: {{cellSize}}rpx;"
+        >
+          <text class="character" style="font-family: {{selectedFontFamily}};">{{item}}</text>
+          <view wx:if="{{showGrid}}" class="grid-lines">
+            <view class="grid-line horizontal"></view>
+            <view class="grid-line vertical"></view>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 预览操作 -->
+      <view class="preview-actions">
+        <t-button 
+          theme="light" 
+          size="small"
+          icon="{{showGrid ? 'view-off' : 'view-on'}}"
+          bind:tap="toggleGrid"
+        >
+          {{showGrid ? '隐藏网格' : '显示网格'}}
+        </t-button>
+        
+        <t-button 
+          theme="primary" 
+          size="small"
+          icon="download"
+          bind:tap="onExport"
+        >
+          导出字帖
+        </t-button>
+      </view>
+    </view>
+  </view>
+</view>

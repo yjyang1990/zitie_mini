@@ -1,0 +1,8 @@
+{
+  "component": true,
+  "usingComponents": {
+    "t-loading": "tdesign-miniprogram/miniprogram_dist/loading/loading",
+    "t-button": "tdesign-miniprogram/miniprogram_dist/button/button",
+    "t-icon": "tdesign-miniprogram/miniprogram_dist/icon/icon"
+  }
+}

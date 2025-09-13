@@ -131,7 +131,7 @@ Page<IndexPageData, IndexPageMethods>({
   async getTemplatesData() {
     return new Promise((resolve, reject) => {
       try {
-        const data = require('../../data/templates.json');
+        const data = require('../../data/templates.js');
         resolve(data);
       } catch (error) {
         reject(error);

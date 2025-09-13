@@ -120,7 +120,7 @@ Page({
     return new Promise((resolve) => {
       // 模拟网络延迟
       setTimeout(() => {
-        resolve(require('../../data/templates.json'));
+        resolve(require('../../data/templates.js'));
       }, 500);
     });
   },

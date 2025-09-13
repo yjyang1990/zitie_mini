@@ -1,5 +1,5 @@
 // app.js
-const { storageUtils, uiUtils } = require('./utils/index.ts');
+const { storageUtils, uiUtils } = require('./utils/index.js');
 
 App({
   globalData: {

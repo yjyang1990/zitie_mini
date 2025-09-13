@@ -1,1 +1,8 @@
 /* pages/profile/profile.wxss */
+
+.empty-content {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 28rpx;
+  margin-top: 200rpx;
+}

@@ -22,7 +22,7 @@ set -euo pipefail
 # Setup error handling
 setup_error_handling() {
     set -euo pipefail
-    trap 'echo -e "\n❌ Error occurred in ${BASH_SOURCE[1]} at line ${BASH_LINENO[0]}"' ERR
+    trap 'echo -e "\n❌ Error occurred in ${BASH_SOURCE[1]:-$0} at line ${BASH_LINENO[0]:-unknown}"' ERR
 }
 
 # =============================================================================

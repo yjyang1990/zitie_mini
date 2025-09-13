@@ -2,15 +2,18 @@
   "permissions": {
     "allow": [
       "Edit",
-      "MultiEdit",
+      "MultiEdit", 
       "Write",
       "NotebookEdit",
+      
       "Bash(bash *.sh)",
       "Bash(bash .claude/scripts/*.sh)",
       "Bash(bash .claude/lib/*.sh)",
       "Bash(bash tests/*.sh)",
+      
       "Bash(bats tests/*)",
       "Bash(bats --version)",
+      
       "Bash(git status)",
       "Bash(git log --oneline *)",
       "Bash(git branch)",
@@ -20,6 +23,7 @@
       "Bash(git push)",
       "Bash(git pull)",
       "Bash(git worktree *)",
+      
       "Bash(gh repo view)",
       "Bash(gh issue list)",
       "Bash(gh issue view *)",
@@ -28,6 +32,7 @@
       "Bash(gh pr view *)",
       "Bash(gh pr create *)",
       "Bash(gh auth status)",
+      
       "Bash(npm install)",
       "Bash(npm run *)",
       "Bash(npm test)",
@@ -40,16 +45,22 @@
       "Bash(pnpm run *)",
       "Bash(yarn install)",
       "Bash(yarn run *)",
+      
       "Bash(python *)",
       "Bash(pytest *)",
       "Bash(pip *)",
       "Bash(ruff *)",
+      
       "Bash(composer *)",
+      
       "Bash(cargo *)",
       "Bash(rustc --version)",
+      
       "Bash(go *)",
+      
       "Bash(mvn *)",
       "Bash(gradle *)",
+      
       "Bash(shellcheck *)",
       "Bash(find . -name *)",
       "Bash(grep -r * .)",
@@ -67,6 +78,7 @@
       "Bash(date)",
       "Bash(pwd)",
       "Bash(uname *)",
+      
       "WebFetch(domain:github.com)",
       "WebFetch(domain:api.github.com)",
       "WebFetch(domain:docs.anthropic.com)",
@@ -92,12 +104,5 @@
     "run_tests_before_commit": true,
     "shellcheck_validation": true,
     "security_audit_checks": true
-  },
-  "enabledMcpjsonServers": [
-    "filesystem",
-    "git",
-    "context7",
-    "puppeteer"
-  ],
-  "enableAllProjectMcpServers": true
+  }
 }

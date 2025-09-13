@@ -1,0 +1,32 @@
+<!--pages/index/index.wxml-->
+<view class="container">
+  <view class="page-title">字帖生成器</view>
+  
+  <view class="card">
+    <view class="section-title">欢迎使用字帖生成小程序</view>
+    <view class="section-desc">基于TDesign UI框架开发的智能字帖生成工具</view>
+    
+    <view class="feature-list">
+      <view class="feature-item">
+        <view class="feature-icon">✍️</view>
+        <view class="feature-text">个性化字帖创建</view>
+      </view>
+      <view class="feature-item">
+        <view class="feature-icon">🎨</view>
+        <view class="feature-text">多种书法字体</view>
+      </view>
+      <view class="feature-item">
+        <view class="feature-icon">📱</view>
+        <view class="feature-text">便捷移动体验</view>
+      </view>
+    </view>
+    
+    <button class="btn-primary" bindtap="startCreate">开始创建字帖</button>
+  </view>
+  
+  <view class="card">
+    <view class="section-title">原型设计预览</view>
+    <view class="section-desc">查看完整的产品设计原型</view>
+    <button class="btn-secondary" bindtap="viewPrototype">查看原型设计</button>
+  </view>
+</view>

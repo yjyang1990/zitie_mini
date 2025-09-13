@@ -1,0 +1,56 @@
+/* pages/index/index.wxss */
+
+.section-title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 16rpx;
+}
+
+.section-desc {
+  font-size: 28rpx;
+  color: var(--text-secondary);
+  margin-bottom: 40rpx;
+  line-height: 1.6;
+}
+
+.feature-list {
+  margin: 40rpx 0;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24rpx;
+  padding: 20rpx;
+  background: var(--bg-secondary);
+  border-radius: 16rpx;
+}
+
+.feature-icon {
+  font-size: 48rpx;
+  margin-right: 24rpx;
+  width: 80rpx;
+  text-align: center;
+}
+
+.feature-text {
+  font-size: 32rpx;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--primary-color);
+  border: 2rpx solid var(--primary-color);
+  border-radius: 16rpx;
+  padding: 24rpx 48rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
+.btn-secondary:active {
+  background: var(--primary-color);
+  color: white;
+}

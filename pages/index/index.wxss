@@ -31,13 +31,17 @@
   color: white;
   margin-bottom: 8px;
   font-weight: 700;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  font-size: 32px;
+  letter-spacing: -0.5px;
 }
 
 .hero-subtitle {
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.95);
   font-weight: 500;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  font-size: 17px;
+  line-height: 1.4;
 }
 
 /* Selection Card */
@@ -54,7 +58,9 @@
 
 .selection-title {
   color: var(--ios-label-primary);
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: -0.3px;
 }
 
 /* Template Card */
@@ -62,7 +68,10 @@
   padding: 16px;
   border-radius: 12px;
   margin-top: 12px;
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .template-header, .custom-header {
@@ -81,7 +90,9 @@
 
 .template-name {
   color: var(--ios-label-primary);
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: -0.2px;
 }
 
 .template-preview, .custom-preview {
@@ -120,6 +131,11 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 0.5px solid rgba(255, 255, 255, 0.8);
 }
 
 .action-card:active {
@@ -143,12 +159,17 @@
 .action-title {
   color: var(--ios-label-primary);
   margin-bottom: 4px;
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: -0.2px;
 }
 
 .action-desc {
   color: var(--ios-label-secondary);
   text-align: center;
+  font-size: 14px;
+  line-height: 1.3;
+  opacity: 0.8;
 }
 
 /* Features Grid */
@@ -163,6 +184,11 @@
   text-align: center;
   transition: all 0.2s ease;
   border: 0.5px solid var(--ios-gray-lighter);
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
 }
 
 .feature-card:active {
@@ -184,14 +210,18 @@
 
 .feature-title {
   color: var(--ios-label-primary);
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: 4px;
+  font-size: 16px;
+  letter-spacing: -0.1px;
 }
 
 .feature-desc {
   color: var(--ios-label-secondary);
   text-align: center;
   line-height: 1.3;
+  font-size: 13px;
+  opacity: 0.85;
 }
 
 /* Recent Templates List */
@@ -365,14 +395,33 @@
   }
   
   .template-card, .custom-card {
-    background: rgba(44, 44, 46, 0.8);
+    background: rgba(44, 44, 46, 0.9);
+    border: 0.5px solid rgba(255, 255, 255, 0.1);
   }
   
-  .action-title, .feature-title {
-    color: white;
+  .action-card {
+    background: rgba(44, 44, 46, 0.9);
+    border: 0.5px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .feature-card {
+    background: rgba(44, 44, 46, 0.9);
+    border: 0.5px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .action-title, .feature-title, .template-name, .selection-title {
+    color: #FFFFFF;
   }
   
   .action-desc, .feature-desc {
+    color: rgba(255, 255, 255, 0.8);
+  }
+  
+  .template-preview, .custom-preview {
     color: rgba(255, 255, 255, 0.7);
+  }
+  
+  .template-desc {
+    color: rgba(255, 255, 255, 0.6);
   }
 }

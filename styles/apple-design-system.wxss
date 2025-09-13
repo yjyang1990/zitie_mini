@@ -27,10 +27,10 @@
   --ios-background-secondary: #FFFFFF;
   --ios-background-tertiary: #F2F2F7;
   
-  --ios-label-primary: #000000;
+  --ios-label-primary: #1C1C1E;
   --ios-label-secondary: #3C3C43;
-  --ios-label-tertiary: #3C3C43;
-  --ios-label-quaternary: #3C3C43;
+  --ios-label-tertiary: #636366;
+  --ios-label-quaternary: #8E8E93;
   
   /* iOS Gradient Backgrounds */
   --ios-gradient-blue: linear-gradient(135deg, #007AFF 0%, #5AC8FA 100%);
@@ -39,9 +39,9 @@
   --ios-gradient-ocean: linear-gradient(135deg, #5AC8FA 0%, #007AFF 100%);
   
   /* iOS Blur Effects */
-  --ios-blur-light: rgba(255, 255, 255, 0.8);
+  --ios-blur-light: rgba(255, 255, 255, 0.85);
   --ios-blur-dark: rgba(0, 0, 0, 0.4);
-  --ios-blur-tint: rgba(255, 255, 255, 0.7);
+  --ios-blur-tint: rgba(255, 255, 255, 0.8);
 }
 
 /* ============ iOS Typography System ============ */
@@ -314,9 +314,10 @@
 /* iOS Glass Effect */
 .ios-glass {
   background: var(--ios-blur-tint);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 0.5px solid rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 0.5px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .ios-glass-dark {

@@ -31,6 +31,9 @@ page {
   color: var(--text-primary);
   font-size: 32rpx;
   line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "kern";
 }
 
 /* 通用容器样式 */
@@ -96,3 +99,26 @@ page {
 .mb-40 { margin-bottom: 40rpx; }
 .mt-20 { margin-top: 20rpx; }
 .mt-40 { margin-top: 40rpx; }
+
+/* 文字清晰度优化 */
+.text-sharp {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+.text-bold {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.text-contrast {
+  color: #1C1C1E;
+  font-weight: 600;
+}
+
+.text-high-contrast {
+  color: #000000;
+  font-weight: 700;
+  text-shadow: 0 0 1px rgba(0, 0, 0, 0.1);
+}

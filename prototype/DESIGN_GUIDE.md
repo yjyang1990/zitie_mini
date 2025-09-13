@@ -9,6 +9,7 @@
 这是一个专为移动端设计的字帖生成小程序原型展示，严格遵循iOS设计规范，提供完整的用户界面展示和交互体验。
 
 ### 🎯 设计目标
+
 - **高保真还原**: 接近真实iOS应用的视觉效果
 - **完整功能展示**: 涵盖字帖生成的完整用户流程
 - **专业设计质感**: 使用iOS官方设计系统和色彩规范
@@ -18,7 +19,8 @@
 
 ## 🎨 核心设计规范
 
-### 1. **设备规格 - iPhone 12标准**
+### 1. 设备规格 - iPhone 12标准
+
 ```css
 /* iPhone 12 精确尺寸规范 */
 :root {
@@ -30,7 +32,8 @@
 }
 ```
 
-### 2. **iOS官方色彩系统**
+### 2. iOS官方色彩系统
+
 ```css
 /* iOS系统色彩 - 完整规范 */
 :root {
@@ -63,7 +66,8 @@
 }
 ```
 
-### 3. **渐变系统设计**
+### 3. 渐变系统设计
+
 ```css
 /* 高级渐变系统 */
 :root {
@@ -76,7 +80,8 @@
 }
 ```
 
-### 4. **多层毛玻璃效果**
+### 4. 多层毛玻璃效果
+
 ```css
 /* 5个层级的毛玻璃效果 */
 :root {
@@ -101,7 +106,8 @@
 }
 ```
 
-### 5. **6级优雅阴影系统**
+### 5. 6级优雅阴影系统
+
 ```css
 /* 优雅阴影系统 - 6个层级 */
 :root {
@@ -123,7 +129,8 @@
 
 ## 🏗️ 组件架构设计
 
-### 1. **页面容器结构**
+### 1. 页面容器结构
+
 ```html
 <div class="page-container">
     <div class="page-title">📱 页面标题</div>
@@ -141,7 +148,8 @@
 </div>
 ```
 
-### 2. **iOS卡片组件**
+### 2. iOS卡片组件
+
 ```html
 <div class="ios-card [elevated]">
     <div class="ios-card-header">分组标题</div>
@@ -156,7 +164,8 @@
 </div>
 ```
 
-### 3. **按钮系统**
+### 3. 按钮系统
+
 ```html
 <!-- 主要按钮 -->
 <button class="ios-button">主要操作</button>
@@ -171,7 +180,8 @@
 <button class="ios-button success">确认操作</button>
 ```
 
-### 4. **iOS开关组件**
+### 4. iOS开关组件
+
 ```html
 <div class="ios-switch">
     <div class="switch-slider [off]"></div>
@@ -183,6 +193,7 @@
 ## 🌍 多层毛玻璃纹理背景系统
 
 ### 背景纹理实现
+
 ```css
 /* 7层复合背景纹理 */
 body::before {
@@ -220,44 +231,51 @@ body::before {
 
 ### 必须实现的7个核心页面
 
-#### 1. 🏠 **首页导航**
+#### 1. 🏠 首页导航
+
 - **英雄区域**: 使用渐变背景 + 动态纹理
 - **功能卡片**: 核心功能和工具设置两组
 - **图标设计**: 使用渐变背景的圆角图标
 - **Tab Bar状态**: 首页激活状态
 
-#### 2. ✍️ **字帖制作**
+#### 2. ✍️ 字帖制作
+
 - **导航栏**: 返回、标题、预览操作
 - **类型选择**: 田字格、米字格、回米格、空白
 - **内容输入**: 多行文本输入框
 - **实时预览**: 田字格样式的字符预览
 - **操作按钮**: 成功样式的生成按钮
 
-#### 3. 📚 **字帖模板**
+#### 3. 📚 字帖模板
+
 - **热门推荐**: elevated卡片样式
 - **学习专区**: 按年龄段分类
 - **特色内容**: 书法经典等高级内容
 - **图标系统**: 不同主题的渐变图标
 
-#### 4. 📋 **我的作品**
+#### 4. 📋 我的作品
+
 - **最近创建**: 作品列表 + 时间戳
 - **统计数据**: 数字展示的设置行
 - **快捷操作**: 批量导出、清理功能
 - **数据展示**: 总页数、创建数等统计信息
 
-#### 5. ⚙️ **高级设置**
+#### 5. ⚙️ 高级设置
+
 - **方格设置**: 大小、粗细、颜色配置
 - **字体设置**: 样式、大小、颜色、粗细
 - **描红设置**: 开关、透明度、颜色
 - **页面布局**: 纸张、边距、方向设置
 
-#### 6. 👤 **个人中心**
+#### 6. 👤 个人中心
+
 - **用户信息**: 头像 + 登录状态
 - **应用偏好**: 通知、深色模式、自动保存
 - **高级功能**: 专业版、云端同步
 - **帮助支持**: 教程、反馈、评分
 
-#### 7. 👀 **预览导出**
+#### 7. 👀 预览导出
+
 - **预览容器**: 完整的字帖预览展示
 - **导出选项**: PDF、图片、云端打印
 - **分享按钮**: 渐变样式的主要操作按钮
@@ -267,7 +285,8 @@ body::before {
 
 ## 🎭 交互动效设计
 
-### 1. **悬停效果**
+### 1. 悬停效果
+
 ```css
 .page-container:hover {
     transform: translateY(-8px) scale(1.02);
@@ -281,7 +300,8 @@ body::before {
 }
 ```
 
-### 2. **按钮动效**
+### 2. 按钮动效
+
 ```css
 .ios-button::before {
     content: '';
@@ -296,7 +316,8 @@ body::before {
 }
 ```
 
-### 3. **页面标题动画**
+### 3. 页面标题动画
+
 ```css
 @keyframes titleFloat {
     0% { transform: translateX(-50%) translateY(0px); opacity: 0.8; }
@@ -313,6 +334,7 @@ body::before {
 ## 🖼️ 右键保存图片功能
 
 ### 功能实现要求
+
 ```javascript
 // 核心功能配置
 const saveOptions = {
@@ -330,6 +352,7 @@ const saveOptions = {
 ```
 
 ### 交互体验要求
+
 - **悬停提示**: 鼠标悬停1秒后显示保存提示
 - **右键触发**: 阻止默认右键菜单，显示确认对话框
 - **加载指示**: 显示加载动画和进度提示
@@ -340,7 +363,8 @@ const saveOptions = {
 
 ## 📐 布局和响应式设计
 
-### 1. **网格系统**
+### 1. 网格系统
+
 ```css
 .pages-showcase {
     display: grid;
@@ -354,7 +378,8 @@ const saveOptions = {
 }
 ```
 
-### 2. **响应式适配**
+### 2. 响应式适配
+
 ```css
 /* 手机端 */
 @media (max-width: 430px) {
@@ -390,7 +415,8 @@ const saveOptions = {
 }
 ```
 
-### 3. **高度自适应**
+### 3. 高度自适应
+
 ```css
 .page-container {
     width: 390px;
@@ -414,6 +440,7 @@ const saveOptions = {
 ## 🎨 字体和排版系统
 
 ### 字体系统
+
 ```css
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
@@ -423,6 +450,7 @@ body {
 ```
 
 ### 文字层次
+
 ```css
 /* 字体大小系统 */
 .home-hero h1 { font-size: 32px; font-weight: 700; letter-spacing: -0.8px; }
@@ -437,7 +465,8 @@ body {
 
 ## ⚡ 性能优化要求
 
-### 1. **动画性能**
+### 1. 动画性能
+
 ```css
 /* 高性能动画 */
 .ios-card,
@@ -448,7 +477,8 @@ body {
 }
 ```
 
-### 2. **无障碍支持**
+### 2. 无障碍支持
+
 ```css
 @media (prefers-reduced-motion: reduce) {
     * {
@@ -459,7 +489,8 @@ body {
 }
 ```
 
-### 3. **深色模式支持**
+### 3. 深色模式支持
+
 ```css
 @media (prefers-color-scheme: dark) {
     :root {
@@ -479,12 +510,14 @@ body {
 ## 📦 必需依赖和资源
 
 ### 外部库
+
 ```html
 <!-- html2canvas - 用于页面截图保存 -->
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 ```
 
 ### 移动端优化
+
 ```javascript
 // 禁用双击缩放
 document.addEventListener('dblclick', function(e) {
@@ -504,6 +537,7 @@ document.body.addEventListener('touchmove', function(e) {
 ## 🚀 生成指令总结
 
 ### 完整实现指令
+
 > 基于以上完整规范，生成一个包含7个页面的移动端原型展示HTML文件，要求：
 
 1. **严格遵循iPhone 12尺寸** (390px × 自适应高度)
@@ -516,6 +550,7 @@ document.body.addEventListener('touchmove', function(e) {
 8. **完整的7个页面** (首页、制作、模板、作品、设置、个人、预览)
 
 ### 预期效果
+
 - 🎨 **专业级iOS设计质感**，接近真实原生应用效果
 - 📱 **完整功能展示**，涵盖字帖生成的全部用户流程  
 - 🖼️ **可保存原型图**，支持右键导出高分辨率PNG
@@ -525,7 +560,8 @@ document.body.addEventListener('touchmove', function(e) {
 ---
 
 ## 📄 文件结构
-```
+
+```text
 prototype/
 ├── clean-mobile-showcase.html    # 主文件 - 完整原型展示
 ├── DESIGN_GUIDE.md              # 本设计指南文档

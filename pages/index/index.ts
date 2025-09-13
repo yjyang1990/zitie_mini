@@ -31,6 +31,7 @@ interface IndexPageData {
 interface IndexPageMethods {
   initPage(): void;
   loadRecentTemplates(): void;
+  getTemplatesData(): Promise<any>;
   loadTemplate(template: Template): void;
   startCreate(): void;
   openTemplateLibrary(): void;

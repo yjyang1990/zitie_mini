@@ -1,4 +1,4 @@
-import { formatStorageData, getStorageSync, setStorageSync } from '../../utils/index';
+// Remove utils import since we'll use wx API directly
 
 interface Template {
   id: string;
@@ -51,7 +51,7 @@ interface PageData {
   selectedTemplate: Template | null;
 }
 
-Page<PageData>({
+Page({
   data: {
     templates: [],
     filteredTemplates: [],
@@ -118,7 +118,7 @@ Page<PageData>({
 
   // 加载收藏数据
   loadFavorites() {
-    const favorites = getStorageSync('template_favorites', []);
+    const favorites = wx.getStorageSync('template_favorites') || [];
     this.setData({ favorites });
   },
 
@@ -154,7 +154,7 @@ Page<PageData>({
   onViewModeChange(event: WechatMiniprogram.CustomEvent) {
     const viewMode = event.currentTarget.dataset.mode as 'grid' | 'list';
     this.setData({ viewMode });
-    setStorageSync('template_view_mode', viewMode);
+    wx.setStorageSync('template_view_mode', viewMode);
   },
 
   // 应用筛选条件
@@ -252,7 +252,7 @@ Page<PageData>({
     }
     
     this.setData({ favorites });
-    setStorageSync('template_favorites', favorites);
+    wx.setStorageSync('template_favorites', favorites);
   },
 
   // 使用模板
@@ -285,7 +285,7 @@ Page<PageData>({
 
   // 记录模板使用历史
   recordTemplateUsage(templateId: string) {
-    const history = getStorageSync('template_usage_history', []);
+    const history = wx.getStorageSync('template_usage_history') || [];
     const now = Date.now();
     
     // 移除旧记录
@@ -297,7 +297,7 @@ Page<PageData>({
     // 保持最多50条记录
     const limitedHistory = filteredHistory.slice(0, 50);
     
-    setStorageSync('template_usage_history', limitedHistory);
+    wx.setStorageSync('template_usage_history', limitedHistory);
   },
 
   // 分享模板

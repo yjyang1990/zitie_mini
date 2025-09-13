@@ -1,70 +1,89 @@
 {
-  "description": "字帖生成小程序项目配置",
+  "description": "字帖生成器微信小程序项目配置",
   "packOptions": {
-    "ignore": [],
-    "include": []
+    "ignore": [
+      {
+        "type": "folder",
+        "value": ".claude"
+      },
+      {
+        "type": "folder", 
+        "value": "prototype"
+      },
+      {
+        "type": "folder",
+        "value": "dist"
+      },
+      {
+        "type": "file",
+        "value": "*.ts"
+      },
+      {
+        "type": "file",
+        "value": "*.md"
+      }
+    ]
   },
   "setting": {
     "urlCheck": false,
-    "scopeDataCheck": false,
-    "coverView": true,
     "es6": true,
+    "enhance": true,
     "postcss": true,
-    "compileHotReLoad": false,
-    "preloadBackgroundData": false,
-    "minified": true,
-    "autoAudits": false,
+    "minified": false,
     "newFeature": true,
-    "uglifyFileName": false,
-    "uploadWithSourceMap": true,
-    "useIsolateContext": true,
+    "coverView": true,
     "nodeModules": true,
-    "enhance": false,
-    "useCompilerModule": true,
-    "userConfirmedUseCompilerModuleSwitch": false,
+    "autoAudits": false,
     "showShadowRootInWxmlPanel": true,
-    "skylineRenderEnable": true,
-    "bigPackageSizeSupport": true,
-    "packNpmRelationList": [],
-    "ignoreUploadUnusedFiles": true,
+    "checkInvalidKey": true,
+    "checkSiteMap": true,
+    "uploadWithSourceMap": true,
+    "compileHotReLoad": false,
+    "useMultiFrameRuntime": true,
+    "useApiHook": true,
     "babelSetting": {
       "ignore": [],
       "disablePlugins": [],
       "outputPath": ""
     },
-    "compileWorklet": false,
+    "bundle": false,
+    "useIsolateContext": true,
+    "useCompilerModule": true,
+    "userConfirmedUseCompilerModuleSwitch": false,
     "packNpmManually": false,
-    "minifyWXSS": true,
-    "minifyWXML": true,
-    "localPlugins": false,
-    "condition": true,
-    "swc": false,
-    "disableSWC": true,
-    "disableUseStrict": false,
-    "useCompilerPlugins": false
+    "packNpmRelationList": [
+      {
+        "packageJsonPath": "./package.json",
+        "miniprogramNpmDistDir": "./"
+      }
+    ]
   },
   "compileType": "miniprogram",
-  "libVersion": "3.10.0",
-  "appid": "wxe180bd2433ea2fd0",
-  "projectname": "zite_mini",
+  "libVersion": "2.32.0",
+  "appid": "wx-your-appid-here",
+  "projectname": "zitie_mini",
+  "debugOptions": {
+    "hidedInDevtools": []
+  },
+  "scripts": {},
   "simulatorType": "wechat",
-  "simulatorPluginLibVersion": {
-    "wxext14566970e7e9f62": "2.27.3"
-  },
+  "simulatorPluginLibVersion": {},
   "condition": {
+    "search": {
+      "current": -1,
+      "list": []
+    },
+    "conversation": {
+      "current": -1,
+      "list": []
+    },
+    "game": {
+      "current": -1,
+      "list": []
+    },
     "miniprogram": {
-      "list": [
-        {
-          "name": "首页",
-          "pathName": "pages/index/index",
-          "query": "",
-          "scene": null
-        }
-      ]
+      "current": -1,
+      "list": []
     }
-  },
-  "editorSetting": {
-    "tabIndent": "auto",
-    "tabSize": 2
   }
 }

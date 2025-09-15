@@ -2,7 +2,7 @@
 
 > 🎨 **专业级iOS风格设计** | 📱 **iPhone 12标准尺寸** | 🖼️ **支持右键保存图片**
 
-📚 **[查看完整文档索引](./INDEX.md)** | 🚀 **[快速上手指南](./QUICK_START_GUIDE.md)** | 📋 **[45+模板库](./TEMPLATE_LIBRARY.md)**
+📚 **[📖 完整指南(单文件)](./COMPLETE_GUIDE.md)** | 🗂️ **[分文档索引](./INDEX.md)** | 🚀 **[快速上手](./QUICK_START_GUIDE.md)**
 
 ---
 
